@@ -11,7 +11,9 @@ from pathlib import Path
 from urllib.parse import unquote, urljoin, urlparse
 
 import requests
+import urllib3
 from bs4 import BeautifulSoup, Comment
+from requests.structures import CaseInsensitiveDict
 
 SITE = "https://er-sucht-ihn.de"
 SITEMAP = f"{SITE}/sitemap.php"
@@ -40,8 +42,7 @@ DYNAMIC_SELECTORS = [
     ".user-box", ".register-box-module", ".cookie-consent", "aside", "nav",
 ]
 
-session = requests.Session()
-session.headers["User-Agent"] = "Er-sucht-Ihn migration snapshot/1.0"
+USER_AGENT = "Er-sucht-Ihn migration snapshot/1.0"
 
 
 class FetchPolicyError(RuntimeError):
@@ -60,8 +61,27 @@ def _safe_authority(parsed, allowed_hosts: set[str]) -> bool:
     return port in {None, 443 if parsed.scheme == "https" else 80}
 
 
-def validate_source_url(url: str) -> str:
-    parsed = urlparse(url)
+def _parse_url(url: str):
+    try:
+        return urlparse(url)
+    except (TypeError, ValueError):
+        return None
+
+
+def _decode_path_repeatedly(path: str, rounds: int = 3) -> str:
+    decoded = path
+    for _ in range(rounds):
+        next_value = unquote(decoded)
+        if next_value == decoded:
+            break
+        decoded = next_value
+    return decoded
+
+
+def validate_source_url(url: str) -> tuple[str, ...]:
+    parsed = _parse_url(url)
+    if parsed is None:
+        raise FetchPolicyError(f"Refusing malformed source URL: {url}")
     if parsed.scheme != "https" or not _safe_authority(parsed, SOURCE_HOSTS) or parsed.fragment:
         raise FetchPolicyError(f"Refusing source URL outside the HTTPS market allowlist: {url}")
     try:
@@ -70,11 +90,48 @@ def validate_source_url(url: str) -> str:
         raise FetchPolicyError(f"Could not resolve approved source host: {parsed.hostname}") from error
     if not addresses:
         raise FetchPolicyError(f"Approved source host resolved to no addresses: {parsed.hostname}")
+    approved = []
     for address in addresses:
         ip = ipaddress.ip_address(address[4][0])
         if not ip.is_global:
             raise FetchPolicyError(f"Refusing non-public source address for {parsed.hostname}: {ip}")
-    return url
+        approved.append(str(ip))
+    return tuple(sorted(set(approved)))
+
+
+def _request_pinned(url: str, address: str) -> requests.Response:
+    """Fetch from the exact validated IP while retaining TLS SNI/hostname checks."""
+    parsed = _parse_url(url)
+    if parsed is None or parsed.hostname is None:
+        raise FetchPolicyError(f"Refusing malformed source URL: {url}")
+    target = parsed.path or "/"
+    if parsed.query:
+        target += f"?{parsed.query}"
+    pool = urllib3.HTTPSConnectionPool(
+        host=address,
+        port=parsed.port or 443,
+        assert_hostname=parsed.hostname,
+        server_hostname=parsed.hostname,
+        cert_reqs="CERT_REQUIRED",
+        ca_certs=requests.certs.where(),
+        timeout=urllib3.Timeout(connect=FETCH_TIMEOUT[0], read=FETCH_TIMEOUT[1]),
+        maxsize=1,
+        block=True,
+    )
+    raw = pool.urlopen(
+        "GET",
+        target,
+        headers={"Host": parsed.hostname, "User-Agent": USER_AGENT, "Accept-Encoding": "identity"},
+        redirect=False,
+        retries=False,
+        preload_content=False,
+    )
+    response = requests.Response()
+    response.status_code = raw.status
+    response.headers = CaseInsensitiveDict(raw.headers)
+    response.url = url
+    response.raw = raw
+    return response
 
 
 def _read_bounded_response(response: requests.Response, expected_types: tuple[str, ...]) -> requests.Response:
@@ -102,6 +159,7 @@ def _read_bounded_response(response: requests.Response, expected_types: tuple[st
         chunks.append(chunk)
     response._content = b"".join(chunks)
     response._content_consumed = True
+    response.close()
     return response
 
 
@@ -110,8 +168,19 @@ def fetch(url: str, attempts: int = 4, expected_types: tuple[str, ...] = ("text/
     for attempt in range(attempts):
         current = url
         for redirect_count in range(MAX_REDIRECTS + 1):
-            validate_source_url(current)
-            last = session.get(current, timeout=FETCH_TIMEOUT, allow_redirects=False, stream=True)
+            approved_addresses = validate_source_url(current)
+            connection_errors = []
+            last = None
+            for address in approved_addresses:
+                try:
+                    last = _request_pinned(current, address)
+                    break
+                except (OSError, urllib3.exceptions.HTTPError) as error:
+                    connection_errors.append(str(error))
+            if last is None:
+                if attempt + 1 == attempts:
+                    raise FetchPolicyError(f"All approved source addresses failed: {'; '.join(connection_errors)}")
+                break
             if last.status_code in {301, 302, 303, 307, 308}:
                 location = last.headers.get("Location")
                 last.close()
@@ -161,8 +230,13 @@ def safe_href(raw_href: str, source_url: str) -> str | None:
         return raw
     if raw.lower().startswith("hhttp"):
         raw = raw[1:]
-    absolute = urljoin(source_url, raw)
-    parsed = urlparse(absolute)
+    try:
+        absolute = urljoin(source_url, raw)
+    except (TypeError, ValueError):
+        return None
+    parsed = _parse_url(absolute)
+    if parsed is None:
+        return None
     if parsed.scheme not in {"http", "https"} or parsed.hostname in EXCLUDED_RESOURCE_HOSTS:
         return None
     if not _safe_authority(parsed, {parsed.hostname.lower()} if parsed.hostname else set()):
@@ -222,13 +296,23 @@ def clean_content(soup: BeautifulSoup, kind: str, source_url: str) -> str:
             elif parsed_href.scheme in {"http", "https"} and not is_internal:
                 node.attrs.update({"rel": "nofollow noopener noreferrer", "target": "_blank"})
         elif node.name == "img":
-            source = urljoin(source_url, node.get("src", ""))
-            parsed = urlparse(source)
-            decoded_path = unquote(parsed.path)
+            try:
+                source = urljoin(source_url, node.get("src", ""))
+            except (TypeError, ValueError):
+                node.decompose()
+                continue
+            parsed = _parse_url(source)
+            if parsed is None:
+                node.decompose()
+                continue
+            decoded_path = _decode_path_repeatedly(parsed.path)
+            path_segments = decoded_path.split("/")
             if (
                 parsed.scheme != "https"
                 or not _safe_authority(parsed, ALLOWED_IMAGE_HOSTS)
                 or parsed.hostname in EXCLUDED_RESOURCE_HOSTS
+                or "\\" in decoded_path
+                or any(segment in {".", ".."} for segment in path_segments)
                 or FORBIDDEN_IMAGE_PATH.search(decoded_path)
             ):
                 node.decompose()

@@ -30,9 +30,10 @@ class ImportSecurityTests(unittest.TestCase):
         self.assertEqual(safe_href("/partnersuche/bayern/augsburg", source), "/partnersuche/augsburg")
         self.assertEqual(safe_href("http://er-sucht-ihn.de/faq/", source), "/faq")
         self.assertIsNone(safe_href("https://www.flirt.de/profile/123", source))
+        self.assertIsNone(safe_href("https://[::1", source))
 
     def test_sanitizer_uses_strict_markup_and_resource_allowlists(self):
-        markup = """
+        markup = r"""
         <main>
           <script>alert(1)</script><iframe src="https://js.icony.com/frame/x"></iframe>
           <form><input name="private"></form><video src="https://evil.example/video"></video>
@@ -43,6 +44,9 @@ class ImportSecurityTests(unittest.TestCase):
           <img src="https://user@static-cms.icony-hosting.de/cms/user.jpg" alt="userinfo">
           <img src="https://static-cms.icony-hosting.de:444/cms/user.jpg" alt="port">
           <img src="https://static-cms.icony-hosting.de/user-media/member/42.jpg" alt="member">
+          <img src="https://static-cms.icony-hosting.de/cms\..\user-media\member\42.jpg" alt="backslash-member">
+          <img src="https://static-cms.icony-hosting.de/cms/%252e%252e/%2575ser-media/member/42.jpg" alt="encoded-member">
+          <img src="https://[::1" alt="malformed">
         </main>
         """
         cleaned = clean_content(
@@ -59,6 +63,9 @@ class ImportSecurityTests(unittest.TestCase):
         self.assertNotIn("userinfo", cleaned)
         self.assertNotIn(":444", cleaned)
         self.assertNotIn("user-media", cleaned)
+        self.assertNotIn("backslash-member", cleaned)
+        self.assertNotIn("encoded-member", cleaned)
+        self.assertNotIn("malformed", cleaned)
 
     def test_fragment_drops_renderer_owned_main_and_h1_but_preserves_article_structure(self):
         markup = """
@@ -126,7 +133,7 @@ class ImportSecurityTests(unittest.TestCase):
     @patch("scripts.import_public_pages.socket.getaddrinfo")
     def test_source_url_policy_rejects_ssrf_authority_and_private_ips(self, getaddrinfo):
         getaddrinfo.return_value = [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("93.184.216.34", 443))]
-        self.assertEqual(validate_source_url("https://er-sucht-ihn.de/partnersuche/berlin"), "https://er-sucht-ihn.de/partnersuche/berlin")
+        self.assertEqual(validate_source_url("https://er-sucht-ihn.de/partnersuche/berlin"), ("93.184.216.34",))
         for unsafe in (
             "http://er-sucht-ihn.de/",
             "https://evil.example/",
@@ -141,18 +148,18 @@ class ImportSecurityTests(unittest.TestCase):
             validate_source_url("https://er-sucht-ihn.de/")
 
     @patch("scripts.import_public_pages.socket.getaddrinfo")
-    @patch("scripts.import_public_pages.session.get")
-    def test_fetch_revalidates_redirect_hops_and_rejects_oversize(self, session_get, getaddrinfo):
+    @patch("scripts.import_public_pages._request_pinned")
+    def test_fetch_binds_validated_ip_revalidates_redirects_and_rejects_oversize(self, request_pinned, getaddrinfo):
         getaddrinfo.return_value = [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("93.184.216.34", 443))]
         redirect = Mock(status_code=302, headers={"Location": "https://evil.example/escape"})
-        session_get.return_value = redirect
+        request_pinned.return_value = redirect
         with self.assertRaises(FetchPolicyError):
             fetch("https://er-sucht-ihn.de/start", expected_types=("text/html",))
-        self.assertEqual(session_get.call_count, 1)
+        request_pinned.assert_called_once_with("https://er-sucht-ihn.de/start", "93.184.216.34")
 
         oversized = Mock(status_code=200, headers={"Content-Type": "text/html", "Content-Length": "10485761"})
-        session_get.reset_mock()
-        session_get.return_value = oversized
+        request_pinned.reset_mock()
+        request_pinned.return_value = oversized
         with self.assertRaises(FetchPolicyError):
             fetch("https://er-sucht-ihn.de/start", expected_types=("text/html",))
 
