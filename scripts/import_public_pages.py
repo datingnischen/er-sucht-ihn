@@ -29,6 +29,8 @@ EXCLUDED_RESOURCE_HOSTS = {"singleboersen-ueberblick.de", "www.singleboersen-ueb
 MAX_RESPONSE_BYTES = 10 * 1024 * 1024
 MAX_REDIRECTS = 5
 FETCH_TIMEOUT = (10, 30)
+MAX_URL_PATH_LENGTH = 8192
+MAX_DECODE_ROUNDS = 32
 FORBIDDEN_IMAGE_PATH = re.compile(r"/(?:user-media|member-media|members?|profiles?|profile-images?|mitglieder)(?:/|$)", re.I)
 KNOWN_PATH_FIXES = {
     "/videodate.html": "/videodating.html",
@@ -68,14 +70,31 @@ def _parse_url(url: str):
         return None
 
 
-def _decode_path_repeatedly(path: str, rounds: int = 3) -> str:
+def _safe_urljoin(base: str, reference: str) -> str:
+    try:
+        joined = urljoin(base, reference)
+    except (TypeError, ValueError) as error:
+        raise FetchPolicyError(f"Refusing malformed URL reference: {reference}") from error
+    if _parse_url(joined) is None:
+        raise FetchPolicyError(f"Refusing malformed URL reference: {reference}")
+    return joined
+
+
+def _decode_path_fully(path: str) -> str | None:
+    if len(path) > MAX_URL_PATH_LENGTH:
+        return None
     decoded = path
-    for _ in range(rounds):
-        next_value = unquote(decoded)
+    for _ in range(MAX_DECODE_ROUNDS):
+        try:
+            next_value = unquote(decoded, errors="strict")
+        except UnicodeDecodeError:
+            return None
         if next_value == decoded:
-            break
+            return None if "%" in decoded else decoded
         decoded = next_value
-    return decoded
+        if len(decoded) > MAX_URL_PATH_LENGTH:
+            return None
+    return None
 
 
 def validate_source_url(url: str) -> tuple[str, ...]:
@@ -186,7 +205,7 @@ def fetch(url: str, attempts: int = 4, expected_types: tuple[str, ...] = ("text/
                 last.close()
                 if not location or redirect_count == MAX_REDIRECTS:
                     raise FetchPolicyError("Source exceeded the safe redirect limit")
-                current = urljoin(current, location)
+                current = _safe_urljoin(current, location)
                 continue
             if last.status_code == 200:
                 return _read_bounded_response(last, expected_types)
@@ -197,7 +216,10 @@ def fetch(url: str, attempts: int = 4, expected_types: tuple[str, ...] = ("text/
 
 
 def normalize_path(url: str) -> str:
-    path = urlparse(url).path
+    parsed = _parse_url(url)
+    if parsed is None:
+        raise FetchPolicyError(f"Refusing malformed source URL: {url}")
+    path = parsed.path
     return "/" if path == "/" else "/" + path.strip("/")
 
 
@@ -231,8 +253,8 @@ def safe_href(raw_href: str, source_url: str) -> str | None:
     if raw.lower().startswith("hhttp"):
         raw = raw[1:]
     try:
-        absolute = urljoin(source_url, raw)
-    except (TypeError, ValueError):
+        absolute = _safe_urljoin(source_url, raw)
+    except FetchPolicyError:
         return None
     parsed = _parse_url(absolute)
     if parsed is None:
@@ -297,15 +319,18 @@ def clean_content(soup: BeautifulSoup, kind: str, source_url: str) -> str:
                 node.attrs.update({"rel": "nofollow noopener noreferrer", "target": "_blank"})
         elif node.name == "img":
             try:
-                source = urljoin(source_url, node.get("src", ""))
-            except (TypeError, ValueError):
+                source = _safe_urljoin(source_url, node.get("src", ""))
+            except FetchPolicyError:
                 node.decompose()
                 continue
             parsed = _parse_url(source)
             if parsed is None:
                 node.decompose()
                 continue
-            decoded_path = _decode_path_repeatedly(parsed.path)
+            decoded_path = _decode_path_fully(parsed.path)
+            if decoded_path is None:
+                node.decompose()
+                continue
             path_segments = decoded_path.split("/")
             if (
                 parsed.scheme != "https"

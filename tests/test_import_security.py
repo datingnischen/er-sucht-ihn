@@ -6,6 +6,7 @@ from scripts.import_public_pages import (
     FetchPolicyError,
     clean_content,
     fetch,
+    normalize_path,
     safe_href,
     validate_source_url,
 )
@@ -46,6 +47,8 @@ class ImportSecurityTests(unittest.TestCase):
           <img src="https://static-cms.icony-hosting.de/user-media/member/42.jpg" alt="member">
           <img src="https://static-cms.icony-hosting.de/cms\..\user-media\member\42.jpg" alt="backslash-member">
           <img src="https://static-cms.icony-hosting.de/cms/%252e%252e/%2575ser-media/member/42.jpg" alt="encoded-member">
+          <img src="https://static-cms.icony-hosting.de/%2525252e%2525252e/%25252575ser-media/member/42.jpg" alt="deep-encoded-member">
+          <img src="https://static-cms.icony-hosting.de/cms%2525255c..%2525255cuser-media/member/42.jpg" alt="deep-backslash-member">
           <img src="https://[::1" alt="malformed">
         </main>
         """
@@ -65,6 +68,8 @@ class ImportSecurityTests(unittest.TestCase):
         self.assertNotIn("user-media", cleaned)
         self.assertNotIn("backslash-member", cleaned)
         self.assertNotIn("encoded-member", cleaned)
+        self.assertNotIn("deep-encoded-member", cleaned)
+        self.assertNotIn("deep-backslash-member", cleaned)
         self.assertNotIn("malformed", cleaned)
 
     def test_fragment_drops_renderer_owned_main_and_h1_but_preserves_article_structure(self):
@@ -146,6 +151,8 @@ class ImportSecurityTests(unittest.TestCase):
         getaddrinfo.return_value = [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("127.0.0.1", 443))]
         with self.assertRaises(FetchPolicyError):
             validate_source_url("https://er-sucht-ihn.de/")
+        with self.assertRaises(FetchPolicyError):
+            normalize_path("https://[::1")
 
     @patch("scripts.import_public_pages.socket.getaddrinfo")
     @patch("scripts.import_public_pages._request_pinned")
@@ -156,6 +163,12 @@ class ImportSecurityTests(unittest.TestCase):
         with self.assertRaises(FetchPolicyError):
             fetch("https://er-sucht-ihn.de/start", expected_types=("text/html",))
         request_pinned.assert_called_once_with("https://er-sucht-ihn.de/start", "93.184.216.34")
+
+        malformed_redirect = Mock(status_code=302, headers={"Location": "https://[::1"})
+        request_pinned.reset_mock()
+        request_pinned.return_value = malformed_redirect
+        with self.assertRaises(FetchPolicyError):
+            fetch("https://er-sucht-ihn.de/start", expected_types=("text/html",))
 
         oversized = Mock(status_code=200, headers={"Content-Type": "text/html", "Content-Length": "10485761"})
         request_pinned.reset_mock()
