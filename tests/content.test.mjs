@@ -47,6 +47,20 @@ test("imported HTML allows no active or privacy-leaking URLs", () => {
   assert.doesNotMatch(html, /href=["']\/(?:videodate\.html|startseite)["']/i);
 });
 
+test("imported HTML has no broken internal links, insecure own-host URLs or foreign-brand leaks", () => {
+  const publicPaths = new Set(catalog.pages.filter((page) => !["platform", "magazine"].includes(page.type)).map((page) => page.path));
+  for (const page of catalog.pages) {
+    for (const match of page.contentHtml.matchAll(/href=["']([^"']+)["']/gi)) {
+      const href = match[1];
+      assert.doesNotMatch(href, /^http:\/\/(?:www\.)?er-sucht-ihn\.de/i, page.path);
+      assert.doesNotMatch(href, /^https?:\/\/(?:www\.)?flirt\.de/i, page.path);
+      if (!href.startsWith("/")) continue;
+      const target = decodeURIComponent(href.split(/[?#]/, 1)[0]).replace(/\/$/, "") || "/";
+      assert.ok(publicPaths.has(target), `${page.path} links to missing ${target}`);
+    }
+  }
+});
+
 test("excluded platform and magazine links stay absolute for upstream ownership", () => {
   const html = catalog.pages.map((page) => page.contentHtml).join("\n");
   for (const root of ["registration", "login", "hilfe", "kontakt", "datenschutz.html", "impressum.html", "agb.html", "magazin"]) {

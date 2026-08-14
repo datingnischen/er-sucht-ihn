@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import json
+import ipaddress
 import re
+import socket
 import time
 from pathlib import Path
-from urllib.parse import urljoin, urlparse
+from urllib.parse import unquote, urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup, Comment
@@ -20,10 +22,18 @@ ALLOWED_TAGS = {
     "hr", "img", "li", "main", "ol", "p", "picture", "section", "small", "span", "strong", "ul",
 }
 ALLOWED_IMAGE_HOSTS = {"static-cms.icony-hosting.de", "static2.icony-hosting.de", "er-sucht-ihn.de", "www.er-sucht-ihn.de"}
-EXCLUDED_RESOURCE_HOSTS = {"singleboersen-ueberblick.de", "www.singleboersen-ueberblick.de"}
+SOURCE_HOSTS = {"er-sucht-ihn.de", "www.er-sucht-ihn.de"}
+EXCLUDED_RESOURCE_HOSTS = {"singleboersen-ueberblick.de", "www.singleboersen-ueberblick.de", "flirt.de", "www.flirt.de"}
+MAX_RESPONSE_BYTES = 10 * 1024 * 1024
+MAX_REDIRECTS = 5
+FETCH_TIMEOUT = (10, 30)
+FORBIDDEN_IMAGE_PATH = re.compile(r"/(?:user-media|member-media|members?|profiles?|profile-images?|mitglieder)(?:/|$)", re.I)
 KNOWN_PATH_FIXES = {
     "/videodate.html": "/videodating.html",
     "/startseite": "/",
+    "/partnersuche/bayern/augsburg": "/partnersuche/augsburg",
+    "/partnersuche/bayern/m%C3%BCnchen": "/partnersuche/bayern/muenchen",
+    "/partnersuche/bayern/münchen": "/partnersuche/bayern/muenchen",
 }
 DYNAMIC_SELECTORS = [
     "form", "script", "style", "noscript", "iframe", ".grid-view", ".result-item",
@@ -34,12 +44,84 @@ session = requests.Session()
 session.headers["User-Agent"] = "Er-sucht-Ihn migration snapshot/1.0"
 
 
-def fetch(url: str, attempts: int = 4) -> requests.Response:
+class FetchPolicyError(RuntimeError):
+    """The importer refused a network request that violates its source policy."""
+
+
+def _safe_authority(parsed, allowed_hosts: set[str]) -> bool:
+    if parsed.hostname is None or parsed.hostname.lower() not in allowed_hosts:
+        return False
+    if parsed.username is not None or parsed.password is not None:
+        return False
+    try:
+        port = parsed.port
+    except ValueError:
+        return False
+    return port in {None, 443 if parsed.scheme == "https" else 80}
+
+
+def validate_source_url(url: str) -> str:
+    parsed = urlparse(url)
+    if parsed.scheme != "https" or not _safe_authority(parsed, SOURCE_HOSTS) or parsed.fragment:
+        raise FetchPolicyError(f"Refusing source URL outside the HTTPS market allowlist: {url}")
+    try:
+        addresses = socket.getaddrinfo(parsed.hostname, parsed.port or 443, type=socket.SOCK_STREAM)
+    except socket.gaierror as error:
+        raise FetchPolicyError(f"Could not resolve approved source host: {parsed.hostname}") from error
+    if not addresses:
+        raise FetchPolicyError(f"Approved source host resolved to no addresses: {parsed.hostname}")
+    for address in addresses:
+        ip = ipaddress.ip_address(address[4][0])
+        if not ip.is_global:
+            raise FetchPolicyError(f"Refusing non-public source address for {parsed.hostname}: {ip}")
+    return url
+
+
+def _read_bounded_response(response: requests.Response, expected_types: tuple[str, ...]) -> requests.Response:
+    content_type = response.headers.get("Content-Type", "").split(";", 1)[0].strip().lower()
+    if not content_type or not any(content_type == expected or content_type.startswith(f"{expected}+") for expected in expected_types):
+        response.close()
+        raise FetchPolicyError(f"Unexpected response content type: {content_type or 'missing'}")
+    try:
+        declared_size = int(response.headers.get("Content-Length", "0"))
+    except ValueError:
+        response.close()
+        raise FetchPolicyError("Invalid Content-Length from source")
+    if declared_size > MAX_RESPONSE_BYTES:
+        response.close()
+        raise FetchPolicyError(f"Response exceeds {MAX_RESPONSE_BYTES} bytes")
+    chunks = []
+    size = 0
+    for chunk in response.iter_content(chunk_size=64 * 1024):
+        if not chunk:
+            continue
+        size += len(chunk)
+        if size > MAX_RESPONSE_BYTES:
+            response.close()
+            raise FetchPolicyError(f"Response exceeds {MAX_RESPONSE_BYTES} bytes")
+        chunks.append(chunk)
+    response._content = b"".join(chunks)
+    response._content_consumed = True
+    return response
+
+
+def fetch(url: str, attempts: int = 4, expected_types: tuple[str, ...] = ("text/html", "application/xml", "text/xml")) -> requests.Response:
     last = None
     for attempt in range(attempts):
-        last = session.get(url, timeout=35)
-        if last.status_code == 200:
-            return last
+        current = url
+        for redirect_count in range(MAX_REDIRECTS + 1):
+            validate_source_url(current)
+            last = session.get(current, timeout=FETCH_TIMEOUT, allow_redirects=False, stream=True)
+            if last.status_code in {301, 302, 303, 307, 308}:
+                location = last.headers.get("Location")
+                last.close()
+                if not location or redirect_count == MAX_REDIRECTS:
+                    raise FetchPolicyError("Source exceeded the safe redirect limit")
+                current = urljoin(current, location)
+                continue
+            if last.status_code == 200:
+                return _read_bounded_response(last, expected_types)
+            break
         time.sleep(0.7 * (attempt + 1))
     assert last is not None
     return last
@@ -68,7 +150,7 @@ def text_or(node, fallback=""):
 
 
 def is_internal_market_url(parsed) -> bool:
-    return parsed.scheme == "https" and parsed.netloc.lower() in {"er-sucht-ihn.de", "www.er-sucht-ihn.de"}
+    return parsed.scheme in {"http", "https"} and _safe_authority(parsed, SOURCE_HOSTS)
 
 
 def safe_href(raw_href: str, source_url: str) -> str | None:
@@ -82,6 +164,8 @@ def safe_href(raw_href: str, source_url: str) -> str | None:
     absolute = urljoin(source_url, raw)
     parsed = urlparse(absolute)
     if parsed.scheme not in {"http", "https"} or parsed.hostname in EXCLUDED_RESOURCE_HOSTS:
+        return None
+    if not _safe_authority(parsed, {parsed.hostname.lower()} if parsed.hostname else set()):
         return None
     if is_internal_market_url(parsed):
         path = normalize_path(absolute)
@@ -140,7 +224,13 @@ def clean_content(soup: BeautifulSoup, kind: str, source_url: str) -> str:
         elif node.name == "img":
             source = urljoin(source_url, node.get("src", ""))
             parsed = urlparse(source)
-            if parsed.scheme != "https" or parsed.hostname not in ALLOWED_IMAGE_HOSTS or parsed.hostname in EXCLUDED_RESOURCE_HOSTS:
+            decoded_path = unquote(parsed.path)
+            if (
+                parsed.scheme != "https"
+                or not _safe_authority(parsed, ALLOWED_IMAGE_HOSTS)
+                or parsed.hostname in EXCLUDED_RESOURCE_HOSTS
+                or FORBIDDEN_IMAGE_PATH.search(decoded_path)
+            ):
                 node.decompose()
                 continue
             node.attrs = {key: node.attrs[key] for key in ("src", "alt", "width", "height") if key in node.attrs}
@@ -159,7 +249,7 @@ def fallback_title(path: str) -> str:
 
 
 def main():
-    sitemap_response = fetch(SITEMAP)
+    sitemap_response = fetch(SITEMAP, expected_types=("application/xml", "text/xml"))
     sitemap_response.raise_for_status()
     urls = re.findall(r"<loc>(.*?)</loc>", sitemap_response.text)
     seen = set()
@@ -170,7 +260,7 @@ def main():
             continue
         seen.add(path)
         kind = page_type(path)
-        response = fetch(source_url)
+        response = fetch(source_url, expected_types=("text/html",))
         soup = BeautifulSoup(response.text, "html.parser") if response.status_code == 200 else BeautifulSoup("", "html.parser")
         title = text_or(soup.title, fallback_title(path))
         description_node = soup.find("meta", attrs={"name": "description"})
