@@ -72,6 +72,23 @@ def _parse_url(url: str):
         return None
 
 
+def extract_location_widget_url(soup: BeautifulSoup, path: str) -> str | None:
+    if path == "/partnersuche" or not path.startswith("/partnersuche/"):
+        return None
+    frames = soup.find_all("iframe")
+    if len(frames) != 1:
+        raise FetchPolicyError(f"Expected exactly one ICONY widget on city page {path}")
+    source = frames[0].get("src", "")
+    source_match = re.fullmatch(
+        r"https://js\.icony\.com/frame/\?h=300&id=ersuchtihn&pc=3c89b1&z=([0-9]{5})&ds=&ctr=49&it=1",
+        source,
+    )
+    if source_match is None:
+        raise FetchPolicyError(f"Unsafe ICONY widget URL on city page {path}")
+    postcode = source_match.group(1)
+    return f"https://js.icony.com/frame/?h=300&id=ersuchtihn&pc=3c89b1&z={postcode}&ds=&ctr=49&it=1"
+
+
 def _safe_urljoin(base: str, reference: str) -> str:
     try:
         joined = urljoin(base, reference)
@@ -438,9 +455,10 @@ def main():
         soup = BeautifulSoup(response.text, "html.parser") if response.status_code == 200 else BeautifulSoup("", "html.parser")
         title = text_or(soup.title, fallback_title(path))
         description_node = soup.find("meta", attrs={"name": "description"})
-        description = (description_node.get("content", "").strip() if description_node else "") or f"Informationen und hilfreiche Einstiege zu {fallback_title(path)} auf Er-sucht-Ihn.de."
+        description = (description_node.get("content", "").strip() if description_node else "") or f"Gay-Dating und Partnersuche rund um {fallback_title(path)} auf Er-sucht-Ihn.de."
         h1 = text_or(soup.find("h1"), fallback_title(path))
         canonical = f"{SITE}{'/' if path == '/' else path}"
+        widget_url = extract_location_widget_url(soup, path)
         content = clean_content(soup, kind, source_url, magazine_media)
         images = []
         for image in BeautifulSoup(content, "html.parser").find_all("img", src=True):
@@ -456,7 +474,7 @@ def main():
             "h1": h1,
             "contentHtml": content,
             "images": images,
-            "widgetUrl": None,
+            "widgetUrl": widget_url,
             "sourceStatus": response.status_code,
         })
         print(f"[{index}/{len(urls)}] {response.status_code} {path}")

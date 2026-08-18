@@ -335,7 +335,7 @@ def _description(excerpt_html: str, content_html: str, title: str) -> str:
     text = _plain(excerpt_html) or _plain(content_html)
     text = re.sub(r"\s+", " ", text).strip()
     if not text:
-        return f"{title}: Wissen, Orientierung und Anregungen im Er-sucht-Ihn Magazin."
+        return f"{title} im Er-sucht-Ihn Magazin für schwule Männer."
     return text if len(text) <= 180 else text[:177].rstrip(" ,.;:-") + "…"
 
 

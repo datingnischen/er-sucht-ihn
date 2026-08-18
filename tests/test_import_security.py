@@ -6,6 +6,7 @@ from scripts.import_public_pages import (
     FetchPolicyError,
     _read_bounded_response,
     clean_content,
+    extract_location_widget_url,
     extract_sitemap_locations,
     fetch,
     normalize_path,
@@ -15,6 +16,57 @@ from scripts.import_public_pages import (
 
 
 class ImportSecurityTests(unittest.TestCase):
+    def test_location_widget_extraction_requires_exact_icony_contract(self):
+        valid = BeautifulSoup(
+            '<iframe src="https://js.icony.com/frame/?h=300&amp;id=ersuchtihn&amp;pc=3c89b1&amp;z=22145&amp;ds=&amp;ctr=49&amp;it=1"></iframe>',
+            "html.parser",
+        )
+        self.assertEqual(
+            extract_location_widget_url(valid, "/partnersuche/hamburg"),
+            "https://js.icony.com/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1",
+        )
+        self.assertIsNone(extract_location_widget_url(valid, "/partnersuche"))
+        for unsafe in (
+            "http://js.icony.com/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1",
+            "https://js.icony.com:443/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1",
+            "https://js.icony.com:/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1",
+            "https://js.icony.com.evil.example/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1",
+            "https://user@js.icony.com/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1",
+            "https://js.icony.com/frame?h=300&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1",
+            "https://js.icony.com/other/?h=300&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1",
+            "https://js.icony.com/frame/?h=%33%30%30&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1",
+            "https://js.icony.com/frame/?h=300&id=ersucht%69hn&pc=3c89b1&z=22145&ds=&ctr=49&it=1",
+            "https://js.icony.com/frame/?id=ersuchtihn&h=300&pc=3c89b1&z=22145&ds=&ctr=49&it=1",
+            "https://js.icony.com/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=%32%32%31%34%35&ds=&ctr=49&it=1",
+            " https://js.icony.com/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1",
+            "\thttps://js.icony.com/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1",
+            "https://js.icony.\tcom/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1",
+            "https://js.icony.com/fra\tme/?h=300&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1",
+            "https://js.icony.com/frame/;ignored?h=300&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1",
+            "https://js.icony.com/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1#",
+            "https://js.icony.com/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=٢٢١٤٥&ds=&ctr=49&it=1",
+            "https://js.icony.com/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=２２１４５&ds=&ctr=49&it=1",
+            "https://js.icony.com/frame/?h=300&id=other&pc=3c89b1&z=22145&ds=&ctr=49&it=1",
+            "https://js.icony.com/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=../x&ds=&ctr=49&it=1",
+            "https://js.icony.com/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=2214&ds=&ctr=49&it=1",
+            "https://js.icony.com/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=221456&ds=&ctr=49&it=1",
+            "https://js.icony.com/frame/?h=300&h=301&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1",
+            "https://js.icony.com/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1&extra=1",
+            "https://js.icony.com/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1&broken",
+            "https://js.icony.com/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1#profiles",
+        ):
+            soup = BeautifulSoup(f'<iframe src="{unsafe}"></iframe>', "html.parser")
+            with self.subTest(unsafe=unsafe), self.assertRaises(FetchPolicyError):
+                extract_location_widget_url(soup, "/partnersuche/hamburg")
+        for unexpected_frames in (
+            "",
+            "<iframe></iframe>",
+            '<iframe src="https://js.icony.com/frame/?h=300&id=ersuchtihn&pc=3c89b1&z=22145&ds=&ctr=49&it=1"></iframe><iframe></iframe>',
+        ):
+            soup = BeautifulSoup(unexpected_frames, "html.parser")
+            with self.subTest(unexpected_frames=unexpected_frames), self.assertRaises(FetchPolicyError):
+                extract_location_widget_url(soup, "/partnersuche/hamburg")
+
     def test_sitemap_parser_handles_plain_and_cdata_locations(self):
         xml = """<sitemapindex>
         <sitemap><loc>https://er-sucht-ihn.de/partner_sitemap.php</loc></sitemap>

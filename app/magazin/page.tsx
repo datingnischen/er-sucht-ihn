@@ -3,14 +3,14 @@ import Link from "next/link";
 import { magazinePages, magazinePosts } from "@/lib/magazine";
 
 export const metadata: Metadata = {
-  title: "Magazin für schwule Männer – Dating, Liebe & Community",
-  description: "Ratgeber, Geschichten und Orientierung rund um schwules Dating, Beziehungen, Coming-out und queeres Leben.",
+  title: "Magazin für schwule Männer – Dating, Liebe & schwules Leben",
+  description: "Artikel über Gay-Dating, Beziehungen, Coming-out und das Leben als schwuler Mann.",
   alternates: { canonical: "https://er-sucht-ihn.de/magazin" },
   openGraph: {
     type: "website",
     url: "https://er-sucht-ihn.de/magazin",
     title: "Das Er-sucht-Ihn Magazin",
-    description: "Datingwissen, Beziehungen und Community-Themen für Männer, die Männer lieben.",
+    description: "Artikel über Gay-Dating, Beziehungen, Coming-out und schwules Leben.",
   },
 };
 
@@ -26,13 +26,13 @@ export default function MagazinePage() {
       <section className="magazine-hero">
         <div className="wrap magazine-hero-inner">
           <p className="kicker">Er-sucht-Ihn Magazin</p>
-          <h1>Dating, Liebe und queeres Leben</h1>
-          <p>Wissen, Erfahrungen und neue Perspektiven für Männer, die Männer lieben – verständlich, offen und ohne unnötige Umwege.</p>
+          <h1>Dating, Liebe und schwules Leben</h1>
+          <p>Hier geht es um Dates mit Männern, Beziehungen, Coming-out und das Leben als schwuler Mann.</p>
         </div>
       </section>
 
       <section className="wrap magazine-section" aria-labelledby="aktuell">
-        <div className="magazine-heading"><div><p className="kicker">Neu im Magazin</p><h2 id="aktuell">Aktuelle Beiträge</h2></div><p>Neue Entwicklungen, hilfreiche Einordnungen und Themen aus der Community.</p></div>
+        <div className="magazine-heading"><div><p className="kicker">Neu im Magazin</p><h2 id="aktuell">Aktuelle Beiträge</h2></div><p>Neue Artikel über Gay-Dating, Beziehungen und Coming-out.</p></div>
         <div className="magazine-feature-grid">
           {featured.map((entry, index) => (
             <article className={`magazine-feature-card ${index === 0 ? "magazine-feature-lead" : ""}`} key={entry.id}>
@@ -51,7 +51,7 @@ export default function MagazinePage() {
       </section>
 
       <section className="wrap magazine-section" aria-labelledby="alle-beitraege">
-        <div className="magazine-heading"><div><p className="kicker">Weiterlesen</p><h2 id="alle-beitraege">Alle Beiträge</h2></div><p>Von Partnersuche und Coming-out bis zu Kultur, Sicherheit und Beziehungsthemen.</p></div>
+        <div className="magazine-heading"><div><p className="kicker">Weiterlesen</p><h2 id="alle-beitraege">Alle Beiträge</h2></div><p>Lies über Partnersuche, Coming-out, Sex, Sicherheit, Beziehungen und schwule Kultur.</p></div>
         <div className="magazine-card-grid">
           {morePosts.map((entry) => (
             <article className="magazine-card" key={entry.id}>
@@ -70,7 +70,7 @@ export default function MagazinePage() {
       </section>
 
       <section className="wrap magazine-section magazine-guides" aria-labelledby="guides">
-        <div className="magazine-heading"><div><p className="kicker">Dauerhaft hilfreich</p><h2 id="guides">Guides und Gay-Locations</h2></div><p>Stadt-Guides, Glossar und weitere feste Einstiege für Deine Orientierung.</p></div>
+        <div className="magazine-heading"><div><p className="kicker">Schnell gefunden</p><h2 id="guides">Gay-Locations, Begriffe und mehr</h2></div><p>Finde Gay-Locations in Deiner Stadt und lies Begriffe aus Dating und schwulem Leben nach.</p></div>
         <div className="magazine-guide-grid">
           {magazinePages.map((entry) => <Link href={entry.path} key={entry.id}><strong>{entry.title}</strong><span>Guide öffnen →</span></Link>)}
         </div>

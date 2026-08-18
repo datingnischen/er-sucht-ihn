@@ -32,11 +32,22 @@ test("every imported page has canonical SEO identity and source provenance", () 
 test("dynamic member content and platform forms are not persisted", () => {
   const serialized = JSON.stringify(catalog);
   assert.doesNotMatch(serialized, /cdn3\.icony-hosting\.de\/user-media/);
-  assert.doesNotMatch(serialized, /js\.icony\.com\/frame/);
   assert.doesNotMatch(serialized, /<iframe/i);
   assert.doesNotMatch(serialized, /<form/i);
   assert.doesNotMatch(serialized, /registration\/\?user=/i);
-  assert.ok(catalog.pages.every((page) => page.widgetUrl === null));
+});
+
+test("every city page has its own validated ICONY men widget", async () => {
+  const cityPages = catalog.pages.filter((page) => page.type === "location" && page.path !== "/partnersuche");
+  assert.equal(cityPages.length, 38);
+  assert.ok(catalog.pages.filter((page) => !cityPages.includes(page)).every((page) => page.widgetUrl === null));
+  for (const page of cityPages) {
+    assert.match(page.widgetUrl, /^https:\/\/js\.icony\.com\/frame\/\?h=300&id=ersuchtihn&pc=3c89b1&z=\d{5}&ds=&ctr=49&it=1$/, page.path);
+  }
+  assert.equal(new Set(cityPages.map((page) => new URL(page.widgetUrl).searchParams.get("z"))).size, 38);
+  const renderer = await readFile(new URL("../app/[...slug]/page.tsx", import.meta.url), "utf8");
+  assert.match(renderer, /Single-Männer aus \{locationName\(path\)\} und Umgebung/);
+  assert.match(renderer, /src=\{page\.widgetUrl\}/);
 });
 
 test("imported HTML allows no active or privacy-leaking URLs", () => {

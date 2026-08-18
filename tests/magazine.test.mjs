@@ -8,6 +8,18 @@ const entries = catalog.entries;
 const attachments = catalog.attachments;
 const assets = catalog.assets;
 
+test("magazine landing copy speaks directly to gay men without AI filler", async () => {
+  const landing = await readFile(new URL("../app/magazin/page.tsx", import.meta.url), "utf8");
+  const homepage = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const importer = await readFile(new URL("../scripts/import_magazine.py", import.meta.url), "utf8");
+  const publicCopy = `${landing}\n${homepage}\n${importer}`;
+  assert.doesNotMatch(publicCopy, /hilfreiche Einordnungen|neue Perspektiven|für Deine Orientierung|Wissen, Orientierung und Anregungen/i);
+  assert.match(landing, /Dating, Liebe und schwules Leben/);
+  assert.match(landing, /Leben als schwuler Mann/);
+  assert.match(landing, /Gay-Dating, Beziehungen und Coming-out/);
+  assert.match(homepage, /Dating, Liebe und schwules Leben/);
+});
+
 test("magazine snapshot contains the complete public editorial inventory", () => {
   assert.equal(entries.filter((entry) => entry.type === "post").length, 52);
   assert.equal(entries.filter((entry) => entry.type === "page").length, 14);
