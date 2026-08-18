@@ -12,10 +12,11 @@ Language: de-DE
 
 - [Partnersuche in Deutschland](https://er-sucht-ihn.de/partnersuche): Regionale Einstiege und deutsche Städte.
 - [Lexikon](https://er-sucht-ihn.de/lexikon): Begriffe rund um schwules Dating, Beziehungen und Community.
+- [Magazin](https://er-sucht-ihn.de/magazin): Ratgeber, Geschichten und Orientierung rund um Dating, Liebe, Coming-out und queeres Leben.
 
 ## Plattformgrenze
 
-Registrierung, Login, Suche, Hilfe, Magazin und rechtliche Seiten bleiben Plattformfunktionen auf der Canonical-Domain. Die Sitemap enthält die öffentlich migrierten redaktionellen Seiten.
+Registrierung, Login, Suche, Hilfe und rechtliche Seiten bleiben Plattformfunktionen auf der Canonical-Domain. Das öffentliche Magazin und seine Beiträge werden statisch auf der neuen redaktionellen Oberfläche bereitgestellt.
 `;
 
 export function GET() {

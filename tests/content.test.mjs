@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 import { selectHeroImage } from "../lib/hero-image.mjs";
 
 const catalog = JSON.parse(await readFile(new URL("../data/pages.json", import.meta.url), "utf8"));
+const magazineCatalog = JSON.parse(await readFile(new URL("../data/magazine.json", import.meta.url), "utf8"));
 
 test("the imported catalog preserves the complete unique sitemap inventory", () => {
   assert.equal(catalog.pages.length, 65);
@@ -48,7 +49,12 @@ test("imported HTML allows no active or privacy-leaking URLs", () => {
 });
 
 test("imported HTML has no broken internal links, insecure own-host URLs or foreign-brand leaks", () => {
-  const publicPaths = new Set(catalog.pages.filter((page) => !["platform", "magazine"].includes(page.type)).map((page) => page.path));
+  const publicPaths = new Set([
+    ...catalog.pages.filter((page) => !["platform", "magazine"].includes(page.type)).map((page) => page.path),
+    "/magazin",
+    ...magazineCatalog.entries.map((entry) => entry.path),
+    ...magazineCatalog.categories.map((category) => `/magazin/kategorie/${category.slug}`),
+  ]);
   for (const page of catalog.pages) {
     for (const match of page.contentHtml.matchAll(/href=["']([^"']+)["']/gi)) {
       const href = match[1];
@@ -61,11 +67,24 @@ test("imported HTML has no broken internal links, insecure own-host URLs or fore
   }
 });
 
-test("excluded platform and magazine links stay absolute for upstream ownership", () => {
+test("excluded platform links stay absolute for upstream ownership", () => {
   const html = catalog.pages.map((page) => page.contentHtml).join("\n");
-  for (const root of ["registration", "login", "hilfe", "kontakt", "datenschutz.html", "impressum.html", "agb.html", "magazin"]) {
+  for (const root of ["registration", "login", "hilfe", "kontakt", "datenschutz.html", "impressum.html", "agb.html"]) {
     assert.doesNotMatch(html, new RegExp(`href=["']/${root}(?:[/?"'])`, "i"), `relative excluded link found for ${root}`);
   }
+});
+
+test("cross-links to the migrated magazine are internal and resolvable", () => {
+  const html = catalog.pages.map((page) => page.contentHtml).join("\n");
+  assert.doesNotMatch(html, /href=["']https?:\/\/(?:www\.)?er-sucht-ihn\.de\/magazin(?:[/?"'])/i);
+  const owned = new Set([
+    "/magazin",
+    ...magazineCatalog.entries.map((entry) => entry.path),
+    ...magazineCatalog.categories.map((category) => `/magazin/kategorie/${category.slug}`),
+  ]);
+  const links = [...html.matchAll(/href=["'](\/magazin[^"'?#]*)/gi)].map((match) => match[1].replace(/\/$/, ""));
+  assert.ok(links.length > 0);
+  for (const link of links) assert.ok(owned.has(link), `missing migrated magazine target ${link}`);
 });
 
 test("city heroes prefer representative city photography", () => {

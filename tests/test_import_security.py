@@ -4,7 +4,9 @@ from unittest.mock import Mock, patch
 from bs4 import BeautifulSoup
 from scripts.import_public_pages import (
     FetchPolicyError,
+    _read_bounded_response,
     clean_content,
+    extract_sitemap_locations,
     fetch,
     normalize_path,
     safe_href,
@@ -13,6 +15,19 @@ from scripts.import_public_pages import (
 
 
 class ImportSecurityTests(unittest.TestCase):
+    def test_sitemap_parser_handles_plain_and_cdata_locations(self):
+        xml = """<sitemapindex>
+        <sitemap><loc>https://er-sucht-ihn.de/partner_sitemap.php</loc></sitemap>
+        <sitemap><loc><![CDATA[https://er-sucht-ihn.de/magazin/sitemap.xml]]></loc></sitemap>
+        </sitemapindex>"""
+        self.assertEqual(
+            extract_sitemap_locations(xml),
+            [
+                "https://er-sucht-ihn.de/partner_sitemap.php",
+                "https://er-sucht-ihn.de/magazin/sitemap.xml",
+            ],
+        )
+
     def test_rejects_active_url_schemes_and_excluded_review_host(self):
         source = "https://er-sucht-ihn.de/partnersuche/berlin/"
         self.assertIsNone(safe_href("javascript:alert(1)", source))
@@ -30,6 +45,11 @@ class ImportSecurityTests(unittest.TestCase):
         )
         self.assertEqual(safe_href("/partnersuche/bayern/augsburg", source), "/partnersuche/augsburg")
         self.assertEqual(safe_href("http://er-sucht-ihn.de/faq/", source), "/faq")
+        self.assertEqual(
+            safe_href("https://er-sucht-ihn.de/magazin/coming-out/", source),
+            "/magazin/coming-out",
+        )
+        self.assertIsNone(safe_href("https://er-sucht-ihn.de/magazin/gay/leerer-tag/", source))
         self.assertIsNone(safe_href("https://www.flirt.de/profile/123", source))
         self.assertIsNone(safe_href("https://[::1", source))
 
@@ -71,6 +91,25 @@ class ImportSecurityTests(unittest.TestCase):
         self.assertNotIn("deep-encoded-member", cleaned)
         self.assertNotIn("deep-backslash-member", cleaned)
         self.assertNotIn("malformed", cleaned)
+
+    def test_sanitizer_localizes_known_magazine_uploads_and_rejects_unknown_ones(self):
+        known = "/magazin/wp-content/uploads/2026/07/editorial.png"
+        markup = f"""
+        <main>
+          <a href="https://er-sucht-ihn.de/magazin/coming-out/">Magazin</a>
+          <img src="https://er-sucht-ihn.de{known}" alt="Editorial">
+          <img src="https://er-sucht-ihn.de/magazin/wp-content/uploads/unknown.png" alt="Unknown">
+        </main>
+        """
+        cleaned = clean_content(
+            BeautifulSoup(markup, "html.parser"),
+            "editorial",
+            "https://er-sucht-ihn.de/",
+            {known: "/magazine/media/editorial.png"},
+        )
+        self.assertIn('href="/magazin/coming-out"', cleaned)
+        self.assertIn('src="/magazine/media/editorial.png"', cleaned)
+        self.assertNotIn("unknown.png", cleaned)
 
     def test_fragment_drops_renderer_owned_main_and_h1_but_preserves_article_structure(self):
         markup = """
@@ -154,6 +193,19 @@ class ImportSecurityTests(unittest.TestCase):
         with self.assertRaises(FetchPolicyError):
             normalize_path("https://[::1")
 
+    def test_bounded_reader_rejects_negative_lengths_and_always_closes_streams(self):
+        negative = Mock(headers={"Content-Type": "text/html", "Content-Length": "-1"})
+        with self.assertRaises(FetchPolicyError):
+            _read_bounded_response(negative, ("text/html",))
+        negative.close.assert_called_once()
+        negative.iter_content.assert_not_called()
+
+        interrupted = Mock(headers={"Content-Type": "text/html", "Content-Length": "10"})
+        interrupted.iter_content.side_effect = OSError("stream interrupted")
+        with self.assertRaises(OSError):
+            _read_bounded_response(interrupted, ("text/html",))
+        interrupted.close.assert_called_once()
+
     @patch("scripts.import_public_pages.socket.getaddrinfo")
     @patch("scripts.import_public_pages._request_pinned")
     def test_fetch_binds_validated_ip_revalidates_redirects_and_rejects_oversize(self, request_pinned, getaddrinfo):
@@ -175,6 +227,12 @@ class ImportSecurityTests(unittest.TestCase):
         request_pinned.return_value = oversized
         with self.assertRaises(FetchPolicyError):
             fetch("https://er-sucht-ihn.de/start", expected_types=("text/html",))
+
+        failure = Mock(status_code=503, headers={})
+        request_pinned.reset_mock()
+        request_pinned.return_value = failure
+        self.assertIs(fetch("https://er-sucht-ihn.de/start", attempts=1), failure)
+        failure.close.assert_called_once()
 
 
 if __name__ == "__main__":

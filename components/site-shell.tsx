@@ -8,7 +8,7 @@ const nav = [
   ["Partnersuche", "/partnersuche"],
   ["Lexikon", "/lexikon"],
   ["Dating-Tipps", "/dating-tipps"],
-  ["Magazin", "https://er-sucht-ihn.de/magazin/"],
+  ["Magazin", "/magazin"],
 ] as const;
 
 export function Header() {

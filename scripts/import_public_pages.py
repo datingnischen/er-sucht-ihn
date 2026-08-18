@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import html
 import ipaddress
 import re
 import socket
@@ -18,7 +19,8 @@ from requests.structures import CaseInsensitiveDict
 SITE = "https://er-sucht-ihn.de"
 SITEMAP = f"{SITE}/sitemap.php"
 OUT = Path(__file__).resolve().parents[1] / "data" / "pages.json"
-PLATFORM_ROOTS = {"registration", "login", "suche", "hilfe", "kontakt", "gutschein", "datenschutz.html", "impressum.html", "agb.html", "magazin"}
+MAGAZINE_OUT = OUT.parent / "magazine.json"
+PLATFORM_ROOTS = {"registration", "login", "suche", "hilfe", "kontakt", "gutschein", "datenschutz.html", "impressum.html", "agb.html"}
 ALLOWED_TAGS = {
     "a", "b", "blockquote", "br", "div", "em", "figcaption", "figure", "h1", "h2", "h3", "h4",
     "hr", "img", "li", "main", "ol", "p", "picture", "section", "small", "span", "strong", "ul",
@@ -154,32 +156,30 @@ def _request_pinned(url: str, address: str) -> requests.Response:
 
 
 def _read_bounded_response(response: requests.Response, expected_types: tuple[str, ...]) -> requests.Response:
-    content_type = response.headers.get("Content-Type", "").split(";", 1)[0].strip().lower()
-    if not content_type or not any(content_type == expected or content_type.startswith(f"{expected}+") for expected in expected_types):
-        response.close()
-        raise FetchPolicyError(f"Unexpected response content type: {content_type or 'missing'}")
     try:
-        declared_size = int(response.headers.get("Content-Length", "0"))
-    except ValueError:
+        content_type = response.headers.get("Content-Type", "").split(";", 1)[0].strip().lower()
+        if not content_type or not any(content_type == expected or content_type.startswith(f"{expected}+") for expected in expected_types):
+            raise FetchPolicyError(f"Unexpected response content type: {content_type or 'missing'}")
+        try:
+            declared_size = int(response.headers.get("Content-Length", "0"))
+        except ValueError as error:
+            raise FetchPolicyError("Invalid Content-Length from source") from error
+        if declared_size < 0 or declared_size > MAX_RESPONSE_BYTES:
+            raise FetchPolicyError(f"Invalid or oversized Content-Length from source: {declared_size}")
+        chunks = []
+        size = 0
+        for chunk in response.iter_content(chunk_size=64 * 1024):
+            if not chunk:
+                continue
+            size += len(chunk)
+            if size > MAX_RESPONSE_BYTES:
+                raise FetchPolicyError(f"Response exceeds {MAX_RESPONSE_BYTES} bytes")
+            chunks.append(chunk)
+        response._content = b"".join(chunks)
+        response._content_consumed = True
+        return response
+    finally:
         response.close()
-        raise FetchPolicyError("Invalid Content-Length from source")
-    if declared_size > MAX_RESPONSE_BYTES:
-        response.close()
-        raise FetchPolicyError(f"Response exceeds {MAX_RESPONSE_BYTES} bytes")
-    chunks = []
-    size = 0
-    for chunk in response.iter_content(chunk_size=64 * 1024):
-        if not chunk:
-            continue
-        size += len(chunk)
-        if size > MAX_RESPONSE_BYTES:
-            response.close()
-            raise FetchPolicyError(f"Response exceeds {MAX_RESPONSE_BYTES} bytes")
-        chunks.append(chunk)
-    response._content = b"".join(chunks)
-    response._content_consumed = True
-    response.close()
-    return response
 
 
 def fetch(url: str, attempts: int = 4, expected_types: tuple[str, ...] = ("text/html", "application/xml", "text/xml")) -> requests.Response:
@@ -209,6 +209,7 @@ def fetch(url: str, attempts: int = 4, expected_types: tuple[str, ...] = ("text/
                 continue
             if last.status_code == 200:
                 return _read_bounded_response(last, expected_types)
+            last.close()
             break
         time.sleep(0.7 * (attempt + 1))
     assert last is not None
@@ -266,6 +267,8 @@ def safe_href(raw_href: str, source_url: str) -> str | None:
     if is_internal_market_url(parsed):
         path = normalize_path(absolute)
         path = KNOWN_PATH_FIXES.get(path, path)
+        if path.startswith("/magazin/gay/"):
+            return None
         root = path.lstrip("/").split("/", 1)[0]
         if root in PLATFORM_ROOTS:
             suffix = parsed.query and f"?{parsed.query}" or ""
@@ -274,7 +277,12 @@ def safe_href(raw_href: str, source_url: str) -> str | None:
     return absolute
 
 
-def clean_content(soup: BeautifulSoup, kind: str, source_url: str) -> str:
+def clean_content(
+    soup: BeautifulSoup,
+    kind: str,
+    source_url: str,
+    magazine_media: dict[str, str] | None = None,
+) -> str:
     if kind == "platform":
         return ""
     main = soup.select_one("main#static") or soup.select_one("main.city-container") or soup.select_one("main")
@@ -342,6 +350,12 @@ def clean_content(soup: BeautifulSoup, kind: str, source_url: str) -> str:
             ):
                 node.decompose()
                 continue
+            if parsed.hostname.lower() in SOURCE_HOSTS:
+                local_source = (magazine_media or {}).get(parsed.path) or (magazine_media or {}).get(decoded_path)
+                if not local_source:
+                    node.decompose()
+                    continue
+                source = local_source
             node.attrs = {key: node.attrs[key] for key in ("src", "alt", "width", "height") if key in node.attrs}
             node["src"] = source
         else:
@@ -357,10 +371,61 @@ def fallback_title(path: str) -> str:
     return path.rstrip("/").split("/")[-1].replace("-", " ").title()
 
 
+def load_magazine_media_map() -> dict[str, str]:
+    if not MAGAZINE_OUT.exists():
+        raise FetchPolicyError("Missing data/magazine.json; run import_magazine.py before import_public_pages.py")
+    try:
+        snapshot = json.loads(MAGAZINE_OUT.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise FetchPolicyError("Could not read the verified magazine media snapshot") from error
+    mapping: dict[str, str] = {}
+    for asset in snapshot.get("assets", []):
+        target = asset.get("localPath", "")
+        if not re.fullmatch(r"/magazine/media/[A-Za-z0-9._-]+", target):
+            raise FetchPolicyError(f"Invalid localized magazine media target: {target}")
+        for path in asset.get("legacyPaths", []):
+            if not isinstance(path, str) or not path.startswith("/magazin/wp-content/uploads/"):
+                raise FetchPolicyError(f"Invalid magazine media compatibility path: {path}")
+            if path in mapping and mapping[path] != target:
+                raise FetchPolicyError(f"Ambiguous magazine media compatibility path: {path}")
+            mapping[path] = target
+    if not mapping:
+        raise FetchPolicyError("Magazine media snapshot contains no compatibility paths")
+    return mapping
+
+
+def extract_sitemap_locations(xml: str) -> list[str]:
+    locations = []
+    for raw in re.findall(r"<loc(?:\s[^>]*)?>(.*?)</loc>", xml, flags=re.I | re.S):
+        value = raw.strip()
+        if value.startswith("<![CDATA[") and value.endswith("]]>"):
+            value = value[9:-3].strip()
+        value = html.unescape(value)
+        if value:
+            locations.append(value)
+    return locations
+
+
+def discover_public_urls() -> list[str]:
+    response = fetch(SITEMAP, expected_types=("application/xml", "text/xml"))
+    response.raise_for_status()
+    locations = extract_sitemap_locations(response.text)
+    partner_sitemap = f"{SITE}/partner_sitemap.php"
+    if partner_sitemap in locations:
+        child = fetch(partner_sitemap, expected_types=("application/xml", "text/xml"))
+        child.raise_for_status()
+        urls = extract_sitemap_locations(child.text)
+        if not urls:
+            raise FetchPolicyError("Approved partner sitemap contains no public URLs")
+        return urls
+    if any(_parse_url(url) and _parse_url(url).path.endswith((".xml", "_sitemap.php")) for url in locations):
+        raise FetchPolicyError("Sitemap index does not contain the exact approved partner sitemap")
+    return locations
+
+
 def main():
-    sitemap_response = fetch(SITEMAP, expected_types=("application/xml", "text/xml"))
-    sitemap_response.raise_for_status()
-    urls = re.findall(r"<loc>(.*?)</loc>", sitemap_response.text)
+    magazine_media = load_magazine_media_map()
+    urls = discover_public_urls()
     seen = set()
     pages = []
     for index, source_url in enumerate(urls, 1):
@@ -376,7 +441,7 @@ def main():
         description = (description_node.get("content", "").strip() if description_node else "") or f"Informationen und hilfreiche Einstiege zu {fallback_title(path)} auf Er-sucht-Ihn.de."
         h1 = text_or(soup.find("h1"), fallback_title(path))
         canonical = f"{SITE}{'/' if path == '/' else path}"
-        content = clean_content(soup, kind, source_url)
+        content = clean_content(soup, kind, source_url, magazine_media)
         images = []
         for image in BeautifulSoup(content, "html.parser").find_all("img", src=True):
             if image["src"] not in [item["src"] for item in images]:

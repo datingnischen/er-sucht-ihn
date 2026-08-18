@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "python -m unittest discover -s tests -p test_import_security.py && node --test tests/*.test.mjs",
+    "test": "python -m unittest discover -s tests -p \"test_*.py\" && node --test tests/*.test.mjs",
     "lint": "eslint",
     "typecheck": "tsc --noEmit"
   },

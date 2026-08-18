@@ -29,7 +29,7 @@ test("the sanitized snapshot classifies every eligible registration CTA with the
 
 test("ordinary editorial links remain ordinary text links", () => {
   const page = catalog.pages.find((item) => item.path === "/lexikon/gaychat");
-  assert.match(page.contentHtml, /<a href="https:\/\/er-sucht-ihn\.de\/magazin\/gay-kontakte">Gaykontakte<\/a>/);
+  assert.match(page.contentHtml, /<a href="\/magazin\/gay-kontakte">Gaykontakte<\/a>/);
 });
 
 test("runtime rendering does not contain a second HTML parser", () => {
