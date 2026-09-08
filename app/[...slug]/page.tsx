@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFamilyPages, getImportedPage, normalizePublicPath, publicPages } from "@/lib/content";
 import { selectHeroImage } from "@/lib/hero-image.mjs";
-import { locationName, registrationUrl } from "@/lib/site";
+import { citySearchUrl, locationName, registrationUrl } from "@/lib/site";
 import { CityCardSection } from "@/components/city-card-section";
 import { removeLegacyCityLists } from "@/lib/location-hub.mjs";
 import { buildBreadcrumbs, buildBreadcrumbSchema } from "@/lib/breadcrumbs.mjs";
@@ -29,6 +29,7 @@ export default async function ImportedPageView({ params }: Props) {
   const path = normalizePublicPath(slug);
   const page = getImportedPage(path);
   if (!page || page.type === "platform" || page.type === "magazine") notFound();
+  const isLocationDetail = page.type === "location" && path !== "/partnersuche";
   const root = path.split("/")[1] as "partnersuche" | "lexikon";
   const image = selectHeroImage(page.images);
   const locationHubRoot = root === "partnersuche" && path === "/partnersuche" ? "partnersuche" : null;
@@ -45,11 +46,11 @@ export default async function ImportedPageView({ params }: Props) {
       <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializePageEntityGraph(pageEntityGraph) }} />
       <div className="article-hero"><div><p className="kicker">{page.type === "location" ? "Regional kennenlernen" : page.type === "lexicon" ? "Kurz erklärt" : "Gut informiert"}</p><h1>{page.h1}</h1><p className="lead">{page.description}</p><a className="button button-green" href={registrationUrl(path)}>Jetzt kostenlos starten</a></div>{image ? <img src={image.src} alt={image.alt || page.h1} /> : null}</div>
-      {page.type === "location" && page.widgetUrl ? <section className="city-singles-widget" aria-labelledby="single-maenner-widget">
+      {isLocationDetail && page.widgetUrl ? <section className="city-singles-widget" aria-labelledby="single-maenner-widget">
         <div className="city-singles-widget-heading"><div><p className="kicker">Gerade aktiv</p><h2 id="single-maenner-widget">Single-Männer aus {locationName(path)} und Umgebung</h2></div><p>Sieh, welche Männer zuletzt bei Er-sucht-Ihn aktiv waren, und öffne ein Profil, das Dich neugierig macht.</p></div>
         <div className="city-singles-widget-body">
           <iframe src={page.widgetUrl} title={`Single-Männer aus ${locationName(path)} und Umgebung`} loading="lazy" referrerPolicy="no-referrer" />
-          <div className="city-singles-widget-action"><h3>Du möchtest einen Mann kennenlernen?</h3><p>Erstelle kostenlos Dein Profil und schreib Männer an, die zu Dir passen.</p><a className="button button-green" href={registrationUrl(path)}>Kostenlos Männer kennenlernen</a></div>
+          <div className="city-singles-widget-action"><h3>Du möchtest einen Mann kennenlernen?</h3><p>Erstelle kostenlos Dein Profil und schreib Männer an, die zu Dir passen.</p><a className="button button-green" href={registrationUrl(path)}>Kostenlos Männer kennenlernen</a><a className="button button-outline" href={citySearchUrl(path)}>Ausführlicher in {locationName(path)} suchen</a></div>
         </div>
       </section> : null}
       {locationHubRoot ? <CityCardSection pages={publicPages} root={locationHubRoot} /> : null}
