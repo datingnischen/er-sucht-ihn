@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { platform, registrationUrl } from "@/lib/site";
+import { ABOUT_REVIEWS_PATH, ABOUT_ROOT_PATH, ABOUT_SOCIAL_PATH, SUCCESS_STORIES_PATH } from "@/lib/about-pages.mjs";
 
 const nav = [
   ["Partnersuche", "/partnersuche"],
   ["Lexikon", "/lexikon"],
   ["Dating-Tipps", "/dating-tipps"],
   ["Magazin", "/magazin"],
+  ["Über uns", ABOUT_ROOT_PATH],
 ] as const;
 
 export function Header() {
@@ -50,8 +52,9 @@ export function Footer() {
             <img src="/trust/empfohlen-45-sterne.png" alt="Empfohlen von Singlebörsen-Überblick.de – 4,5 Sterne" width="300" height="60" />
           </a>
         </div>
-        <FooterColumn title="Entdecken" links={[["Partnersuche", "/partnersuche"], ["Lexikon", "/lexikon"], ["Dating-Tipps", "/dating-tipps"], ["Erfahrungen", "/bewertungen-und-erfahrungen"], ["Social Media", "/social-media"]]} />
-        <FooterColumn title="Vertrauen" links={[["Sicherheit & Datenschutz", "/sicherheit-und-datenschutz.html"], ["Redaktionelle Kontrolle", "/redaktionelle-kontrolle.html"], ["Basis-Mitgliedschaft", "/kostenlose-basis-mitgliedschaft.html"], ["Erfolgsgeschichten", "/unsere-erfolgsgeschichten.html"], ["FAQ", "/faq"]]} />
+        <FooterColumn title="Entdecken" links={[["Partnersuche", "/partnersuche"], ["Lexikon", "/lexikon"], ["Dating-Tipps", "/dating-tipps"], ["Magazin", "/magazin"]]} />
+        <FooterColumn title="Über uns" links={[["Über Er-sucht-Ihn", ABOUT_ROOT_PATH], ["Bewertungen & Erfahrungen", ABOUT_REVIEWS_PATH], ["Social Media", ABOUT_SOCIAL_PATH], ["Erfolgsgeschichten", SUCCESS_STORIES_PATH]]} />
+        <FooterColumn title="Vertrauen" links={[["Sicherheit & Datenschutz", "/sicherheit-und-datenschutz.html"], ["Redaktionelle Kontrolle", "/redaktionelle-kontrolle.html"], ["Basis-Mitgliedschaft", "/kostenlose-basis-mitgliedschaft.html"], ["FAQ", "/faq"]]} />
         <div className="footer-column"><h2>Service</h2><ul>
           <li><a href={platform.help}>Hilfe & Support</a></li><li><a href={platform.login}>Login</a></li><li><a href={register}>Registrieren</a></li>
           <li><a href={platform.privacy}>Datenschutz</a></li><li><a href={platform.legal}>Impressum</a></li><li><a href={platform.terms}>AGB</a></li>

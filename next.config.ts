@@ -1,10 +1,12 @@
 import type { NextConfig } from "next";
+import { aboutRedirects } from "./lib/about-pages.mjs";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   turbopack: { root: process.cwd() },
   async redirects() {
     return [
+      ...aboutRedirects,
       { source: "/magazin/wp-sitemap.xml", destination: "/magazin/sitemap.xml", permanent: true },
       { source: "/magazin/sitemap_index.xml", destination: "/magazin/sitemap.xml", permanent: true },
       { source: "/magazin/post-sitemap.xml", destination: "/magazin/sitemap.xml", permanent: true },
