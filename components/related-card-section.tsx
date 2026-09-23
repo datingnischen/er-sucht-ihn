@@ -19,7 +19,7 @@ export function RelatedCardSection({ cards }: { cards: RelatedCard[] }) {
           {card.image ? <img src={card.image.src} alt={card.image.alt} loading="lazy" /> : <span className="related-card-fallback" aria-hidden="true" />}
         </span>
         <span className="related-card-copy">
-          <small>Partnersuche in</small>
+          <small>Gay Partnersuche</small>
           <strong>{card.location}</strong>
           <span className="related-card-action">Stadt entdecken →</span>
         </span>
