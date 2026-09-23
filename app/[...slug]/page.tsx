@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ABOUT_SOCIAL_PATH } from "@/lib/about-pages.mjs";
 import { getFamilyPages, getImportedPage, normalizePublicPath, publicPages } from "@/lib/content";
 import { selectHeroImage } from "@/lib/hero-image.mjs";
 import { citySearchUrl, locationName, registrationUrl } from "@/lib/site";
@@ -13,8 +14,11 @@ import { buildPageEntityGraph, serializePageEntityGraph } from "@/lib/page-entit
 
 type Props = { params: Promise<{ slug: string[] }> };
 
+// Paths with their own route under app/ instead of the imported-page template.
+const dedicatedRoutes = new Set([ABOUT_SOCIAL_PATH]);
+
 export function generateStaticParams() {
-  return publicPages.filter((page) => page.path !== "/").map((page) => ({ slug: page.path.slice(1).split("/") }));
+  return publicPages.filter((page) => page.path !== "/" && !dedicatedRoutes.has(page.path)).map((page) => ({ slug: page.path.slice(1).split("/") }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

@@ -4,6 +4,8 @@ import { ABOUT_REVIEWS_PATH, ABOUT_ROOT_PATH, ABOUT_SOCIAL_PATH } from "@/lib/ab
 import { buildBreadcrumbs, buildBreadcrumbSchema } from "@/lib/breadcrumbs.mjs";
 import { serializePageEntityGraph } from "@/lib/page-entities.mjs";
 import { platform, registrationUrl, SITE_URL } from "@/lib/site";
+import { socialChannels, socialProfileUrls } from "@/lib/social-channels";
+import { SocialIcon } from "@/components/social-icon";
 
 const canonical = `${SITE_URL}${ABOUT_ROOT_PATH}`;
 const title = "Über uns: Wer hinter Er-sucht-Ihn.de steht";
@@ -13,12 +15,6 @@ const ratings = [
   { source: "Trustpilot", score: "4", scale: "5", label: "Sterne", text: "Nutzer loben die unkomplizierte Anmeldung, den klaren Fokus auf Männerkontakte und das freundliche Umfeld.", href: "https://de.trustpilot.com/review/er-sucht-ihn.de" },
   { source: "DatingReport.com", score: "7,9", scale: "10", label: "Punkte", text: "Hervorgehoben werden einfache Anmeldung, klare Zielgruppe und modernes Design – für Beziehung wie Flirt.", href: "https://www.datingreport.com/review/er-sucht-ihn-de-im-test-was-kann-das-beliebte-dating-portal-fuer-schwule/" },
   { source: "Singlebörsen-Überblick.de", score: "4,5", scale: "5", label: "Sterne", text: "Empfohlen als eine der führenden Plattformen für schwule Singles – mit sicherer Anmeldung und viel Datenschutz.", href: "https://singleboersen-ueberblick.de/testbericht/er-sucht-ihn-de" },
-] as const;
-
-const socialChannels = [
-  { name: "Facebook-Seite", handle: "facebook.com/ersuchtihn", text: "Neuigkeiten, Community-Beiträge und Themen rund um Dating, Liebe und Beziehungen zwischen Männern.", href: "https://www.facebook.com/ersuchtihn/", icon: "f", profile: true },
-  { name: "Facebook-Gruppe", handle: "Community-Gruppe", text: "Tausche Dich mit anderen schwulen Männern aus, knüpfe Kontakte und teile Deine Erfahrungen.", href: "https://www.facebook.com/groups/130558014269848/", icon: "f", profile: false },
-  { name: "YouTube", handle: "@Er-sucht-Ihn", text: "Videos, Erfahrungen und Tipps rund um schwules Dating, Partnerschaft und Beziehungen.", href: "https://www.youtube.com/@Er-sucht-Ihn", icon: "▶", profile: true },
 ] as const;
 
 export const metadata: Metadata = {
@@ -33,7 +29,7 @@ function aboutEntityGraph() {
     "@context": "https://schema.org",
     "@graph": [
       { "@type": "WebSite", "@id": `${SITE_URL}/#website`, url: `${SITE_URL}/`, name: "Er-sucht-Ihn.de", inLanguage: "de-DE" },
-      { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: "Er-sucht-Ihn.de", url: `${SITE_URL}/`, logo: `${SITE_URL}/brand/logo.svg`, parentOrganization: { "@type": "Organization", name: "ICONY GmbH" }, sameAs: socialChannels.filter((channel) => channel.profile).map((channel) => channel.href) },
+      { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: "Er-sucht-Ihn.de", url: `${SITE_URL}/`, logo: `${SITE_URL}/brand/logo.svg`, parentOrganization: { "@type": "Organization", name: "ICONY GmbH" }, sameAs: socialProfileUrls },
       { "@type": "AboutPage", "@id": `${canonical}#webpage`, url: canonical, name: "Über uns", description, inLanguage: "de-DE", isPartOf: { "@id": `${SITE_URL}/#website` }, about: { "@id": `${SITE_URL}/#organization` } },
     ],
   };
@@ -109,7 +105,7 @@ export default function AboutPage() {
         </div>
         <div className="about-card-grid">
           {socialChannels.map((channel) => <a className="about-social-card" href={channel.href} key={channel.href} rel="nofollow noopener noreferrer" target="_blank">
-            <span className="about-social-icon" aria-hidden="true">{channel.icon}</span>
+            <span className={`about-social-icon social-${channel.platform}`} aria-hidden="true"><SocialIcon platform={channel.platform} /></span>
             <span className="about-social-name"><strong>{channel.name}</strong><small>{channel.handle}</small></span>
             <span className="about-social-text">{channel.text}</span>
           </a>)}
