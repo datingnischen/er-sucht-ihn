@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { platform, registrationUrl } from "@/lib/site";
-import { ABOUT_REVIEWS_PATH, ABOUT_ROOT_PATH, ABOUT_SOCIAL_PATH, SUCCESS_STORIES_PATH } from "@/lib/about-pages.mjs";
+import { ABOUT_REVIEWS_PATH, ABOUT_ROOT_PATH, ABOUT_SOCIAL_PATH } from "@/lib/about-pages.mjs";
 
 const nav = [
   ["Partnersuche", "/partnersuche"],
@@ -53,8 +53,8 @@ export function Footer() {
           </a>
         </div>
         <FooterColumn title="Entdecken" links={[["Partnersuche", "/partnersuche"], ["Lexikon", "/lexikon"], ["Dating-Tipps", "/dating-tipps"], ["Magazin", "/magazin"]]} />
-        <FooterColumn title="Über uns" links={[["Über Er-sucht-Ihn", ABOUT_ROOT_PATH], ["Bewertungen & Erfahrungen", ABOUT_REVIEWS_PATH], ["Social Media", ABOUT_SOCIAL_PATH], ["Erfolgsgeschichten", SUCCESS_STORIES_PATH]]} />
-        <FooterColumn title="Vertrauen" links={[["Sicherheit & Datenschutz", "/sicherheit-und-datenschutz.html"], ["Redaktionelle Kontrolle", "/redaktionelle-kontrolle.html"], ["Basis-Mitgliedschaft", "/kostenlose-basis-mitgliedschaft.html"], ["FAQ", "/faq"]]} />
+        <FooterColumn title="Über uns" links={[["Über Er-sucht-Ihn", ABOUT_ROOT_PATH], ["Bewertungen & Erfahrungen", ABOUT_REVIEWS_PATH], ["Social Media", ABOUT_SOCIAL_PATH]]} />
+        <FooterColumn title="Vertrauen" links={[["Sicherheit & Datenschutz", "/sicherheit-und-datenschutz.html"], ["Redaktionelle Kontrolle", "/redaktionelle-kontrolle.html"], ["Basis-Mitgliedschaft", "/kostenlose-basis-mitgliedschaft.html"], ["Erfolgsgeschichten", "/unsere-erfolgsgeschichten.html"], ["FAQ", "/faq"]]} />
         <div className="footer-column"><h2>Service</h2><ul>
           <li><a href={platform.help}>Hilfe & Support</a></li><li><a href={platform.login}>Login</a></li><li><a href={register}>Registrieren</a></li>
           <li><a href={platform.privacy}>Datenschutz</a></li><li><a href={platform.legal}>Impressum</a></li><li><a href={platform.terms}>AGB</a></li>

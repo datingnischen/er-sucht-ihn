@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ABOUT_REVIEWS_PATH, ABOUT_ROOT_PATH, ABOUT_SOCIAL_PATH, SUCCESS_STORIES_PATH } from "@/lib/about-pages.mjs";
+import { ABOUT_REVIEWS_PATH, ABOUT_ROOT_PATH, ABOUT_SOCIAL_PATH } from "@/lib/about-pages.mjs";
 import { buildBreadcrumbs, buildBreadcrumbSchema } from "@/lib/breadcrumbs.mjs";
 import { serializePageEntityGraph } from "@/lib/page-entities.mjs";
 import { platform, registrationUrl, SITE_URL } from "@/lib/site";
@@ -64,7 +64,7 @@ export default function AboutPage() {
           <h2 id="wer-wir-sind-title">Eine Community von Männern für Männer</h2>
           <p>Er-sucht-Ihn.de ist eine deutschsprachige Singlebörse für schwule und bisexuelle Männer – für die feste Beziehung genauso wie für ehrliche Flirts auf Augenhöhe.</p>
         </div>
-        <div className="about-card-grid">
+        <div className="about-card-grid about-card-grid-duo">
           <div className="about-card">
             <img className="about-card-image" src="/about/betrieb-support.webp" alt="Mann schaut lächelnd von seinem Smartphone auf" width="720" height="450" loading="lazy" />
             <p className="kicker">Betrieb &amp; Support</p>
@@ -78,13 +78,6 @@ export default function AboutPage() {
             <h3>Wissen rund um schwules Dating</h3>
             <p>Unsere Redaktion schreibt über Dating, Beziehungen und Community-Themen – verständlich und nah an dem, was schwule Singles bewegt.</p>
             <Link className="about-card-link" href="/magazin/author/redaktion">Zur Redaktion</Link>
-          </div>
-          <div className="about-card">
-            <img className="about-card-image" src="/about/erfolgsgeschichten.webp" alt="Glückliches Männerpaar sitzt Arm in Arm auf dem Sofa" width="720" height="450" loading="lazy" />
-            <p className="kicker">Erfolgsgeschichten</p>
-            <h3>Paare, die sich hier gefunden haben</h3>
-            <p>Jeden Tag finden neue Paare bei uns zueinander – und einige erzählen uns ihre Geschichte.</p>
-            <Link className="about-card-link" href={SUCCESS_STORIES_PATH}>Erfolgsgeschichten lesen</Link>
           </div>
         </div>
       </section>
