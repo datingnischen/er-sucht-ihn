@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { ABOUT_PAGE_MOVES, ABOUT_REVIEWS_PATH, ABOUT_SOCIAL_PATH, aboutPathForImportedPath, aboutRedirects } from "../lib/about-pages.mjs";
 import { buildBreadcrumbs } from "../lib/breadcrumbs.mjs";
+import { classifyPath } from "../lib/site-contract.mjs";
 
 const catalog = JSON.parse(readFileSync(new URL("../data/pages.json", import.meta.url), "utf8"));
 
@@ -31,4 +32,15 @@ test("header and footer link the about area and its subpages", () => {
   assert.match(shell, /\["Über uns", ABOUT_ROOT_PATH\]/);
   assert.match(shell, /<FooterColumn title="Über uns" links=\{\[[^\n]*ABOUT_REVIEWS_PATH[^\n]*ABOUT_SOCIAL_PATH/);
   assert.doesNotMatch(shell, /"\/bewertungen-und-erfahrungen"|"\/social-media"/);
+});
+
+test("ICONY-served success stories and dating tips stay off the migrated site", () => {
+  for (const path of ["/unsere-erfolgsgeschichten.html", "/dating-tipps"]) assert.equal(classifyPath(path), "platform");
+  const shell = readFileSync(new URL("../components/site-shell.tsx", import.meta.url), "utf8");
+  const home = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const headerNav = shell.slice(shell.indexOf("const nav = ["), shell.indexOf("] as const;"));
+  assert.doesNotMatch(headerNav, /Dating-Tipps/);
+  assert.match(shell, /\["Dating-Tipps", platform\.datingTips\]/);
+  assert.match(shell, /\["Erfolgsgeschichten", platform\.successStories\]/);
+  assert.doesNotMatch(shell + home, /href="\/(dating-tipps|unsere-erfolgsgeschichten\.html)"|"\/dating-tipps"|"\/unsere-erfolgsgeschichten\.html"/);
 });

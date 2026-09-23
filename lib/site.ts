@@ -93,4 +93,6 @@ export const platform = {
   privacy: `${LIVE}/datenschutz.html`,
   legal: `${LIVE}/impressum.html`,
   terms: `${LIVE}/agb.html`,
+  successStories: `${LIVE}/unsere-erfolgsgeschichten.html`,
+  datingTips: `${LIVE}/dating-tipps`,
 };

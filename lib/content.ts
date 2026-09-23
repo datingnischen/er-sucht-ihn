@@ -1,7 +1,7 @@
 import catalog from "@/data/pages.json";
 import { normalizeImportedPath } from "./imported-path.mjs";
 import { aboutPathForImportedPath } from "./about-pages.mjs";
-import { SITE_URL } from "./site-contract.mjs";
+import { classifyPath, SITE_URL } from "./site-contract.mjs";
 
 export type ImportedPage = {
   path: string;
@@ -22,7 +22,12 @@ function withAboutPath(page: ImportedPage): ImportedPage {
   return path === page.path ? page : { ...page, path, canonical: `${SITE_URL}${path}` };
 }
 
-const pages = (catalog.pages as ImportedPage[]).map(withAboutPath);
+// Pages that ICONY still serves on the live domain are never rendered here.
+function withPlatformType(page: ImportedPage): ImportedPage {
+  return classifyPath(page.path) === "platform" ? { ...page, type: "platform" } : page;
+}
+
+const pages = (catalog.pages as ImportedPage[]).map(withAboutPath).map(withPlatformType);
 const pageMap = new Map(pages.map((page) => [page.path, page]));
 
 export const publicPages = pages.filter((page) => page.type !== "platform" && page.type !== "magazine");

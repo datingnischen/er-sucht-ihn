@@ -7,7 +7,6 @@ import { ABOUT_REVIEWS_PATH, ABOUT_ROOT_PATH, ABOUT_SOCIAL_PATH } from "@/lib/ab
 
 const nav = [
   ["Partnersuche", "/partnersuche"],
-  ["Dating-Tipps", "/dating-tipps"],
   ["Magazin", "/magazin"],
   ["Über uns", ABOUT_ROOT_PATH],
 ] as const;
@@ -51,9 +50,9 @@ export function Footer() {
             <img src="/trust/empfohlen-45-sterne.png" alt="Empfohlen von Singlebörsen-Überblick.de – 4,5 Sterne" width="300" height="60" />
           </a>
         </div>
-        <FooterColumn title="Entdecken" links={[["Partnersuche", "/partnersuche"], ["Dating-Tipps", "/dating-tipps"], ["Magazin", "/magazin"]]} />
+        <FooterColumn title="Entdecken" links={[["Partnersuche", "/partnersuche"], ["Dating-Tipps", platform.datingTips], ["Magazin", "/magazin"]]} />
         <FooterColumn title="Über uns" links={[["Über Er-sucht-Ihn", ABOUT_ROOT_PATH], ["Bewertungen & Erfahrungen", ABOUT_REVIEWS_PATH], ["Social Media", ABOUT_SOCIAL_PATH]]} />
-        <FooterColumn title="Vertrauen" links={[["Sicherheit & Datenschutz", "/sicherheit-und-datenschutz.html"], ["Redaktionelle Kontrolle", "/redaktionelle-kontrolle.html"], ["Basis-Mitgliedschaft", "/kostenlose-basis-mitgliedschaft.html"], ["Erfolgsgeschichten", "/unsere-erfolgsgeschichten.html"], ["FAQ", "/faq"]]} />
+        <FooterColumn title="Vertrauen" links={[["Sicherheit & Datenschutz", "/sicherheit-und-datenschutz.html"], ["Redaktionelle Kontrolle", "/redaktionelle-kontrolle.html"], ["Basis-Mitgliedschaft", "/kostenlose-basis-mitgliedschaft.html"], ["Erfolgsgeschichten", platform.successStories], ["FAQ", "/faq"]]} />
         <div className="footer-column"><h2>Service</h2><ul>
           <li><a href={platform.help}>Hilfe & Support</a></li><li><a href={platform.login}>Login</a></li><li><a href={register}>Registrieren</a></li>
           <li><a href={platform.privacy}>Datenschutz</a></li><li><a href={platform.legal}>Impressum</a></li><li><a href={platform.terms}>AGB</a></li>
@@ -65,5 +64,5 @@ export function Footer() {
 }
 
 function FooterColumn({ title, links }: { title: string; links: readonly (readonly [string, string])[] }) {
-  return <div className="footer-column"><h2>{title}</h2><ul>{links.map(([label, href]) => <li key={href}><Link href={href}>{label}</Link></li>)}</ul></div>;
+  return <div className="footer-column"><h2>{title}</h2><ul>{links.map(([label, href]) => <li key={href}>{href.startsWith("http") ? <a href={href}>{label}</a> : <Link href={href}>{label}</Link>}</li>)}</ul></div>;
 }

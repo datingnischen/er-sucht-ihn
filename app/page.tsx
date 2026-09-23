@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getFamilyPages } from "@/lib/content";
-import { locationName, registrationUrl, SITE_URL } from "@/lib/site";
+import { locationName, platform, registrationUrl, SITE_URL } from "@/lib/site";
 import { buildPageEntityGraph, serializePageEntityGraph } from "@/lib/page-entities.mjs";
 import { magazinePosts } from "@/lib/magazine";
 
@@ -44,6 +44,6 @@ export default function HomePage() {
 
     <section className="wrap section home-magazine"><div className="split-heading"><div><p className="kicker">Neu im Magazin</p><h2>Dating, Liebe und schwules Leben</h2></div><Link className="button button-outline" href="/magazin">Alle Artikel lesen</Link></div><div className="magazine-card-grid">{latestMagazine.map((entry) => <article className="magazine-card" key={entry.id}><Link href={entry.path}>{entry.featuredImage ? <span className="magazine-card-media"><img src={entry.featuredImage} alt="" loading="lazy" /></span> : <span className="magazine-card-media magazine-card-fallback" aria-hidden="true" />}<div className="magazine-card-copy"><span>{entry.categories[0]?.name || "Magazin"}</span><h3>{entry.title}</h3><p>{entry.description}</p><small>Artikel lesen →</small></div></Link></article>)}</div></section>
 
-    <section className="wrap feature success"><img src="/home/erfolg.webp" alt="Zwei Männer, die ihr Glück miteinander gefunden haben" width="555" height="401" /><div><p className="kicker">Echte Verbindungen</p><h2>Wenn aus einem Klick eine gemeinsame Geschichte wird.</h2><p>Jeden Tag entstehen neue Kontakte und Beziehungen. Einige Paare teilen ihre Geschichte – als Mutmacher für alle, die noch am Anfang stehen.</p><Link className="button button-pink" href="/unsere-erfolgsgeschichten.html">Erfolgsgeschichten lesen</Link></div></section>
+    <section className="wrap feature success"><img src="/home/erfolg.webp" alt="Zwei Männer, die ihr Glück miteinander gefunden haben" width="555" height="401" /><div><p className="kicker">Echte Verbindungen</p><h2>Wenn aus einem Klick eine gemeinsame Geschichte wird.</h2><p>Jeden Tag entstehen neue Kontakte und Beziehungen. Einige Paare teilen ihre Geschichte – als Mutmacher für alle, die noch am Anfang stehen.</p><a className="button button-pink" href={platform.successStories}>Erfolgsgeschichten lesen</a></div></section>
   </main>;
 }
