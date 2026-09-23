@@ -85,11 +85,16 @@ export default async function MagazineDetailPage({ params }: Props) {
           {entry.featuredImage && <figure className="magazine-article-hero"><img src={entry.featuredImage} alt="" /></figure>}
           <div className="magazine-article-layout">
             <div className="rich-content magazine-rich-content" dangerouslySetInnerHTML={{ __html: entry.contentHtml }} />
-            <aside className="magazine-side-cta">
-              <p className="kicker">Männer kennenlernen</p>
-              <h2>Bereit für neue Kontakte?</h2>
-              <p>Entdecke Männer, die zu Dir und Deinen Wünschen passen.</p>
-              <a className="button button-green" href={registrationUrl(path)}>Kostenlos registrieren</a>
+            <aside className="magazine-side">
+              <div className="magazine-side-cta">
+                <p className="kicker">Männer kennenlernen</p>
+                <h2>Bereit für neue Kontakte?</h2>
+                <p>Entdecke Männer, die zu Dir und Deinen Wünschen passen.</p>
+                <a className="button button-green" href={registrationUrl(path)}>Kostenlos registrieren</a>
+              </div>
+              <a className="magazine-radar-card" href={registrationUrl(path)}>
+                <img src="/brand/umkreissuche-radar.svg" alt="Umkreissuche: Männer in Deiner Nähe – kostenlos anmelden" width={320} height={480} loading="lazy" decoding="async" />
+              </a>
             </aside>
           </div>
         </article>
