@@ -94,5 +94,8 @@ export const platform = {
   legal: `${LIVE}/impressum.html`,
   terms: `${LIVE}/agb.html`,
   successStories: `${LIVE}/unsere-erfolgsgeschichten.html`,
+  safety: `${LIVE}/sicherheit-und-datenschutz.html`,
+  editorialControl: `${LIVE}/redaktionelle-kontrolle.html`,
+  basicMembership: `${LIVE}/kostenlose-basis-mitgliedschaft.html`,
   datingTips: `${LIVE}/dating-tipps`,
 };

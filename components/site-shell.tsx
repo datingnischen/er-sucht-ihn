@@ -52,7 +52,7 @@ export function Footer() {
         </div>
         <FooterColumn title="Entdecken" links={[["Partnersuche", "/partnersuche"], ["Dating-Tipps", platform.datingTips], ["Magazin", "/magazin"]]} />
         <FooterColumn title="Über uns" links={[["Über Er-sucht-Ihn", ABOUT_ROOT_PATH], ["Bewertungen & Erfahrungen", ABOUT_REVIEWS_PATH], ["Social Media", ABOUT_SOCIAL_PATH]]} />
-        <FooterColumn title="Vertrauen" links={[["Sicherheit & Datenschutz", "/sicherheit-und-datenschutz.html"], ["Redaktionelle Kontrolle", "/redaktionelle-kontrolle.html"], ["Basis-Mitgliedschaft", "/kostenlose-basis-mitgliedschaft.html"], ["Erfolgsgeschichten", platform.successStories], ["FAQ", "/faq"]]} />
+        <FooterColumn title="Vertrauen" links={[["Sicherheit & Datenschutz", platform.safety], ["Redaktionelle Kontrolle", platform.editorialControl], ["Basis-Mitgliedschaft", platform.basicMembership], ["Erfolgsgeschichten", platform.successStories], ["FAQ", "/faq"]]} />
         <div className="footer-column"><h2>Service</h2><ul>
           <li><a href={platform.help}>Hilfe & Support</a></li><li><a href={platform.login}>Login</a></li><li><a href={register}>Registrieren</a></li>
           <li><a href={platform.privacy}>Datenschutz</a></li><li><a href={platform.legal}>Impressum</a></li><li><a href={platform.terms}>AGB</a></li>

@@ -44,3 +44,14 @@ test("ICONY-served success stories and dating tips stay off the migrated site", 
   assert.match(shell, /\["Erfolgsgeschichten", platform\.successStories\]/);
   assert.doesNotMatch(shell + home, /href="\/(dating-tipps|unsere-erfolgsgeschichten\.html)"|"\/dating-tipps"|"\/unsere-erfolgsgeschichten\.html"/);
 });
+
+test("ICONY-served trust pages link to the live domain, never to Vercel copies", () => {
+  const trustPaths = ["/sicherheit-und-datenschutz.html", "/redaktionelle-kontrolle.html", "/kostenlose-basis-mitgliedschaft.html"];
+  for (const path of trustPaths) assert.equal(classifyPath(path), "platform");
+  const shell = readFileSync(new URL("../components/site-shell.tsx", import.meta.url), "utf8");
+  const home = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
+  assert.match(shell, /\["Sicherheit & Datenschutz", platform\.safety\]/);
+  assert.match(shell, /\["Redaktionelle Kontrolle", platform\.editorialControl\]/);
+  assert.match(shell, /\["Basis-Mitgliedschaft", platform\.basicMembership\]/);
+  for (const path of trustPaths) assert.ok(!(shell + home).includes(`"${path}"`), `${path} must not be a relative link`);
+});

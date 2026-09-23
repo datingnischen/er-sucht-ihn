@@ -20,7 +20,7 @@ SITE = "https://er-sucht-ihn.de"
 SITEMAP = f"{SITE}/sitemap.php"
 OUT = Path(__file__).resolve().parents[1] / "data" / "pages.json"
 MAGAZINE_OUT = OUT.parent / "magazine.json"
-PLATFORM_ROOTS = {"registration", "login", "suche", "hilfe", "kontakt", "gutschein", "datenschutz.html", "impressum.html", "agb.html", "unsere-erfolgsgeschichten.html", "dating-tipps"}
+PLATFORM_ROOTS = {"registration", "login", "suche", "hilfe", "kontakt", "gutschein", "datenschutz.html", "impressum.html", "agb.html", "unsere-erfolgsgeschichten.html", "sicherheit-und-datenschutz.html", "redaktionelle-kontrolle.html", "kostenlose-basis-mitgliedschaft.html", "dating-tipps"}
 ALLOWED_TAGS = {
     "a", "b", "blockquote", "br", "div", "em", "figcaption", "figure", "h1", "h2", "h3", "h4",
     "hr", "img", "li", "main", "ol", "p", "picture", "section", "small", "span", "strong", "ul",
