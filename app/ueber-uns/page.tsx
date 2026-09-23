@@ -66,24 +66,24 @@ export default function AboutPage() {
         </div>
         <div className="about-card-grid">
           <div className="about-card">
-            <span className="about-card-icon" aria-hidden="true">🤝</span>
+            <img className="about-card-image" src="/about/betrieb-support.webp" alt="Mann schaut lächelnd von seinem Smartphone auf" width="720" height="450" loading="lazy" />
             <p className="kicker">Betrieb &amp; Support</p>
             <h3>Verlässlich betreut von ICONY</h3>
-            <p>Er-sucht-Ihn.de gehört zum Partnernetzwerk der ICONY GmbH. ICONY ist Betreiber und rechtlicher Ansprechpartner und kümmert sich um Support, Technik und die laufende Weiterentwicklung – mit Servern in Deutschland.</p>
+            <p>Die ICONY GmbH betreibt Er-sucht-Ihn.de und kümmert sich um Support, Technik und Weiterentwicklung – mit Servern in Deutschland.</p>
             <a className="about-card-link" href={platform.legal}>Zum Impressum</a>
           </div>
           <div className="about-card">
-            <span className="about-card-icon" aria-hidden="true">✍️</span>
+            <img className="about-card-image" src="/about/magazin-redaktion.webp" alt="Zwei Männer unterhalten sich lachend bei einem Kaffee" width="720" height="450" loading="lazy" />
             <p className="kicker">Magazin &amp; Redaktion</p>
             <h3>Wissen rund um schwules Dating</h3>
-            <p>Unsere Redaktion schreibt im Magazin über Dating, Beziehungen, Community-Themen und Geschichte – verständlich, respektvoll und nah an dem, was schwule Singles wirklich bewegt.</p>
+            <p>Unsere Redaktion schreibt über Dating, Beziehungen und Community-Themen – verständlich und nah an dem, was schwule Singles bewegt.</p>
             <Link className="about-card-link" href="/magazin/author/redaktion">Zur Redaktion</Link>
           </div>
           <div className="about-card">
-            <span className="about-card-icon" aria-hidden="true">💞</span>
+            <img className="about-card-image" src="/about/erfolgsgeschichten.webp" alt="Glückliches Männerpaar sitzt Arm in Arm auf dem Sofa" width="720" height="450" loading="lazy" />
             <p className="kicker">Erfolgsgeschichten</p>
             <h3>Paare, die sich hier gefunden haben</h3>
-            <p>Jeden Tag finden neue Paare bei uns zueinander. Einige erzählen uns ihre Geschichte, bevor sie sich glücklich abmelden – der schönste Beweis für unsere Arbeit.</p>
+            <p>Jeden Tag finden neue Paare bei uns zueinander – und einige erzählen uns ihre Geschichte.</p>
             <Link className="about-card-link" href={SUCCESS_STORIES_PATH}>Erfolgsgeschichten lesen</Link>
           </div>
         </div>
