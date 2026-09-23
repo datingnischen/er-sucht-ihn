@@ -4,18 +4,19 @@ import { readFile } from "node:fs/promises";
 import { selectHeroImage } from "../lib/hero-image.mjs";
 
 const catalog = JSON.parse(await readFile(new URL("../data/pages.json", import.meta.url), "utf8"));
-const magazineCatalog = JSON.parse(await readFile(new URL("../data/magazine.json", import.meta.url), "utf8"));
+const wordpressMagazine = JSON.parse(await readFile(new URL("../data/magazine.json", import.meta.url), "utf8"));
+const retiredLexicon = JSON.parse(await readFile(new URL("../data/magazine-lexikon.json", import.meta.url), "utf8"));
+const magazineCatalog = { ...wordpressMagazine, entries: [...wordpressMagazine.entries, ...retiredLexicon.entries] };
 
 test("the imported catalog preserves the complete unique sitemap inventory", () => {
-  assert.equal(catalog.pages.length, 65);
-  assert.equal(new Set(catalog.pages.map((page) => page.path)).size, 65);
+  assert.equal(catalog.pages.length, 61);
+  assert.equal(new Set(catalog.pages.map((page) => page.path)).size, 61);
   for (const path of [
     "/",
     "/partnersuche",
     "/partnersuche/berlin",
     "/partnersuche/nordrhein-westfalen/köln",
     "/partnersuche/bayern/muenchen",
-    "/lexikon/gaychat",
   ]) assert.ok(catalog.pages.some((page) => page.path === path), `missing ${path}`);
 });
 

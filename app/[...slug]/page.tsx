@@ -30,10 +30,10 @@ export default async function ImportedPageView({ params }: Props) {
   const page = getImportedPage(path);
   if (!page || page.type === "platform" || page.type === "magazine") notFound();
   const isLocationDetail = page.type === "location" && path !== "/partnersuche";
-  const root = path.split("/")[1] as "partnersuche" | "lexikon";
+  const root = path.split("/")[1];
   const image = selectHeroImage(page.images);
   const locationHubRoot = root === "partnersuche" && path === "/partnersuche" ? "partnersuche" : null;
-  const related = !locationHubRoot && ["partnersuche", "lexikon"].includes(root) ? getFamilyPages(root).filter((item) => item.path !== path).slice(0, 6) : [];
+  const related = !locationHubRoot && root === "partnersuche" ? getFamilyPages(root).filter((item) => item.path !== path).slice(0, 6) : [];
   const relatedCards = page.type === "location" && !locationHubRoot ? buildRelatedCards(publicPages, path, root) : [];
   const contentHtml = locationHubRoot ? removeLegacyCityLists(page.contentHtml, locationHubRoot, page.h1) : page.contentHtml;
   const breadcrumbName = page.type === "location" ? undefined : page.h1;
@@ -45,7 +45,7 @@ export default async function ImportedPageView({ params }: Props) {
       <nav className="breadcrumbs" aria-label="Breadcrumb"><ol>{breadcrumbs.map((item, index) => <li key={item.path}>{index < breadcrumbs.length - 1 ? <Link href={item.path}>{item.name}</Link> : <span aria-current="page">{item.name}</span>}</li>)}</ol></nav>
       <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializePageEntityGraph(pageEntityGraph) }} />
-      <div className="article-hero"><div><p className="kicker">{page.type === "location" ? "Regional kennenlernen" : page.type === "lexicon" ? "Kurz erklärt" : "Gut informiert"}</p><h1>{page.h1}</h1><p className="lead">{page.description}</p><a className="button button-green" href={registrationUrl(path)}>Jetzt kostenlos starten</a></div>{image ? <img src={image.src} alt={image.alt || page.h1} /> : null}</div>
+      <div className="article-hero"><div><p className="kicker">{page.type === "location" ? "Regional kennenlernen" : "Gut informiert"}</p><h1>{page.h1}</h1><p className="lead">{page.description}</p><a className="button button-green" href={registrationUrl(path)}>Jetzt kostenlos starten</a></div>{image ? <img src={image.src} alt={image.alt || page.h1} /> : null}</div>
       {isLocationDetail && page.widgetUrl ? <section className="city-singles-widget" aria-labelledby="single-maenner-widget">
         <div className="city-singles-widget-heading"><div><p className="kicker">Gerade aktiv</p><h2 id="single-maenner-widget">Single-Männer aus {locationName(path)} und Umgebung</h2></div><p>Sieh, welche Männer zuletzt bei Er-sucht-Ihn aktiv waren, und öffne ein Profil, das Dich neugierig macht.</p></div>
         <div className="city-singles-widget-body">

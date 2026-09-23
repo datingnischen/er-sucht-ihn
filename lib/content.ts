@@ -7,7 +7,7 @@ export type ImportedPage = {
   path: string;
   sourceUrl: string;
   canonical: string;
-  type: "location" | "lexicon" | "editorial" | "magazine" | "platform";
+  type: "location" | "editorial" | "magazine" | "platform";
   title: string;
   description: string;
   h1: string;
@@ -35,7 +35,7 @@ export function getImportedPage(path: string) {
   return pageMap.get(path) ?? null;
 }
 
-export function getFamilyPages(root: "partnersuche" | "lexikon") {
+export function getFamilyPages(root: "partnersuche") {
   const prefix = `/${root}/`;
   return publicPages.filter((page) => page.path.startsWith(prefix));
 }

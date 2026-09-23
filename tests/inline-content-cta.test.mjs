@@ -23,13 +23,13 @@ test("the sanitized snapshot classifies every eligible registration CTA with the
       }
     }
   }
-  assert.equal(decorated, 144);
+  assert.equal(decorated, 136);
   assert.equal(preserved, 2);
 });
 
 test("ordinary editorial links remain ordinary text links", () => {
-  const page = catalog.pages.find((item) => item.path === "/lexikon/gaychat");
-  assert.match(page.contentHtml, /<a href="\/magazin\/gay-kontakte">Gaykontakte<\/a>/);
+  const page = catalog.pages.find((item) => item.path === "/fuer-abenteuer.html");
+  assert.match(page.contentHtml, /<a href="\/magazin\/gaychat">[^<]+<\/a>/);
 });
 
 test("runtime rendering does not contain a second HTML parser", () => {

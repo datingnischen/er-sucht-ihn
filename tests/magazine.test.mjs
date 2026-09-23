@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 
 const catalog = JSON.parse(await readFile(new URL("../data/magazine.json", import.meta.url), "utf8"));
+const retiredLexicon = JSON.parse(await readFile(new URL("../data/magazine-lexikon.json", import.meta.url), "utf8")).entries;
 
 const entries = catalog.entries;
 const attachments = catalog.attachments;
@@ -98,10 +99,10 @@ test("localized assets preserve exact legacy upload compatibility paths", () => 
 });
 
 test("all retained internal magazine links resolve to migrated content or archives", () => {
-  const owned = new Set(entries.map((entry) => entry.path));
+  const owned = new Set([...entries, ...retiredLexicon].map((entry) => entry.path));
   const categories = new Set(catalog.categories.map((category) => `/magazin/kategorie/${category.slug}`));
   const unresolved = [];
-  for (const entry of entries) {
+  for (const entry of [...entries, ...retiredLexicon]) {
     for (const match of entry.contentHtml.matchAll(/href="(\/[^"#?]+)["?#]/g)) {
       const path = decodeURI(match[1]).replace(/\/$/, "");
       if (path.startsWith("/magazin/") && !owned.has(path) && !categories.has(path) && !path.startsWith("/magazine/media/")) {

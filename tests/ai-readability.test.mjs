@@ -11,11 +11,11 @@ test("imported article fragments do not duplicate the page main landmark or h1",
   assert.deepEqual(offenders.map((page) => page.path), []);
 });
 
-test("lexicon routes remain factual canonical WebPages without unsupported term claims", () => {
+test("editorial routes remain factual canonical WebPages without unsupported term claims", () => {
   const graph = buildPageEntityGraph({
-    path: "/lexikon/gaychat",
-    canonical: `${SITE}/lexikon/gaychat`,
-    type: "lexicon",
+    path: "/fuer-abenteuer.html",
+    canonical: `${SITE}/fuer-abenteuer.html`,
+    type: "editorial",
     h1: "Gaychat",
     description: "Informationen zu Gaychats und sicherem Kennenlernen für Männer.",
   });
@@ -23,8 +23,8 @@ test("lexicon routes remain factual canonical WebPages without unsupported term 
   const webpage = graph["@graph"].find((node) => node["@type"] === "WebPage");
   assert.deepEqual(webpage, {
     "@type": "WebPage",
-    "@id": `${SITE}/lexikon/gaychat#webpage`,
-    url: `${SITE}/lexikon/gaychat`,
+    "@id": `${SITE}/fuer-abenteuer.html#webpage`,
+    url: `${SITE}/fuer-abenteuer.html`,
     name: "Gaychat",
     description: "Informationen zu Gaychats und sicherem Kennenlernen für Männer.",
     inLanguage: "de-DE",
@@ -41,7 +41,7 @@ test("location pages stay factual WebPages without invented Place or Article cla
 });
 
 test("JSON-LD serialization escapes HTML tag boundaries", () => {
-  const graph = buildPageEntityGraph({ path: "/lexikon/test", canonical: `${SITE}/lexikon/test`, type: "lexicon", h1: "Test", description: "</script><script>alert(1)</script>" });
+  const graph = buildPageEntityGraph({ path: "/test.html", canonical: `${SITE}/test.html`, type: "editorial", h1: "Test", description: "</script><script>alert(1)</script>" });
   const serialized = serializePageEntityGraph(graph);
   assert.doesNotMatch(serialized, /</);
   assert.match(serialized, /\\u003c\/script>/);
@@ -50,7 +50,7 @@ test("JSON-LD serialization escapes HTML tag boundaries", () => {
 test("llms.txt is concise, canonical and does not claim to control model training", () => {
   const source = fs.readFileSync(new URL("../app/llms.txt/route.ts", import.meta.url), "utf8");
   assert.match(source, /https:\/\/er-sucht-ihn\.de\/sitemap\.xml/);
-  for (const path of ["/partnersuche", "/lexikon"]) assert.match(source, new RegExp(`https://er-sucht-ihn\\.de${path}`));
+  for (const path of ["/partnersuche", "/magazin"]) assert.match(source, new RegExp(`https://er-sucht-ihn\\.de${path}`));
   assert.doesNotMatch(source, /sie-sucht-sie|lesbische|Frauen|oesterreich|schweiz/i);
   assert.match(source, /Content-Type[^\n]*text\/plain; charset=utf-8/i);
   assert.match(source, /export const dynamic = "force-static"/);

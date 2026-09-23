@@ -248,7 +248,7 @@ def page_type(path: str) -> str:
     if root == "partnersuche":
         return "location"
     if root == "lexikon":
-        return "lexicon"
+        return "retired"
     if root == "magazin":
         return "magazine"
     return "editorial"
@@ -451,6 +451,8 @@ def main():
             continue
         seen.add(path)
         kind = page_type(path)
+        if kind == "retired":
+            continue
         response = fetch(source_url, expected_types=("text/html",))
         soup = BeautifulSoup(response.text, "html.parser") if response.status_code == 200 else BeautifulSoup("", "html.parser")
         title = text_or(soup.title, fallback_title(path))

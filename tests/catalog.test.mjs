@@ -21,7 +21,7 @@ test("location routes receive location conversion tracking", () => {
 });
 
 test("editorial routes receive magazine conversion tracking", () => {
-  for (const path of ["/", "/dating-tipps", "/lexikon/gaychat"]) {
+  for (const path of ["/", "/fuer-abenteuer.html", "/magazin/gaychat"]) {
     assert.equal(getRegistrationUrl(path), "https://er-sucht-ihn.de/registration/?AID=magazin");
   }
 });
@@ -41,9 +41,9 @@ test("legal and platform links stay on the canonical live ICONY market", () => {
 });
 
 test("migration contract covers the public editorial route families", () => {
-  assert.deepEqual(routeFamilies, ["partnersuche", "lexikon"]);
+  assert.deepEqual(routeFamilies, ["partnersuche"]);
   assert.equal(isMigratedPath("/partnersuche/berlin"), true);
-  assert.equal(isMigratedPath("/lexikon/gaychat"), true);
+  assert.equal(isMigratedPath("/magazin/gaychat"), true);
   assert.equal(isMigratedPath("/registration"), false);
   assert.equal(isMigratedPath("/login"), false);
 });

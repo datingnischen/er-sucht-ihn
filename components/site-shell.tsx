@@ -7,7 +7,6 @@ import { ABOUT_REVIEWS_PATH, ABOUT_ROOT_PATH, ABOUT_SOCIAL_PATH } from "@/lib/ab
 
 const nav = [
   ["Partnersuche", "/partnersuche"],
-  ["Lexikon", "/lexikon"],
   ["Dating-Tipps", "/dating-tipps"],
   ["Magazin", "/magazin"],
   ["Über uns", ABOUT_ROOT_PATH],
@@ -52,7 +51,7 @@ export function Footer() {
             <img src="/trust/empfohlen-45-sterne.png" alt="Empfohlen von Singlebörsen-Überblick.de – 4,5 Sterne" width="300" height="60" />
           </a>
         </div>
-        <FooterColumn title="Entdecken" links={[["Partnersuche", "/partnersuche"], ["Lexikon", "/lexikon"], ["Dating-Tipps", "/dating-tipps"], ["Magazin", "/magazin"]]} />
+        <FooterColumn title="Entdecken" links={[["Partnersuche", "/partnersuche"], ["Dating-Tipps", "/dating-tipps"], ["Magazin", "/magazin"]]} />
         <FooterColumn title="Über uns" links={[["Über Er-sucht-Ihn", ABOUT_ROOT_PATH], ["Bewertungen & Erfahrungen", ABOUT_REVIEWS_PATH], ["Social Media", ABOUT_SOCIAL_PATH]]} />
         <FooterColumn title="Vertrauen" links={[["Sicherheit & Datenschutz", "/sicherheit-und-datenschutz.html"], ["Redaktionelle Kontrolle", "/redaktionelle-kontrolle.html"], ["Basis-Mitgliedschaft", "/kostenlose-basis-mitgliedschaft.html"], ["Erfolgsgeschichten", "/unsere-erfolgsgeschichten.html"], ["FAQ", "/faq"]]} />
         <div className="footer-column"><h2>Service</h2><ul>

@@ -1,4 +1,5 @@
 import catalog from "@/data/magazine.json";
+import retiredLexicon from "@/data/magazine-lexikon.json";
 
 export type MagazineEntry = {
   id: number;
@@ -32,7 +33,8 @@ export type MagazineCategory = { id: number; name: string; slug: string; count: 
 export type MagazineAuthor = { id: number; name: string; slug: string; description: string };
 type MagazineAsset = { localPath: string; legacyPaths: string[] };
 
-export const magazineEntries = catalog.entries as MagazineEntry[];
+// The former /lexikon articles live on as magazine posts outside the WordPress snapshot.
+export const magazineEntries = [...catalog.entries, ...retiredLexicon.entries] as MagazineEntry[];
 export const magazineAttachments = catalog.attachments as MagazineAttachment[];
 export const magazinePosts = magazineEntries
   .filter((entry) => entry.type === "post")

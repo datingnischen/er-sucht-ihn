@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       ...aboutRedirects,
+      { source: "/lexikon", destination: "/magazin", permanent: true },
+      { source: "/lexikon/:slug", destination: "/magazin/:slug", permanent: true },
       { source: "/magazin/wp-sitemap.xml", destination: "/magazin/sitemap.xml", permanent: true },
       { source: "/magazin/sitemap_index.xml", destination: "/magazin/sitemap.xml", permanent: true },
       { source: "/magazin/post-sitemap.xml", destination: "/magazin/sitemap.xml", permanent: true },
