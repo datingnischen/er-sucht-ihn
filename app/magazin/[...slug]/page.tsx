@@ -5,6 +5,8 @@ import {
   getMagazineAttachment,
   getMagazineEntry,
   magazineStaticParams,
+  magazineUpdatedDate,
+  magazineUpdatedLabel,
   relatedMagazineEntries,
 } from "@/lib/magazine";
 import { registrationUrl } from "@/lib/site";
@@ -41,10 +43,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-function dateLabel(date: string) {
-  return new Intl.DateTimeFormat("de-DE", { day: "2-digit", month: "long", year: "numeric" }).format(new Date(date));
-}
-
 export default async function MagazineDetailPage({ params }: Props) {
   const { slug } = await params;
   const path = pathFrom(slug);
@@ -79,7 +77,7 @@ export default async function MagazineDetailPage({ params }: Props) {
             <p className="magazine-article-deck">{entry.description}</p>
             <div className="magazine-byline">
               {entry.author?.name && <span>Von <Link href={`/magazin/author/${entry.author.slug}`}>{entry.author.name}</Link></span>}
-              {entry.date && <time dateTime={entry.date}>{dateLabel(entry.date)}</time>}
+              {entry.type === "post" && magazineUpdatedDate(entry) && <time dateTime={magazineUpdatedDate(entry)}>{magazineUpdatedLabel(entry)}</time>}
             </div>
           </header>
           {entry.featuredImage && <figure className="magazine-article-hero"><img src={entry.featuredImage} alt="" /></figure>}

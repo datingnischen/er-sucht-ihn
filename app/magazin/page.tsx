@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { magazinePages, magazinePosts } from "@/lib/magazine";
+import { magazinePages, magazinePosts, magazineUpdatedDate, magazineUpdatedLabel } from "@/lib/magazine";
 
 export const metadata: Metadata = {
   title: "Magazin für schwule Männer – Dating, Liebe & schwules Leben",
@@ -13,10 +13,6 @@ export const metadata: Metadata = {
     description: "Artikel über Gay-Dating, Beziehungen, Coming-out und schwules Leben.",
   },
 };
-
-function dateLabel(date: string) {
-  return new Intl.DateTimeFormat("de-DE", { day: "2-digit", month: "long", year: "numeric" }).format(new Date(date));
-}
 
 export default function MagazinePage() {
   const featured = magazinePosts.slice(0, 3);
@@ -42,7 +38,7 @@ export default function MagazinePage() {
                   <span>{entry.categories[0]?.name || "Magazin"}</span>
                   <h3>{entry.title}</h3>
                   <p>{entry.description}</p>
-                  <time dateTime={entry.date}>{dateLabel(entry.date)}</time>
+                  <time dateTime={magazineUpdatedDate(entry)}>{magazineUpdatedLabel(entry)}</time>
                 </div>
               </Link>
             </article>
@@ -61,7 +57,7 @@ export default function MagazinePage() {
                   <span>{entry.categories[0]?.name || "Ratgeber"}</span>
                   <h3>{entry.title}</h3>
                   <p>{entry.description}</p>
-                  <time dateTime={entry.date}>{dateLabel(entry.date)}</time>
+                  <time dateTime={magazineUpdatedDate(entry)}>{magazineUpdatedLabel(entry)}</time>
                 </div>
               </Link>
             </article>

@@ -54,6 +54,18 @@ const legacyAssetByPath = new Map(
   magazineAssets.flatMap((asset) => asset.legacyPaths.map((path) => [safeDecodePath(path), asset.localPath] as const)),
 );
 
+const germanDate = new Intl.DateTimeFormat("de-DE", { day: "2-digit", month: "long", year: "numeric" });
+
+/** Sichtbares Artikeldatum: Änderungsdatum, Fallback auf das Veröffentlichungsdatum. */
+export function magazineUpdatedDate(entry: Pick<MagazineEntry, "date" | "modified">) {
+  return entry.modified || entry.date;
+}
+
+export function magazineUpdatedLabel(entry: Pick<MagazineEntry, "date" | "modified">) {
+  const value = magazineUpdatedDate(entry);
+  return value ? `Aktualisiert am ${germanDate.format(new Date(value))}` : "";
+}
+
 export function getMagazineEntry(path: string) {
   return entryByPath.get(normalizeMagazinePath(path));
 }
