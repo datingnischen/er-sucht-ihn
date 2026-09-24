@@ -1,6 +1,7 @@
 import type { ImportedPage } from "@/lib/content";
 import Link from "next/link";
 import { buildCityCards, getHubPresentation } from "@/lib/location-hub.mjs";
+import { CitySearchFallback } from "@/components/city-search-fallback";
 
 type CityCard = {
   path: string;
@@ -40,6 +41,7 @@ export function CityCardSection({ pages, root }: { pages: ImportedPage[]; root: 
           </article>
         ))}
       </div>
+      <CitySearchFallback />
       <div className="city-explorer-cta">
         <div><strong>{presentation.ctaTitle}</strong><span>Starte kostenlos und finde Männer aus Deiner Nähe.</span></div>
         <a className="button button-green" href={cities[0]?.registrationUrl}>{presentation.ctaLabel}</a>

@@ -1,0 +1,7 @@
+.city-search-fallback{display:flex;align-items:center;justify-content:space-between;gap:28px;margin-top:24px;padding:26px 28px;border:1px solid #d7e8f1;border-radius:18px;background:linear-gradient(145deg,var(--pink-soft),var(--paper) 62%)}
+.city-search-fallback-text{max-width:720px}
+.city-search-fallback h2{margin:0 0 8px;font-size:clamp(1.35rem,2.4vw,1.75rem);line-height:1.2}
+.city-search-fallback-text>p:last-child{margin:0;color:var(--muted)}
+.city-search-fallback .button{flex-shrink:0}
+.city-search-fallback .button:focus-visible{outline:3px solid var(--green);outline-offset:3px}
+@media(max-width:720px){.city-search-fallback{align-items:stretch;flex-direction:column;gap:18px;padding:22px 20px}.city-search-fallback .button{width:100%}}

@@ -85,6 +85,9 @@ export function citySearchUrl(
   return `${LIVE}/suche/?plz=${postcode}&AID=location`;
 }
 
+/** Individual ICONY search without a preset postcode, for cities without their own page. */
+export const INDIVIDUAL_SEARCH_URL = `${LIVE}/suche/?AID=location`;
+
 export const platform = {
   login: `${LIVE}/login/`,
   registration: `${LIVE}/registration/?AID=magazin`,
