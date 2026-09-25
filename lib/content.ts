@@ -27,7 +27,20 @@ function withPlatformType(page: ImportedPage): ImportedPage {
   return classifyPath(page.path) === "platform" ? { ...page, type: "platform" } : page;
 }
 
-const pages = (catalog.pages as ImportedPage[]).map(withAboutPath).map(withPlatformType);
+// Gezielte Korrekturen am ICONY-Import, die ein erneuter Import sonst wieder zurücksetzen würde.
+const metaOverrides: Record<string, Pick<ImportedPage, "title" | "description">> = {
+  "/faq": {
+    title: "FAQ er-sucht-ihn.de: Kosten, Sicherheit & Ablauf erklärt",
+    description: "Antworten auf häufige Fragen zur Partnersuche bei er-sucht-ihn.de. Jetzt alles zu Kosten, Sicherheit & Ablauf erfahren.",
+  },
+};
+
+function withMetaOverride(page: ImportedPage): ImportedPage {
+  const override = metaOverrides[page.path];
+  return override ? { ...page, ...override } : page;
+}
+
+const pages = (catalog.pages as ImportedPage[]).map(withAboutPath).map(withPlatformType).map(withMetaOverride);
 const pageMap = new Map(pages.map((page) => [page.path, page]));
 
 export const publicPages = pages.filter((page) => page.type !== "platform" && page.type !== "magazine");

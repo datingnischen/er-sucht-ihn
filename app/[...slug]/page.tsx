@@ -3,7 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ABOUT_SOCIAL_PATH } from "@/lib/about-pages.mjs";
 import { getFamilyPages, getImportedPage, normalizePublicPath, publicPages } from "@/lib/content";
-import { selectHeroImage } from "@/lib/hero-image.mjs";
+import { removeHeroImageFromContent, selectHeroImage } from "@/lib/hero-image.mjs";
+import { buildFaqMainEntity, extractFaq } from "@/lib/faq.mjs";
+import { FaqSection } from "@/components/faq-section";
 import { citySearchUrl, locationName, registrationUrl } from "@/lib/site";
 import { CityCardSection } from "@/components/city-card-section";
 import { removeLegacyCityLists } from "@/lib/location-hub.mjs";
@@ -39,11 +41,12 @@ export default async function ImportedPageView({ params }: Props) {
   const locationHubRoot = root === "partnersuche" && path === "/partnersuche" ? "partnersuche" : null;
   const related = !locationHubRoot && root === "partnersuche" ? getFamilyPages(root).filter((item) => item.path !== path).slice(0, 6) : [];
   const relatedCards = page.type === "location" && !locationHubRoot ? buildRelatedCards(publicPages, path, root) : [];
-  const contentHtml = locationHubRoot ? removeLegacyCityLists(page.contentHtml, locationHubRoot, page.h1) : page.contentHtml;
+  const contentHtml = removeHeroImageFromContent(locationHubRoot ? removeLegacyCityLists(page.contentHtml, locationHubRoot, page.h1) : page.contentHtml, image);
+  const faq = extractFaq(contentHtml);
   const breadcrumbName = page.type === "location" ? undefined : page.h1;
   const breadcrumbs = buildBreadcrumbs(path, breadcrumbName);
   const breadcrumbSchema = buildBreadcrumbSchema(path, breadcrumbName);
-  const pageEntityGraph = buildPageEntityGraph(page);
+  const pageEntityGraph = buildPageEntityGraph(page, { faqEntities: faq ? buildFaqMainEntity(faq.groups) : [] });
   return <main className="wrap page-shell">
     <article className="article-card">
       <nav className="breadcrumbs" aria-label="Breadcrumb"><ol>{breadcrumbs.map((item, index) => <li key={item.path}>{index < breadcrumbs.length - 1 ? <Link href={item.path}>{item.name}</Link> : <span aria-current="page">{item.name}</span>}</li>)}</ol></nav>
@@ -58,7 +61,11 @@ export default async function ImportedPageView({ params }: Props) {
         </div>
       </section> : null}
       {locationHubRoot ? <CityCardSection pages={publicPages} root={locationHubRoot} /> : null}
-      <div className="rich-content" dangerouslySetInnerHTML={{ __html: contentHtml }} />
+      {faq ? <>
+        <div className="rich-content" dangerouslySetInnerHTML={{ __html: faq.beforeHtml }} />
+        <FaqSection groups={faq.groups} registrationHref={registrationUrl(path)} />
+        <div className="rich-content" dangerouslySetInnerHTML={{ __html: faq.afterHtml }} />
+      </> : <div className="rich-content" dangerouslySetInnerHTML={{ __html: contentHtml }} />}
       <aside className="inline-cta"><h2>Bereit für Deinen ersten Kontakt?</h2><p>Erstelle kostenlos Dein Profil und entdecke Männer, die ähnliche Wünsche und Werte mitbringen.</p><a className="button button-green" href={registrationUrl(path)}>Kostenlos registrieren</a></aside>
     </article>
     {relatedCards.length ? <RelatedCardSection cards={relatedCards} /> : related.length ? <aside className="related"><p className="kicker">Weiter entdecken</p><h2>Weitere passende Einstiege</h2><div className="related-grid">{related.map((item) => <Link href={item.path} key={item.path}><strong>{item.h1}</strong><span>Mehr erfahren →</span></Link>)}</div></aside> : null}
