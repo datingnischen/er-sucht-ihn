@@ -5,6 +5,7 @@ import { buildBreadcrumbs, buildBreadcrumbSchema } from "@/lib/breadcrumbs.mjs";
 import { serializePageEntityGraph } from "@/lib/page-entities.mjs";
 import { platform, registrationUrl, SITE_URL } from "@/lib/site";
 import { socialChannels, socialProfileUrls } from "@/lib/social-channels";
+import { staticAsset } from "@/lib/static-asset.mjs";
 import { SocialIcon } from "@/components/social-icon";
 
 const canonical = `${SITE_URL}${ABOUT_ROOT_PATH}`;
@@ -29,7 +30,7 @@ function aboutEntityGraph() {
     "@context": "https://schema.org",
     "@graph": [
       { "@type": "WebSite", "@id": `${SITE_URL}/#website`, url: `${SITE_URL}/`, name: "Er-sucht-Ihn.de", inLanguage: "de-DE" },
-      { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: "Er-sucht-Ihn.de", url: `${SITE_URL}/`, logo: `${SITE_URL}/brand/logo.svg`, parentOrganization: { "@type": "Organization", name: "ICONY GmbH" }, sameAs: socialProfileUrls },
+      { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: "Er-sucht-Ihn.de", url: `${SITE_URL}/`, logo: staticAsset("/brand/logo.svg"), parentOrganization: { "@type": "Organization", name: "ICONY GmbH" }, sameAs: socialProfileUrls },
       { "@type": "AboutPage", "@id": `${canonical}#webpage`, url: canonical, name: "Über uns", description, inLanguage: "de-DE", isPartOf: { "@id": `${SITE_URL}/#website` }, about: { "@id": `${SITE_URL}/#organization` } },
     ],
   };
@@ -62,14 +63,14 @@ export default function AboutPage() {
         </div>
         <div className="about-card-grid about-card-grid-duo">
           <div className="about-card">
-            <img className="about-card-image" src="/about/betrieb-support.webp" alt="Mann schaut lächelnd von seinem Smartphone auf" width="720" height="450" loading="lazy" />
+            <img className="about-card-image" src={staticAsset("/about/betrieb-support.webp")} alt="Mann schaut lächelnd von seinem Smartphone auf" width="720" height="450" loading="lazy" />
             <p className="kicker">Betrieb &amp; Support</p>
             <h3>Verlässlich betreut von ICONY</h3>
             <p>Die ICONY GmbH betreibt Er-sucht-Ihn.de und kümmert sich um Support, Technik und Weiterentwicklung – mit Servern in Deutschland.</p>
             <a className="about-card-link" href={platform.legal}>Zum Impressum</a>
           </div>
           <div className="about-card">
-            <img className="about-card-image" src="/about/magazin-redaktion.webp" alt="Zwei Männer unterhalten sich lachend bei einem Kaffee" width="720" height="450" loading="lazy" />
+            <img className="about-card-image" src={staticAsset("/about/magazin-redaktion.webp")} alt="Zwei Männer unterhalten sich lachend bei einem Kaffee" width="720" height="450" loading="lazy" />
             <p className="kicker">Magazin &amp; Redaktion</p>
             <h3>Wissen rund um schwules Dating</h3>
             <p>Unsere Redaktion schreibt über Dating, Beziehungen und Community-Themen – verständlich und nah an dem, was schwule Singles bewegt.</p>
@@ -93,7 +94,7 @@ export default function AboutPage() {
         </div>
         <div className="about-section-actions">
           <Link className="button button-pink" href={ABOUT_REVIEWS_PATH}>Alle Bewertungen &amp; Erfahrungen</Link>
-          <img src="/trust/empfohlen-45-sterne.png" alt="Empfohlen von Singlebörsen-Überblick.de – 4,5 Sterne" width="300" height="60" />
+          <img src={staticAsset("/trust/empfohlen-45-sterne.png")} alt="Empfohlen von Singlebörsen-Überblick.de – 4,5 Sterne" width="300" height="60" />
         </div>
       </section>
 

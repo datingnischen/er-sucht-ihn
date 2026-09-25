@@ -10,6 +10,7 @@ import {
   relatedMagazineEntries,
 } from "@/lib/magazine";
 import { registrationUrl } from "@/lib/site";
+import { staticAsset } from "@/lib/static-asset.mjs";
 
 export const dynamicParams = false;
 
@@ -91,7 +92,7 @@ export default async function MagazineDetailPage({ params }: Props) {
                 <a className="button button-green" href={registrationUrl(path)}>Kostenlos registrieren</a>
               </div>
               <a className="magazine-radar-card" href={registrationUrl(path)}>
-                <img src="/brand/umkreissuche-radar.svg" alt="Umkreissuche: Männer in Deiner Nähe – kostenlos anmelden" width={320} height={480} loading="lazy" decoding="async" />
+                <img src={staticAsset("/brand/umkreissuche-radar.svg")} alt="Umkreissuche: Männer in Deiner Nähe – kostenlos anmelden" width={320} height={480} loading="lazy" decoding="async" />
               </a>
             </aside>
           </div>

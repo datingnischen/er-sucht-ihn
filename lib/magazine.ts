@@ -1,5 +1,6 @@
 import catalog from "@/data/magazine.json";
 import retiredLexicon from "@/data/magazine-lexikon.json";
+import { absolutizeAssetUrls, staticAsset } from "./static-asset.mjs";
 
 export type MagazineEntry = {
   id: number;
@@ -34,8 +35,15 @@ export type MagazineAuthor = { id: number; name: string; slug: string; descripti
 type MagazineAsset = { localPath: string; legacyPaths: string[] };
 
 // The former /lexikon articles live on as magazine posts outside the WordPress snapshot.
-export const magazineEntries = [...catalog.entries, ...retiredLexicon.entries] as MagazineEntry[];
-export const magazineAttachments = catalog.attachments as MagazineAttachment[];
+// Medien kommen vom Asset-Host, weil der nginx vor der Live-Domain nur Seitenrouten durchreicht.
+export const magazineEntries = ([...catalog.entries, ...retiredLexicon.entries] as MagazineEntry[]).map((entry) => ({
+  ...entry,
+  featuredImage: entry.featuredImage ? staticAsset(entry.featuredImage) : entry.featuredImage,
+  contentHtml: absolutizeAssetUrls(entry.contentHtml),
+}));
+export const magazineAttachments = (catalog.attachments as MagazineAttachment[]).map((attachment) =>
+  attachment.targetType === "asset" ? { ...attachment, target: staticAsset(attachment.target) } : attachment,
+);
 export const magazinePosts = magazineEntries
   .filter((entry) => entry.type === "post")
   .sort((a, b) => b.date.localeCompare(a.date));
@@ -51,7 +59,7 @@ const attachmentByPath = new Map(magazineAttachments.map((attachment) => [attach
 const categoryBySlug = new Map(magazineCategories.map((category) => [category.slug, category]));
 const authorBySlug = new Map(magazineAuthors.map((author) => [author.slug, author]));
 const legacyAssetByPath = new Map(
-  magazineAssets.flatMap((asset) => asset.legacyPaths.map((path) => [safeDecodePath(path), asset.localPath] as const)),
+  magazineAssets.flatMap((asset) => asset.legacyPaths.map((path) => [safeDecodePath(path), staticAsset(asset.localPath)] as const)),
 );
 
 const germanDate = new Intl.DateTimeFormat("de-DE", { day: "2-digit", month: "long", year: "numeric" });

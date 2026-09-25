@@ -8,8 +8,9 @@ import { getImportedPage } from "@/lib/content";
 import { buildPageEntityGraph, serializePageEntityGraph } from "@/lib/page-entities.mjs";
 import { registrationUrl } from "@/lib/site";
 import { socialChannels } from "@/lib/social-channels";
+import { staticAsset } from "@/lib/static-asset.mjs";
 
-const heroImage = { src: "/about/betrieb-support.webp", alt: "Mann schaut lächelnd von seinem Smartphone auf" };
+const heroImage = { src: staticAsset("/about/betrieb-support.webp"), alt: "Mann schaut lächelnd von seinem Smartphone auf" };
 const channels = socialChannels.filter((channel) => channel.profile);
 const community = socialChannels.find((channel) => !channel.profile);
 
