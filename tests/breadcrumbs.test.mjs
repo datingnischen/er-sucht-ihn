@@ -37,9 +37,9 @@ test("breadcrumb structured data uses canonical absolute item URLs", () => {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Start", item: "https://er-sucht-ihn.de/" },
-      { "@type": "ListItem", position: 2, name: "Partnersuche", item: "https://er-sucht-ihn.de/partnersuche" },
-      { "@type": "ListItem", position: 3, name: "Bayern", item: "https://er-sucht-ihn.de/partnersuche/bayern" },
-      { "@type": "ListItem", position: 4, name: "München", item: "https://er-sucht-ihn.de/partnersuche/bayern/muenchen" },
+      { "@type": "ListItem", position: 2, name: "Partnersuche", item: "https://er-sucht-ihn.de/partnersuche/" },
+      { "@type": "ListItem", position: 3, name: "Bayern", item: "https://er-sucht-ihn.de/partnersuche/bayern/" },
+      { "@type": "ListItem", position: 4, name: "München", item: "https://er-sucht-ihn.de/partnersuche/bayern/muenchen/" },
     ],
   });
 });

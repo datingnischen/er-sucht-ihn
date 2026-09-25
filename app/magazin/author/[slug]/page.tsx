@@ -10,7 +10,7 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const author = getMagazineAuthor((await params).slug);
   if (!author) return { robots: { index: false, follow: false } };
-  return { title: `Beiträge von ${author.name}`, description: author.description || `Öffentliche Magazinbeiträge von ${author.name}.`, alternates: { canonical: `https://er-sucht-ihn.de/magazin/author/${author.slug}` }, robots: { index: false, follow: true } };
+  return { title: `Beiträge von ${author.name}`, description: author.description || `Öffentliche Magazinbeiträge von ${author.name}.`, alternates: { canonical: `https://er-sucht-ihn.de/magazin/author/${author.slug}/` }, robots: { index: false, follow: true } };
 }
 
 export default async function AuthorPage({ params }: Props) {

@@ -100,5 +100,5 @@ export const platform = {
   safety: `${LIVE}/sicherheit-und-datenschutz.html`,
   editorialControl: `${LIVE}/redaktionelle-kontrolle.html`,
   basicMembership: `${LIVE}/kostenlose-basis-mitgliedschaft.html`,
-  datingTips: `${LIVE}/dating-tipps`,
+  datingTips: `${LIVE}/dating-tipps/`,
 };

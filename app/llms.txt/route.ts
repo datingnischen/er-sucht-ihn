@@ -10,8 +10,8 @@ Language: de-DE
 
 ## Öffentliche Inhaltsbereiche
 
-- [Partnersuche in Deutschland](https://er-sucht-ihn.de/partnersuche): Regionale Einstiege und deutsche Städte.
-- [Magazin](https://er-sucht-ihn.de/magazin): Artikel über Gay-Dating, Beziehungen, Coming-out und schwules Leben.
+- [Partnersuche in Deutschland](https://er-sucht-ihn.de/partnersuche/): Regionale Einstiege und deutsche Städte.
+- [Magazin](https://er-sucht-ihn.de/magazin/): Artikel über Gay-Dating, Beziehungen, Coming-out und schwules Leben.
 
 ## Plattformgrenze
 

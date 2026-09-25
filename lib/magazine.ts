@@ -1,6 +1,7 @@
 import catalog from "@/data/magazine.json";
 import retiredLexicon from "@/data/magazine-lexikon.json";
 import { absolutizeAssetUrls, staticAsset } from "./static-asset.mjs";
+import { slashInternalLinks, withTrailingSlash } from "./site-contract.mjs";
 
 export type MagazineEntry = {
   id: number;
@@ -36,13 +37,17 @@ type MagazineAsset = { localPath: string; legacyPaths: string[] };
 
 // The former /lexikon articles live on as magazine posts outside the WordPress snapshot.
 // Medien kommen vom Asset-Host, weil der nginx vor der Live-Domain nur Seitenrouten durchreicht.
+// Seiten-URLs (Canonical, interne Links) enden auf "/" wie die ICONY-Plattform; der Snapshot bleibt unverändert.
 export const magazineEntries = ([...catalog.entries, ...retiredLexicon.entries] as MagazineEntry[]).map((entry) => ({
   ...entry,
+  canonical: withTrailingSlash(entry.canonical),
   featuredImage: entry.featuredImage ? staticAsset(entry.featuredImage) : entry.featuredImage,
-  contentHtml: absolutizeAssetUrls(entry.contentHtml),
+  contentHtml: absolutizeAssetUrls(slashInternalLinks(entry.contentHtml)),
 }));
 export const magazineAttachments = (catalog.attachments as MagazineAttachment[]).map((attachment) =>
-  attachment.targetType === "asset" ? { ...attachment, target: staticAsset(attachment.target) } : attachment,
+  attachment.targetType === "asset"
+    ? { ...attachment, target: staticAsset(attachment.target) }
+    : { ...attachment, target: withTrailingSlash(attachment.target) },
 );
 export const magazinePosts = magazineEntries
   .filter((entry) => entry.type === "post")

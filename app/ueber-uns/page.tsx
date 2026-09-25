@@ -4,11 +4,12 @@ import { ABOUT_REVIEWS_PATH, ABOUT_ROOT_PATH, ABOUT_SOCIAL_PATH } from "@/lib/ab
 import { buildBreadcrumbs, buildBreadcrumbSchema } from "@/lib/breadcrumbs.mjs";
 import { serializePageEntityGraph } from "@/lib/page-entities.mjs";
 import { platform, registrationUrl, SITE_URL } from "@/lib/site";
+import { publicUrl } from "@/lib/site-contract.mjs";
 import { socialChannels, socialProfileUrls } from "@/lib/social-channels";
 import { staticAsset } from "@/lib/static-asset.mjs";
 import { SocialIcon } from "@/components/social-icon";
 
-const canonical = `${SITE_URL}${ABOUT_ROOT_PATH}`;
+const canonical = publicUrl(ABOUT_ROOT_PATH);
 const title = "Über uns: Wer hinter Er-sucht-Ihn.de steht";
 const description = "Lerne die Plattform hinter Er-sucht-Ihn.de kennen: Betreiber, Redaktion, Bewertungen, Erfahrungen und unsere Social-Media-Kanäle.";
 

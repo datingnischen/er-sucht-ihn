@@ -1,7 +1,7 @@
 import catalog from "@/data/pages.json";
 import { normalizeImportedPath } from "./imported-path.mjs";
 import { aboutPathForImportedPath } from "./about-pages.mjs";
-import { classifyPath, SITE_URL } from "./site-contract.mjs";
+import { classifyPath, publicUrl, slashInternalLinks, withTrailingSlash } from "./site-contract.mjs";
 import { absolutizeAssetUrls, staticAsset } from "./static-asset.mjs";
 
 export type ImportedPage = {
@@ -20,7 +20,7 @@ export type ImportedPage = {
 
 function withAboutPath(page: ImportedPage): ImportedPage {
   const path = aboutPathForImportedPath(page.path);
-  return path === page.path ? page : { ...page, path, canonical: `${SITE_URL}${path}` };
+  return path === page.path ? page : { ...page, path, canonical: publicUrl(path) };
 }
 
 // Pages that ICONY still serves on the live domain are never rendered here.
@@ -41,6 +41,11 @@ function withMetaOverride(page: ImportedPage): ImportedPage {
   return override ? { ...page, ...override } : page;
 }
 
+// Seiten-URLs enden auf "/" wie die ICONY-Plattform; der Import-Snapshot bleibt unverändert.
+function withTrailingSlashUrls(page: ImportedPage): ImportedPage {
+  return { ...page, canonical: withTrailingSlash(page.canonical), contentHtml: slashInternalLinks(page.contentHtml) };
+}
+
 // Importierte Medien liegen in public/magazine/media und kommen vom Asset-Host (nginx reicht nur Seitenrouten durch).
 function withAbsoluteAssets(page: ImportedPage): ImportedPage {
   return {
@@ -50,7 +55,7 @@ function withAbsoluteAssets(page: ImportedPage): ImportedPage {
   };
 }
 
-const pages = (catalog.pages as ImportedPage[]).map(withAboutPath).map(withPlatformType).map(withMetaOverride).map(withAbsoluteAssets);
+const pages = (catalog.pages as ImportedPage[]).map(withAboutPath).map(withPlatformType).map(withMetaOverride).map(withTrailingSlashUrls).map(withAbsoluteAssets);
 const pageMap = new Map(pages.map((page) => [page.path, page]));
 
 export const publicPages = pages.filter((page) => page.type !== "platform" && page.type !== "magazine");

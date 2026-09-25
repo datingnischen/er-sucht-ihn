@@ -5,10 +5,10 @@ import { magazinePages, magazinePosts, magazineUpdatedDate, magazineUpdatedLabel
 export const metadata: Metadata = {
   title: "Magazin für schwule Männer – Dating, Liebe & schwules Leben",
   description: "Artikel über Gay-Dating, Beziehungen, Coming-out und das Leben als schwuler Mann.",
-  alternates: { canonical: "https://er-sucht-ihn.de/magazin" },
+  alternates: { canonical: "https://er-sucht-ihn.de/magazin/" },
   openGraph: {
     type: "website",
-    url: "https://er-sucht-ihn.de/magazin",
+    url: "https://er-sucht-ihn.de/magazin/",
     title: "Das Er-sucht-Ihn Magazin",
     description: "Artikel über Gay-Dating, Beziehungen, Coming-out und schwules Leben.",
   },

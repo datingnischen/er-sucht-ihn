@@ -32,8 +32,8 @@ test("no public page or magazine entry links to the retired lexicon", () => {
 
 test("lexicon URLs redirect permanently into the magazine and leave the navigation", async () => {
   const config = await read("../next.config.ts");
-  assert.match(config, /\{ source: "\/lexikon", destination: "\/magazin", permanent: true \}/);
-  assert.match(config, /\{ source: "\/lexikon\/:slug", destination: "\/magazin\/:slug", permanent: true \}/);
+  assert.match(config, /\{ source: "\/lexikon", destination: "\/magazin\/", permanent: true \}/);
+  assert.match(config, /\{ source: "\/lexikon\/:slug", destination: "\/magazin\/:slug\/", permanent: true \}/);
   const shell = await read("../components/site-shell.tsx");
   const llms = await read("../app/llms.txt/route.ts");
   assert.doesNotMatch(shell + llms, /Lexikon|\/lexikon/);

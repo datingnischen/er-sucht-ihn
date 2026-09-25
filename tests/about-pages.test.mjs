@@ -19,8 +19,8 @@ test("every moved about page exists in the imported catalog", () => {
 });
 
 test("legacy about URLs redirect permanently to the nested pages", () => {
-  assert.deepEqual(aboutRedirects.find((item) => item.source === "/bewertungen-und-erfahrungen"), { source: "/bewertungen-und-erfahrungen", destination: ABOUT_REVIEWS_PATH, permanent: true });
-  assert.deepEqual(aboutRedirects.find((item) => item.source === "/social-media"), { source: "/social-media", destination: ABOUT_SOCIAL_PATH, permanent: true });
+  assert.deepEqual(aboutRedirects.find((item) => item.source === "/bewertungen-und-erfahrungen"), { source: "/bewertungen-und-erfahrungen", destination: `${ABOUT_REVIEWS_PATH}/`, permanent: true });
+  assert.deepEqual(aboutRedirects.find((item) => item.source === "/social-media"), { source: "/social-media", destination: `${ABOUT_SOCIAL_PATH}/`, permanent: true });
 });
 
 test("about breadcrumbs name the parent area", () => {
