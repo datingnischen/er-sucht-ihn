@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { platform, registrationUrl } from "@/lib/site";
-import { ABOUT_REVIEWS_PATH, ABOUT_ROOT_PATH, ABOUT_SOCIAL_PATH } from "@/lib/about-pages.mjs";
+import { ABOUT_REVIEWS_PATH, ABOUT_ROOT_PATH, ABOUT_SEARCH_PATH, ABOUT_SOCIAL_PATH } from "@/lib/about-pages.mjs";
+import { withTrailingSlash } from "@/lib/site-contract.mjs";
 import { staticAsset } from "@/lib/static-asset.mjs";
 
 const nav = [
@@ -24,6 +25,9 @@ export function Header() {
           {nav.map(([label, href]) => href.startsWith("http") ? <a href={href} key={label}>{label}</a> : <Link href={href} key={label}>{label}</Link>)}
         </nav>
         <div className="header-actions">
+          <Link className="header-search" href={withTrailingSlash(ABOUT_SEARCH_PATH)} aria-label="Seite durchsuchen" title="Suche">
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" strokeWidth="2.2" /><path d="m20 20-3.6-3.6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /></svg>
+          </Link>
           <a className="login" href={platform.login}>Login</a>
           <a className="button button-green button-compact" href={registrationUrl(pathname)}>Registrieren</a>
         </div>

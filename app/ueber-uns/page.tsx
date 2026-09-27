@@ -8,6 +8,7 @@ import { publicUrl } from "@/lib/site-contract.mjs";
 import { socialChannels, socialProfileUrls } from "@/lib/social-channels";
 import { staticAsset } from "@/lib/static-asset.mjs";
 import { SocialIcon } from "@/components/social-icon";
+import { SiteSearchForm } from "@/components/site-search-form";
 
 const canonical = publicUrl(ABOUT_ROOT_PATH);
 const title = "Über uns: Wer hinter Er-sucht-Ihn.de steht";
@@ -54,6 +55,10 @@ export default function AboutPage() {
           <li><a href="#bewertungen">Bewertungen &amp; Erfahrungen</a></li>
           <li><a href="#social-media">Social Media</a></li>
         </ul>
+        <div className="about-search">
+          <p className="about-search-label">Du suchst etwas Bestimmtes? Durchsuche Magazin, Städteseiten und Ratgeber.</p>
+          <SiteSearchForm label="Magazin, Städte und Ratgeber durchsuchen" />
+        </div>
       </header>
 
       <section className="about-section" id="wer-wir-sind" aria-labelledby="wer-wir-sind-title">
