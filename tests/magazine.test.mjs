@@ -15,7 +15,7 @@ test("magazine landing copy speaks directly to gay men without AI filler", async
   const importer = await readFile(new URL("../scripts/import_magazine.py", import.meta.url), "utf8");
   const publicCopy = `${landing}\n${homepage}\n${importer}`;
   assert.doesNotMatch(publicCopy, /hilfreiche Einordnungen|neue Perspektiven|für Deine Orientierung|Wissen, Orientierung und Anregungen/i);
-  assert.match(landing, /Dating, Liebe und schwules Leben/);
+  assert.match(landing, /Dating, Liebe und (?:<em>)?schwules Leben/);
   assert.match(landing, /Leben als schwuler Mann/);
   assert.match(landing, /Gay-Dating, Beziehungen und Coming-out/);
   assert.match(homepage, /Dating, Liebe und (?:<em>)?schwules Leben/);

@@ -79,6 +79,21 @@ export function magazineUpdatedLabel(entry: Pick<MagazineEntry, "date" | "modifi
   return value ? `Aktualisiert am ${germanDate.format(new Date(value))}` : "";
 }
 
+/** Sichtbares Artikeldatum: Änderungsdatum, Fallback auf das Veröffentlichungsdatum. Seiten zeigen kein Datum. */
+export function articleUpdatedDate(entry: Pick<MagazineEntry, "date" | "modified">): string {
+  return entry.modified || entry.date;
+}
+
+/** Beiträge nach Erscheinungsjahr, neuestes Jahr zuerst (innerhalb des Jahres bleiben die neuesten vorn). */
+export function magazinePostsByYear() {
+  const years = new Map<string, MagazineEntry[]>();
+  for (const entry of magazinePosts) {
+    const year = entry.date.slice(0, 4);
+    years.set(year, [...(years.get(year) ?? []), entry]);
+  }
+  return [...years].map(([year, posts]) => ({ year, posts }));
+}
+
 export function getMagazineEntry(path: string) {
   return entryByPath.get(normalizeMagazinePath(path));
 }

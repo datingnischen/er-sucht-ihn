@@ -8,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const editorial = publicPages.map((page) => ({ url: page.canonical, changeFrequency: page.path === "/" ? "weekly" as const : "monthly" as const, priority: page.path === "/" ? 1 : page.type === "location" ? 0.8 : 0.65 }));
   const magazine = [
     { url: "https://er-sucht-ihn.de/magazin/", changeFrequency: "weekly" as const, priority: 0.85 },
+    { url: "https://er-sucht-ihn.de/magazin/archiv/", changeFrequency: "weekly" as const, priority: 0.6 },
     ...magazineEntries.map((entry) => ({ url: entry.canonical, lastModified: entry.modified, changeFrequency: "monthly" as const, priority: entry.type === "post" ? 0.7 : 0.65 })),
   ];
   const about = { url: publicUrl(ABOUT_ROOT_PATH), changeFrequency: "monthly" as const, priority: 0.6 };
