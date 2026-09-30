@@ -17,10 +17,14 @@ test("regional breadcrumb names preserve German spelling", () => {
 });
 
 test("breadcrumb presentation is semantic, keyboard visible and mobile safe", async () => {
-  const pageSource = await import("node:fs").then(({ readFileSync }) => readFileSync(new URL("../app/[...slug]/page.tsx", import.meta.url), "utf8"));
-  const css = await import("node:fs").then(({ readFileSync }) => readFileSync(new URL("../app/globals.css", import.meta.url), "utf8"));
-  assert.match(pageSource, /<nav className="breadcrumbs" aria-label="Breadcrumb"><ol>/);
-  assert.match(pageSource, /aria-current="page"/);
+  const read = (path) => import("node:fs").then(({ readFileSync }) => readFileSync(new URL(path, import.meta.url), "utf8"));
+  const component = await read("../components/breadcrumbs.tsx");
+  const css = await read("../app/globals.css");
+  assert.match(component, /<nav className=\{`breadcrumbs \$\{className\}`\.trim\(\)\} aria-label="Breadcrumb"><ol>/);
+  assert.match(component, /aria-current="page"/);
+  for (const template of ["../app/[...slug]/page.tsx", "../components/location/location-city-page.tsx", "../components/location/location-hub-page.tsx", "../components/editorial/content-page.tsx"]) {
+    assert.doesNotMatch(await read(template), /<nav className="breadcrumbs"/, `${template} renders breadcrumbs through the component`);
+  }
   assert.match(css, /\.breadcrumbs ol\s*\{[^}]*display:flex[^}]*flex-wrap:wrap/i);
   assert.match(css, /\.breadcrumbs a:focus-visible\s*\{[^}]*outline:/i);
 });

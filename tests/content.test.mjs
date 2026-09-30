@@ -46,9 +46,11 @@ test("every city page has its own validated ICONY men widget", async () => {
     assert.match(page.widgetUrl, /^https:\/\/js\.icony\.com\/frame\/\?h=300&id=ersuchtihn&pc=3c89b1&z=\d{5}&ds=&ctr=49&it=1$/, page.path);
   }
   assert.equal(new Set(cityPages.map((page) => new URL(page.widgetUrl).searchParams.get("z"))).size, 38);
-  const renderer = await readFile(new URL("../app/[...slug]/page.tsx", import.meta.url), "utf8");
-  assert.match(renderer, /Single-Männer aus \{locationName\(path\)\} und Umgebung/);
-  assert.match(renderer, /src=\{page\.widgetUrl\}/);
+  const renderer = await readFile(new URL("../components/location/location-city-page.tsx", import.meta.url), "utf8");
+  const widget = await readFile(new URL("../components/location/icony-men-widget.tsx", import.meta.url), "utf8");
+  assert.match(renderer, /page\.widgetUrl \? \([\s\S]*<IconyMenWidget city=\{cityName\} widgetUrl=\{page\.widgetUrl\}/);
+  assert.match(widget, /Single-Männer aus \{city\} <em>und Umgebung<\/em>/);
+  assert.match(widget, /<iframe className="sc-widget-frame" src=\{widgetUrl\}/);
 });
 
 test("imported HTML allows no active or privacy-leaking URLs", () => {

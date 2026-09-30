@@ -41,18 +41,18 @@ test("city search URL creation fails closed for malformed configured postcodes",
   );
 });
 
-test("the city-search CTA renders beside the widget only for location details", async () => {
-  const [renderer, css] = await Promise.all([
+test("the city-search CTA renders beside the widget and in the CTA band of every city page", async () => {
+  const [route, renderer, widget] = await Promise.all([
     readFile(new URL("../app/[...slug]/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../components/location/location-city-page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/location/icony-men-widget.tsx", import.meta.url), "utf8"),
   ]);
+  assert.match(route, /page\.type === "location" \? <LocationCityPage/);
   assert.match(renderer, /import \{[^}]*citySearchUrl[^}]*\} from "@\/lib\/site"/);
-  assert.match(renderer, /const isLocationDetail = page\.type === "location" && path !== "\/partnersuche"/);
-  assert.match(
-    renderer,
-    /isLocationDetail && page\.widgetUrl[\s\S]*href=\{citySearchUrl\(path\)\}[\s\S]*Ausführlicher in \{locationName\(path\)\} suchen[\s\S]*<\/section>/,
-  );
   assert.equal(renderer.match(/citySearchUrl\(path\)/g)?.length, 1);
-  assert.equal(renderer.match(/href=\{registrationUrl\(path\)\}/g)?.length, 3);
-  assert.match(css, /\.city-singles-widget-action \.button\s*\+\s*\.button\s*\{[^}]*margin-top:/);
+  assert.match(renderer, /<IconyMenWidget city=\{cityName\} widgetUrl=\{page\.widgetUrl\} searchUrl=\{searchUrl\} \/>/);
+  assert.match(renderer, /href=\{searchUrl\}><SearchIcon \/>Männer in \{cityName\} suchen/);
+  assert.ok((renderer.match(/href=\{signupUrl\}/g)?.length ?? 0) >= 3);
+  assert.match(widget, /href=\{searchUrl\}><SearchIcon \/>Ausführlicher in \{city\} suchen/);
+  assert.doesNotMatch(renderer + widget, /https:\/\/er-sucht-ihn\.de\/suche/);
 });

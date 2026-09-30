@@ -1,23 +1,21 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ABOUT_SOCIAL_PATH } from "@/lib/about-pages.mjs";
-import { getFamilyPages, getImportedPage, normalizePublicPath, publicPages } from "@/lib/content";
+import { getImportedPage, normalizePublicPath, publicPages } from "@/lib/content";
 import { removeHeroImageFromContent, selectHeroImage } from "@/lib/hero-image.mjs";
 import { buildFaqMainEntity, extractFaq } from "@/lib/faq.mjs";
-import { FaqSection } from "@/components/faq-section";
-import { citySearchUrl, locationName, registrationUrl } from "@/lib/site";
-import { CityCardSection } from "@/components/city-card-section";
 import { removeLegacyCityLists } from "@/lib/location-hub.mjs";
 import { buildBreadcrumbs, buildBreadcrumbSchema } from "@/lib/breadcrumbs.mjs";
-import { buildRelatedCards } from "@/lib/related-cards.mjs";
-import { RelatedCardSection } from "@/components/related-card-section";
 import { buildPageEntityGraph, serializePageEntityGraph } from "@/lib/page-entities.mjs";
+import { LocationHubPage } from "@/components/location/location-hub-page";
+import { LocationCityPage } from "@/components/location/location-city-page";
+import { ContentPage } from "@/components/editorial/content-page";
 
 type Props = { params: Promise<{ slug: string[] }> };
 
 // Paths with their own route under app/ instead of the imported-page template.
 const dedicatedRoutes = new Set([ABOUT_SOCIAL_PATH]);
+const HUB_PATH = "/partnersuche";
 
 export function generateStaticParams() {
   return publicPages.filter((page) => page.path !== "/" && !dedicatedRoutes.has(page.path)).map((page) => ({ slug: page.path.slice(1).split("/") }));
@@ -30,44 +28,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: page.title, description: page.description, alternates: { canonical: page.canonical }, openGraph: { title: page.title, description: page.description, url: page.canonical, images: selectHeroImage(page.images)?.src ? [selectHeroImage(page.images).src] : undefined } };
 }
 
+/**
+ * Verteilt die importierten ICONY-Seiten auf drei Vorlagen:
+ * Städteübersicht (/partnersuche), Stadtseiten und Inhaltsseiten (FAQ, Bewertungen, Ratgeber).
+ */
 export default async function ImportedPageView({ params }: Props) {
   const { slug } = await params;
   const path = normalizePublicPath(slug);
   const page = getImportedPage(path);
   if (!page || page.type === "platform" || page.type === "magazine") notFound();
-  const isLocationDetail = page.type === "location" && path !== "/partnersuche";
-  const root = path.split("/")[1];
+  const isHub = path === HUB_PATH;
   const image = selectHeroImage(page.images);
-  const locationHubRoot = root === "partnersuche" && path === "/partnersuche" ? "partnersuche" : null;
-  const related = !locationHubRoot && root === "partnersuche" ? getFamilyPages(root).filter((item) => item.path !== path).slice(0, 6) : [];
-  const relatedCards = page.type === "location" && !locationHubRoot ? buildRelatedCards(publicPages, path, root) : [];
-  const contentHtml = removeHeroImageFromContent(locationHubRoot ? removeLegacyCityLists(page.contentHtml, locationHubRoot, page.h1) : page.contentHtml, image);
+  const contentHtml = removeHeroImageFromContent(isHub ? removeLegacyCityLists(page.contentHtml, "partnersuche", page.h1) : page.contentHtml, image);
   const faq = extractFaq(contentHtml);
   const breadcrumbName = page.type === "location" ? undefined : page.h1;
   const breadcrumbs = buildBreadcrumbs(path, breadcrumbName);
-  const breadcrumbSchema = buildBreadcrumbSchema(path, breadcrumbName);
-  const pageEntityGraph = buildPageEntityGraph(page, { faqEntities: faq ? buildFaqMainEntity(faq.groups) : [] });
-  return <main className="wrap page-shell">
-    <article className="article-card">
-      <nav className="breadcrumbs" aria-label="Breadcrumb"><ol>{breadcrumbs.map((item, index) => <li key={item.path}>{index < breadcrumbs.length - 1 ? <Link href={item.path}>{item.name}</Link> : <span aria-current="page">{item.name}</span>}</li>)}</ol></nav>
-      <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializePageEntityGraph(pageEntityGraph) }} />
-      <div className="article-hero"><div><p className="kicker">{page.type === "location" ? "Regional kennenlernen" : "Gut informiert"}</p><h1>{page.h1}</h1><p className="lead">{page.description}</p><a className="button button-green" href={registrationUrl(path)}>Jetzt kostenlos starten</a></div>{image ? <img src={image.src} alt={image.alt || page.h1} /> : null}</div>
-      {isLocationDetail && page.widgetUrl ? <section className="city-singles-widget" aria-labelledby="single-maenner-widget">
-        <div className="city-singles-widget-heading"><div><p className="kicker">Gerade aktiv</p><h2 id="single-maenner-widget">Single-Männer aus {locationName(path)} und Umgebung</h2></div><p>Sieh, welche Männer zuletzt bei Er-sucht-Ihn aktiv waren, und öffne ein Profil, das Dich neugierig macht.</p></div>
-        <div className="city-singles-widget-body">
-          <iframe src={page.widgetUrl} title={`Single-Männer aus ${locationName(path)} und Umgebung`} loading="lazy" referrerPolicy="no-referrer" />
-          <div className="city-singles-widget-action"><h3>Du möchtest einen Mann kennenlernen?</h3><p>Erstelle kostenlos Dein Profil und schreib Männer an, die zu Dir passen.</p><a className="button button-green" href={registrationUrl(path)}>Kostenlos Männer kennenlernen</a><a className="button button-outline" href={citySearchUrl(path)}>Ausführlicher in {locationName(path)} suchen</a></div>
-        </div>
-      </section> : null}
-      {locationHubRoot ? <CityCardSection pages={publicPages} root={locationHubRoot} /> : null}
-      {faq ? <>
-        <div className="rich-content" dangerouslySetInnerHTML={{ __html: faq.beforeHtml }} />
-        <FaqSection groups={faq.groups} registrationHref={registrationUrl(path)} />
-        <div className="rich-content" dangerouslySetInnerHTML={{ __html: faq.afterHtml }} />
-      </> : <div className="rich-content" dangerouslySetInnerHTML={{ __html: contentHtml }} />}
-      <aside className="inline-cta"><h2>Bereit für Deinen ersten Kontakt?</h2><p>Erstelle kostenlos Dein Profil und entdecke Männer, die ähnliche Wünsche und Werte mitbringen.</p><a className="button button-green" href={registrationUrl(path)}>Kostenlos registrieren</a></aside>
-    </article>
-    {relatedCards.length ? <RelatedCardSection cards={relatedCards} /> : related.length ? <aside className="related"><p className="kicker">Weiter entdecken</p><h2>Weitere passende Einstiege</h2><div className="related-grid">{related.map((item) => <Link href={item.path} key={item.path}><strong>{item.h1}</strong><span>Mehr erfahren →</span></Link>)}</div></aside> : null}
-  </main>;
+  const pageEntityGraph = buildPageEntityGraph(page, { faqEntities: faq ? buildFaqMainEntity(faq.groups) : [], breadcrumb: buildBreadcrumbSchema(path, breadcrumbName) });
+  const view = { page, path, image, contentHtml, faq, breadcrumbs };
+  return <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializePageEntityGraph(pageEntityGraph) }} />
+    {isHub ? <LocationHubPage {...view} />
+      : page.type === "location" ? <LocationCityPage {...view} />
+      : <ContentPage {...view} />}
+  </>;
 }
