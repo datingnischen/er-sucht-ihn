@@ -1,0 +1,366 @@
+/*
+ * Er-sucht-Ihn.de – Designsystem „Dusk“
+ * Farbwelt aus dem Verlauf Türkis → Azur → Indigo → Violett (Pride-Flagge schwuler Männer),
+ * tiefes Nachtblau als Gegengewicht, kühles Eisblau als Seitengrund. Überschriften in Fraunces.
+ * Wird nach globals.css geladen und überschreibt dessen Grundwerte.
+ */
+:root {
+  --ink: #101a2e;
+  --muted: #5a6478;
+  --paper: #fff;
+  --bg: #f4f8fc;
+  --bg-2: #eaf1f9;
+  --line: #d8e3ef;
+  --dark: #101a2e;
+
+  --pink: #3d88b0;
+  --pink-dark: #2a6f97;
+  --pink-soft: #e8f3fa;
+  --green: #2a6f97;
+  --green-dark: #1f4e79;
+
+  --navy: #14284b;
+  --navy-deep: #0b1730;
+  --ocean: #1b5e8f;
+  --azure: #2f8fd8;
+  --teal: #2ec4b6;
+  --mint: #d9f4ef;
+  --lilac: #a99cf0;
+  --lavender: #efeaff;
+  --violet: #6f5bd6;
+
+  --dusk: linear-gradient(115deg, #2ec4b6 0%, #2f8fd8 38%, #4f63e6 64%, #7b4fd0 100%);
+  --cta: linear-gradient(135deg, #2f8fd8 0%, #4f63e6 100%);
+  --cta-shadow: 0 12px 26px rgba(47, 143, 216, .30);
+  --display: var(--font-display), "Fraunces", Georgia, "Times New Roman", serif;
+  --radius: 26px;
+  --radius-sm: 16px;
+  --shadow: 0 18px 48px rgba(20, 40, 75, .09);
+  --shadow-lift: 0 24px 56px rgba(20, 40, 75, .16);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+h1, h2, h3,
+.display {
+  font-family: var(--display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 60;
+  font-weight: 650;
+  letter-spacing: -.018em;
+  color: var(--ink);
+}
+h1 { font-weight: 700; letter-spacing: -.028em; }
+h1 em, h2 em, h3 em, .display em {
+  font-style: italic;
+  font-weight: 600;
+  font-variation-settings: "SOFT" 100;
+  background: var(--dusk);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-right: .06em;
+}
+
+::selection { background: #cfe6fa; color: var(--navy-deep); }
+:focus-visible { outline: 3px solid var(--azure); outline-offset: 3px; }
+
+.kicker {
+  color: var(--ocean);
+  font-family: "Open Sans", Arial, sans-serif;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+/* Buttons: Primär ist der Dusk-Verlauf. button-green bleibt als Klassenname, weil viele Seiten ihn nutzen. */
+.button {
+  min-height: 50px;
+  padding: 0 26px;
+  border-radius: 999px;
+  border: 0;
+  font-weight: 800;
+  letter-spacing: .005em;
+  box-shadow: none;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease, background-position .4s ease, color .2s ease, border-color .2s ease;
+}
+.button:hover { transform: translateY(-2px); }
+.button-compact { min-height: 42px; padding-inline: 20px; }
+.button-green,
+.button-pink {
+  background: var(--cta);
+  background-size: 140% 100%;
+  color: #fff;
+  box-shadow: var(--cta-shadow);
+}
+.button-green:hover,
+.button-pink:hover { background-position: 100% 0; box-shadow: 0 16px 32px rgba(47, 143, 216, .38); color: #fff; }
+.button-outline {
+  background: #fff;
+  border: 1.5px solid #bfd6ea;
+  color: var(--navy);
+}
+.button-outline:hover { border-color: var(--azure); color: var(--ocean); }
+.button-ghost-light {
+  background: rgba(255, 255, 255, .08);
+  border: 1.5px solid rgba(255, 255, 255, .45);
+  color: #fff;
+}
+.button-ghost-light:hover { background: rgba(255, 255, 255, .16); border-color: #fff; color: #fff; }
+.text-link { color: var(--ocean); font-weight: 800; }
+
+/* Streifen der Pride-Flagge schwuler Männer (Grün/Türkis, Weiß, Blau/Violett) */
+.pride-stripe { display: flex; height: 5px; width: 100%; }
+.pride-stripe i { flex: 1; }
+.pride-stripe i:nth-child(1) { background: #078d70; }
+.pride-stripe i:nth-child(2) { background: #26ceaa; }
+.pride-stripe i:nth-child(3) { background: #98e8c1; }
+.pride-stripe i:nth-child(4) { background: #fff; }
+.pride-stripe i:nth-child(5) { background: #7bade2; }
+.pride-stripe i:nth-child(6) { background: #5049cc; }
+.pride-stripe i:nth-child(7) { background: #3d1a78; }
+
+/* Header */
+.site-header {
+  background: rgba(255, 255, 255, .94);
+  border-bottom: 1px solid rgba(216, 227, 239, .9);
+  box-shadow: 0 6px 24px rgba(20, 40, 75, .05);
+}
+.header-inner { min-height: 76px; }
+.desktop-nav { gap: 6px; font-size: .92rem; font-weight: 700; }
+.desktop-nav a {
+  position: relative;
+  padding: 8px 10px;
+  border-radius: 999px;
+  color: var(--navy);
+  transition: color .2s ease, background .2s ease;
+}
+.desktop-nav a::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 3px;
+  height: 2.5px;
+  border-radius: 2px;
+  background: var(--dusk);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s ease;
+}
+.desktop-nav a:hover { color: var(--ocean); }
+.desktop-nav a:hover::after,
+.desktop-nav a[aria-current="page"]::after { transform: scaleX(1); }
+.desktop-nav a[aria-current="page"] { color: var(--ocean); }
+.header-search { color: var(--navy); }
+.header-search:hover { color: var(--ocean); background: var(--pink-soft); }
+.login { color: var(--navy); }
+.login:hover { color: var(--ocean); }
+
+.mobile-menu { display: none; position: relative; }
+.mobile-menu summary {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--navy);
+  cursor: pointer;
+  list-style: none;
+}
+.mobile-menu summary::-webkit-details-marker { display: none; }
+.mobile-menu .mobile-menu-close,
+.mobile-menu[open] .mobile-menu-open { display: none; }
+.mobile-menu[open] .mobile-menu-close { display: block; }
+.mobile-menu-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 12px);
+  width: min(320px, calc(100vw - 32px));
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: var(--shadow-lift);
+  display: grid;
+  gap: 12px;
+}
+.mobile-menu-panel nav { display: grid; }
+.mobile-menu-panel nav a {
+  padding: 12px 14px;
+  border-radius: 12px;
+  color: var(--navy);
+  font-weight: 700;
+}
+.mobile-menu-panel nav a:hover,
+.mobile-menu-panel nav a[aria-current="page"] { background: var(--pink-soft); color: var(--ocean); }
+.mobile-menu-panel .button { width: 100%; }
+
+/* Breadcrumbs */
+.breadcrumbs a { color: var(--ocean); text-decoration-color: rgba(27, 94, 143, .3); }
+
+/* Fließtext importierter Seiten */
+.rich-content { color: #2a3648; }
+.rich-content h2, .rich-content h3 { font-family: var(--display); color: var(--ink); }
+.rich-content a { color: var(--ocean); text-decoration-color: rgba(47, 143, 216, .35); }
+.rich-content a:hover { text-decoration-color: currentColor; }
+.rich-content blockquote {
+  margin: 28px 0;
+  padding: 22px 26px;
+  border: 0;
+  border-left: 4px solid transparent;
+  border-image: var(--dusk) 1;
+  background: #eef5fc;
+  font-family: var(--display);
+  font-size: 1.2rem;
+  font-style: italic;
+}
+.rich-content a.inline-content-cta {
+  background: var(--cta);
+  border-radius: 999px;
+  box-shadow: var(--cta-shadow);
+  color: #fff;
+  text-decoration: none;
+}
+.rich-content a.inline-content-cta:hover { box-shadow: 0 16px 32px rgba(47, 143, 216, .38); }
+
+/* Footer */
+.site-footer {
+  position: relative;
+  margin-top: 90px;
+  background: var(--navy-deep);
+  color: #e6edf7;
+  overflow: hidden;
+}
+.footer-cta {
+  position: relative;
+  padding: 86px 16px 78px;
+  text-align: center;
+  background:
+    radial-gradient(60% 90% at 12% 0%, rgba(46, 196, 182, .32), transparent 60%),
+    radial-gradient(55% 80% at 88% 10%, rgba(111, 91, 214, .42), transparent 62%),
+    radial-gradient(70% 100% at 50% 120%, rgba(47, 143, 216, .45), transparent 70%),
+    var(--navy);
+  isolation: isolate;
+}
+.footer-cta-mark {
+  position: absolute;
+  right: 6%;
+  bottom: -40px;
+  z-index: -1;
+  font-size: 300px;
+  color: rgba(255, 255, 255, .06);
+  line-height: 1;
+}
+.footer-cta .kicker { color: #a7d8ff; margin: 0 0 12px; }
+.footer-cta h2 {
+  max-width: 880px;
+  margin: 0 auto 30px;
+  color: #fff;
+  font-size: clamp(2rem, 4.6vw, 3.4rem);
+  line-height: 1.06;
+}
+.footer-cta h2 em {
+  background: linear-gradient(100deg, #7fe7dc, #8fc6ff 55%, #c9b8ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.footer-cta-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
+.footer-grid {
+  width: min(1170px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 64px 0 40px;
+  display: grid;
+  grid-template-columns: 1.5fr repeat(4, 1fr);
+  gap: 34px;
+}
+.footer-brand img:first-child {
+  width: 230px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: #fff;
+}
+.footer-brand p { color: #c3cfe0; }
+.trust-list { list-style: none; padding: 0; margin: 18px 0; display: grid; gap: 8px; }
+.trust-list li { display: flex; align-items: center; gap: 10px; color: #e6edf7; font-weight: 650; font-size: .92rem; }
+.trust-list li::before { content: none; }
+.trust-list svg { flex: none; width: 20px; height: 20px; padding: 3px; border-radius: 50%; background: rgba(143, 198, 255, .18); color: #8fc6ff; }
+.footer-column h2 {
+  margin: 0 0 14px;
+  color: #fff;
+  font-size: 1.12rem;
+}
+.footer-column ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.footer-column a { color: #c3cfe0; font-size: .93rem; }
+.footer-column a:hover { color: #fff; text-decoration: underline; text-decoration-color: #8fc6ff; text-underline-offset: 4px; }
+.subfooter {
+  width: min(1170px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 22px 0 30px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px 20px;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+  color: #93a3bd;
+  font-size: .85rem;
+}
+.subfooter-love { display: inline-flex; align-items: center; gap: 6px; color: #8fc6ff; }
+
+/* Mobile Registrierleiste */
+.sticky-cta { display: none; }
+
+@media (max-width: 1050px) {
+  .desktop-nav { display: none; }
+  .mobile-menu { display: block; }
+  .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .footer-brand { grid-column: 1 / -1; }
+}
+@media (max-width: 720px) {
+  .header-inner { min-height: 66px; }
+  .header-actions .button-compact { display: none; }
+  .footer-cta { padding: 64px 16px 58px; }
+  .footer-cta-actions .button { width: 100%; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px 20px; padding-top: 48px; }
+  .subfooter { justify-content: center; text-align: center; }
+  .sticky-cta {
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 8px 8px 16px;
+    border-radius: 999px;
+    background: rgba(11, 23, 48, .94);
+    color: #fff;
+    font-size: .86rem;
+    font-weight: 700;
+    box-shadow: 0 16px 40px rgba(11, 23, 48, .35);
+    backdrop-filter: blur(10px);
+    transform: translateY(140%);
+    transition: transform .3s ease;
+  }
+  .sticky-cta span { display: inline-flex; align-items: center; gap: 7px; }
+  .sticky-cta svg { color: #8fc6ff; }
+  .sticky-cta .button { min-height: 42px; padding-inline: 18px; }
+  .sticky-cta.is-visible { transform: none; }
+  .site-footer { padding-bottom: 70px; }
+}
+@media (max-width: 420px) {
+  .footer-grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .button, .desktop-nav a::after, .sticky-cta { transition: none; }
+  .button:hover { transform: none; }
+}

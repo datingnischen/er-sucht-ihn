@@ -18,7 +18,7 @@ test("magazine landing copy speaks directly to gay men without AI filler", async
   assert.match(landing, /Dating, Liebe und schwules Leben/);
   assert.match(landing, /Leben als schwuler Mann/);
   assert.match(landing, /Gay-Dating, Beziehungen und Coming-out/);
-  assert.match(homepage, /Dating, Liebe und schwules Leben/);
+  assert.match(homepage, /Dating, Liebe und (?:<em>)?schwules Leben/);
 });
 
 test("magazine snapshot contains the complete public editorial inventory", () => {

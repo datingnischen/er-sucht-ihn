@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
+import { Fraunces } from "next/font/google";
 import "./globals.css";
+import "./theme.css";
 import { Footer, Header } from "@/components/site-shell";
+import { StickyCta } from "@/components/sticky-cta";
 import { SITE_URL } from "@/lib/site";
 import { staticAsset } from "@/lib/static-asset.mjs";
+
+// Überschriften in Fraunces (weich, mit Kursiv für Akzente), Fließtext bleibt Open Sans von ICONY.
+const display = Fraunces({ subsets: ["latin"], style: ["normal", "italic"], axes: ["SOFT", "opsz"], variable: "--font-display", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -14,5 +20,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="de"><body><Header />{children}<Footer /></body></html>;
+  return <html lang="de" className={display.variable}><body><Header />{children}<Footer /><StickyCta /></body></html>;
 }
