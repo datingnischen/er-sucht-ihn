@@ -55,7 +55,8 @@ test("long imported source URLs wrap inside the editorial content column", () =>
   assert.match(globalCss, /\.rich-content\s*\{[^}]*overflow-wrap\s*:\s*anywhere/i);
 });
 
-test("city cards disable motion when the visitor requests reduced motion", () => {
-  assert.match(globalCss, /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.city-tile img[^}]*transition:\s*none[^}]*transform:\s*none/i);
-  assert.match(globalCss, /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.city-tile-action[^}]*transition:\s*none[^}]*transform:\s*none/i);
+test("city chips and map pins disable motion when the visitor requests reduced motion", async () => {
+  const hubCss = await readFile(new URL("../components/location/sc-hub.css", import.meta.url), "utf8");
+  assert.match(hubCss, /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.sh-pin-pulse,[\s\S]*?animation:\s*none/i);
+  assert.match(hubCss, /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.sh-chip:hover,[\s\S]*?transform:\s*none/i);
 });

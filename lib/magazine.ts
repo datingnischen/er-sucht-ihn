@@ -2,6 +2,7 @@ import catalog from "@/data/magazine.json";
 import retiredLexicon from "@/data/magazine-lexikon.json";
 import { absolutizeAssetUrls, staticAsset } from "./static-asset.mjs";
 import { slashInternalLinks, withTrailingSlash } from "./site-contract.mjs";
+import { withImageAlts } from "./image-alt.mjs";
 
 export type MagazineEntry = {
   id: number;
@@ -43,7 +44,7 @@ export const magazineEntries = ([...catalog.entries, ...retiredLexicon.entries] 
   canonical: withTrailingSlash(entry.canonical),
   featuredImage: entry.featuredImage ? staticAsset(entry.featuredImage) : entry.featuredImage,
   contentHtml: absolutizeAssetUrls(slashInternalLinks(entry.contentHtml)),
-}));
+})).map((entry) => withImageAlts(entry, entry.title) as MagazineEntry);
 export const magazineAttachments = (catalog.attachments as MagazineAttachment[]).map((attachment) =>
   attachment.targetType === "asset"
     ? { ...attachment, target: staticAsset(attachment.target) }

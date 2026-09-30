@@ -30,6 +30,8 @@ const index = buildSearchIndex([
 
 export type SiteSearchResult = { area: string; title: string; href: string; excerpt: string };
 
-export function searchSite(query: string): SiteSearchResult[] {
-  return searchIndex(index, query);
+export function searchSite(query: string, limit?: number): SiteSearchResult[] {
+  return searchIndex(index, query, limit);
 }
+
+export const siteSearchIndexSize = index.length;

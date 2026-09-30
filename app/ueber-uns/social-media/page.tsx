@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AboutHero } from "@/components/about/about-hero";
+import { ArrowIcon, HeartFilledIcon, PeopleIcon } from "@/components/icons";
 import { SocialIcon } from "@/components/social-icon";
 import { ABOUT_ROOT_PATH, ABOUT_SOCIAL_PATH } from "@/lib/about-pages.mjs";
 import { buildBreadcrumbs, buildBreadcrumbSchema } from "@/lib/breadcrumbs.mjs";
@@ -10,67 +12,85 @@ import { registrationUrl } from "@/lib/site";
 import { socialChannels } from "@/lib/social-channels";
 import { staticAsset } from "@/lib/static-asset.mjs";
 
-const heroImage = { src: staticAsset("/about/betrieb-support.webp"), alt: "Mann schaut lächelnd von seinem Smartphone auf" };
-const channels = socialChannels.filter((channel) => channel.profile);
+const shareImage = staticAsset("/about/betrieb-support.webp");
+const profiles = socialChannels.filter((channel) => channel.profile);
 const community = socialChannels.find((channel) => !channel.profile);
 
 export function generateMetadata(): Metadata {
   const page = getImportedPage(ABOUT_SOCIAL_PATH);
   if (!page) return {};
-  return { title: page.title, description: page.description, alternates: { canonical: page.canonical }, openGraph: { title: page.title, description: page.description, url: page.canonical, images: [heroImage.src] } };
+  return { title: page.title, description: page.description, alternates: { canonical: page.canonical }, openGraph: { title: page.title, description: page.description, url: page.canonical, images: [shareImage] } };
 }
 
 export default function AboutSocialPage() {
   const page = getImportedPage(ABOUT_SOCIAL_PATH);
   if (!page) notFound();
+  const breadcrumbSchema = buildBreadcrumbSchema(ABOUT_SOCIAL_PATH, "Social Media");
   const breadcrumbs = buildBreadcrumbs(ABOUT_SOCIAL_PATH, "Social Media");
-  return <main className="wrap page-shell about-page">
-    <article className="article-card">
-      <nav className="breadcrumbs" aria-label="Breadcrumb"><ol>{breadcrumbs.map((item, index) => <li key={item.path}>{index < breadcrumbs.length - 1 ? <Link href={item.path}>{item.name}</Link> : <span aria-current="page">{item.name}</span>}</li>)}</ol></nav>
-      <script type="application/ld+json">{JSON.stringify(buildBreadcrumbSchema(ABOUT_SOCIAL_PATH, "Social Media"))}</script>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializePageEntityGraph(buildPageEntityGraph(page)) }} />
+  return <main className="ab-page">
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializePageEntityGraph(buildPageEntityGraph(page, { breadcrumb: breadcrumbSchema })) }} />
 
-      <header className="social-hero">
-        <div>
-          <p className="kicker">Über uns · Social Media</p>
-          <h1>Er-sucht-Ihn auf Social Media</h1>
-          <p className="lead">{page.description} Dating-Tipps, Community-Themen und Neuigkeiten rund um die Plattform – dort, wo Du ohnehin unterwegs bist.</p>
-          <ul className="social-bubbles" aria-label="Unsere Kanäle">
-            {socialChannels.map((channel) => <li key={channel.href}><a className={`social-bubble social-${channel.platform}`} href={channel.href} rel="nofollow noopener noreferrer" target="_blank" aria-label={channel.name}><SocialIcon platform={channel.platform} size={20} /></a></li>)}
-          </ul>
-        </div>
-        <figure className="social-hero-media"><img src={heroImage.src} alt={heroImage.alt} width="720" height="450" /></figure>
-      </header>
+    <AboutHero
+      breadcrumbs={breadcrumbs}
+      badge="Über uns · Social Media"
+      badgeIcon={<HeartFilledIcon />}
+      title={<>Er-sucht-Ihn auf <em>Social Media</em></>}
+      lead={<p>{page.description} Dating-Tipps, Community-Themen und Neuigkeiten rund um die Plattform – dort, wo Du ohnehin unterwegs bist.</p>}
+      media={<ul className="ab-social-stack" aria-label="Unsere offiziellen Profile">
+        {profiles.map((channel) => <li key={channel.href}>
+          <a className={`ab-stack-card ab-social-${channel.platform}`} href={channel.href} rel="nofollow noopener noreferrer" target="_blank">
+            <span className="ab-social-icon" aria-hidden="true"><SocialIcon platform={channel.platform} size={24} /></span>
+            <span><small>{channel.kind}</small><strong>{channel.handle}</strong></span>
+            <em>{channel.cta}</em>
+          </a>
+        </li>)}
+      </ul>}
+    >
+      <ul className="ab-bubbles" aria-label="Unsere Kanäle">
+        {profiles.map((channel) => <li key={channel.href}><a className={`ab-bubble ab-social-${channel.platform}`} href={channel.href} rel="nofollow noopener noreferrer" target="_blank" aria-label={channel.name}><SocialIcon platform={channel.platform} size={20} /></a></li>)}
+      </ul>
+    </AboutHero>
 
-      <section className="about-section" aria-labelledby="social-channels-title">
-        <div className="about-section-heading">
-          <p className="kicker">Unsere Kanäle</p>
-          <h2 id="social-channels-title">Folge uns, wo Du ohnehin scrollst</h2>
-        </div>
-        <div className="social-channel-grid">
-          {channels.map((channel) => <a className={`social-channel-card social-${channel.platform}`} href={channel.href} key={channel.href} rel="nofollow noopener noreferrer" target="_blank">
-            <span className="social-channel-top"><span className="social-bubble"><SocialIcon platform={channel.platform} size={24} /></span><span className="social-channel-kind">{channel.kind}</span></span>
-            <strong className="social-channel-name">{channel.name}</strong>
-            <span className="social-channel-handle">{channel.handle}</span>
-            <span className="social-channel-text">{channel.text}</span>
-            <span className="social-channel-cta">{channel.cta} <span aria-hidden="true">→</span></span>
-          </a>)}
-        </div>
-      </section>
+    <section className="wrap ab-section ab-section-first" aria-labelledby="social-channels-title">
+      <div className="ab-head">
+        <p className="kicker">Unsere Kanäle</p>
+        <h2 id="social-channels-title">Folge uns, wo Du <em>ohnehin scrollst</em></h2>
+      </div>
+      <ul className="ab-social-grid ab-social-grid-wide">
+        {profiles.map((channel) => <li key={channel.href}>
+          <a className={`ab-social-card ab-social-${channel.platform}`} href={channel.href} rel="nofollow noopener noreferrer" target="_blank">
+            <span className="ab-social-card-top"><span className="ab-social-icon" aria-hidden="true"><SocialIcon platform={channel.platform} size={24} /></span><span className="ab-social-kind">{channel.kind}</span></span>
+            <strong>{channel.name}</strong>
+            <small>{channel.handle}</small>
+            <span>{channel.text}</span>
+            <em>{channel.cta} <ArrowIcon /></em>
+          </a>
+        </li>)}
+      </ul>
+    </section>
 
-      {community ? <section className="social-community" aria-labelledby="social-community-title">
-        <span className="social-bubble social-facebook"><SocialIcon platform={community.platform} size={28} /></span>
+    {community ? <section className="wrap ab-section" aria-labelledby="social-community-title">
+      <div className="ab-group-banner">
+        <span className="ab-group-icon" aria-hidden="true"><PeopleIcon /></span>
         <div>
           <p className="kicker">Community</p>
-          <h2 id="social-community-title">Unsere Facebook-Gruppe</h2>
+          <h2 id="social-community-title">Unsere <em>Facebook-Gruppe</em></h2>
           <p>Hier reden nicht wir, sondern Du: {community.text}</p>
         </div>
-        <a className="button button-pink" href={community.href} rel="nofollow noopener noreferrer" target="_blank">{community.cta}</a>
-      </section> : null}
+        <a className="button button-green" href={community.href} rel="nofollow noopener noreferrer" target="_blank">{community.cta}</a>
+      </div>
+    </section> : null}
 
-      <div className="about-section-actions"><Link className="button button-outline" href={ABOUT_ROOT_PATH}>Zur Über-uns-Übersicht</Link></div>
-
-      <aside className="inline-cta"><h2>Lieber direkt Männer kennenlernen?</h2><p>Erstelle kostenlos Dein Profil und entdecke Männer aus Deiner Region, die ähnliche Wünsche und Werte mitbringen.</p><a className="button button-green" href={registrationUrl(ABOUT_SOCIAL_PATH)}>Kostenlos registrieren</a></aside>
-    </article>
+    <section className="wrap ab-section" aria-labelledby="social-cta-title">
+      <div className="ab-cta">
+        <span className="ab-cta-heart" aria-hidden="true"><HeartFilledIcon /></span>
+        <h2 id="social-cta-title">Lieber direkt <em>Männer kennenlernen?</em></h2>
+        <p>Erstelle kostenlos Dein Profil und entdecke Männer aus Deiner Region, die ähnliche Wünsche und Werte mitbringen.</p>
+        <div className="ab-actions ab-actions-center">
+          <a className="button button-green" href={registrationUrl(ABOUT_SOCIAL_PATH)}>Kostenlos registrieren</a>
+          <Link className="button button-outline" href={ABOUT_ROOT_PATH}>Zur Über-uns-Übersicht</Link>
+        </div>
+      </div>
+    </section>
   </main>;
 }

@@ -1,8 +1,9 @@
 import catalog from "@/data/pages.json";
 import { normalizeImportedPath } from "./imported-path.mjs";
 import { aboutPathForImportedPath } from "./about-pages.mjs";
-import { classifyPath, publicUrl, slashInternalLinks, withTrailingSlash } from "./site-contract.mjs";
+import { classifyPath, publicUrl, SITE_URL, slashInternalLinks, withTrailingSlash } from "./site-contract.mjs";
 import { absolutizeAssetUrls, staticAsset } from "./static-asset.mjs";
+import { withImageAlts } from "./image-alt.mjs";
 
 export type ImportedPage = {
   path: string;
@@ -23,9 +24,13 @@ function withAboutPath(page: ImportedPage): ImportedPage {
   return path === page.path ? page : { ...page, path, canonical: publicUrl(path) };
 }
 
-// Pages that ICONY still serves on the live domain are never rendered here.
+// Pages that ICONY still serves on the live domain are never rendered here,
+// and imported links to them point straight to the live domain.
+const ICONY_PAGE_LINK = /href="(\/(?:(?:sicherheit-und-datenschutz|redaktionelle-kontrolle|kostenlose-basis-mitgliedschaft|premium-mitgliedschaft|unsere-erfolgsgeschichten|fragenflirt|fotoflirt|videodating)\.html|dating-tipps\/?))"/g;
+
 function withPlatformType(page: ImportedPage): ImportedPage {
-  return classifyPath(page.path) === "platform" ? { ...page, type: "platform" } : page;
+  const contentHtml = page.contentHtml.replace(ICONY_PAGE_LINK, `href="${SITE_URL}$1"`);
+  return classifyPath(page.path) === "platform" ? { ...page, contentHtml, type: "platform" } : { ...page, contentHtml };
 }
 
 // Gezielte Korrekturen am ICONY-Import, die ein erneuter Import sonst wieder zurücksetzen würde.
@@ -55,7 +60,7 @@ function withAbsoluteAssets(page: ImportedPage): ImportedPage {
   };
 }
 
-const pages = (catalog.pages as ImportedPage[]).map(withAboutPath).map(withPlatformType).map(withMetaOverride).map(withTrailingSlashUrls).map(withAbsoluteAssets);
+const pages = (catalog.pages as ImportedPage[]).map(withAboutPath).map(withPlatformType).map(withMetaOverride).map(withTrailingSlashUrls).map(withAbsoluteAssets).map((page) => withImageAlts(page, page.h1 || page.title) as ImportedPage);
 const pageMap = new Map(pages.map((page) => [page.path, page]));
 
 export const publicPages = pages.filter((page) => page.type !== "platform" && page.type !== "magazine");
