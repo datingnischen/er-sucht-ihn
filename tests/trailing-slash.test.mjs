@@ -51,7 +51,8 @@ test("internal links in imported HTML get the slash, files and foreign hosts sta
 test("Next redirects page paths without slash itself and loaders normalise imported URLs", async () => {
   const config = await read("../next.config.ts");
   assert.match(config, /trailingSlash: true/);
-  assert.doesNotMatch(config, /skipTrailingSlashRedirect/);
+  assert.match(config, /skipTrailingSlashRedirect: true/, "Slash-Umleitung macht proxy.ts, damit /magazin/wp-json ohne Slash 200 liefert");
+  assert.match(await read("../proxy.ts"), /withTrailingSlash/);
   for (const match of config.matchAll(/destination: "([^"]+)"/g)) {
     const destination = match[1];
     if (destination.startsWith("/:path")) continue;

@@ -1,5 +1,5 @@
-import catalog from "@/data/magazine.json";
-import retiredLexicon from "@/data/magazine-lexikon.json";
+import catalog from "../data/magazine.json" with { type: "json" };
+import retiredLexicon from "../data/magazine-lexikon.json" with { type: "json" };
 import { absolutizeAssetUrls, staticAsset } from "./static-asset.mjs";
 import { slashInternalLinks, withTrailingSlash } from "./site-contract.mjs";
 import { withImageAlts } from "./image-alt.mjs";
@@ -58,6 +58,9 @@ export const magazinePages = magazineEntries
   .sort((a, b) => a.title.localeCompare(b.title, "de"));
 export const magazineCategories = catalog.categories as MagazineCategory[];
 export const magazineAuthors = catalog.authors as MagazineAuthor[];
+export const magazineTags = catalog.tags as MagazineCategory[];
+/** IDs der ehemaligen WordPress-Inhalte (ohne das Lexikon); nur diese gibt der WP-REST-Endpunkt aus. */
+export const magazineWordpressIds = new Set(catalog.entries.map((entry) => entry.id));
 
 const magazineAssets = catalog.assets as MagazineAsset[];
 const entryByPath = new Map(magazineEntries.map((entry) => [entry.path, entry]));

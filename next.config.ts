@@ -29,6 +29,8 @@ export default function nextConfig(phase: string): NextConfig {
     // Seiten-URLs enden auf "/" wie die ICONY-Plattform; Next leitet Pfade ohne Schrägstrich per 308 um
     // (relativ, Dateien wie /sitemap.xml und Bild-URLs bleiben ohne).
     trailingSlash: true,
+    // Die Umleitung auf Pfade mit Schrägstrich macht proxy.ts, damit /magazin/wp-json/… ohne Slash mit 200 antwortet.
+    skipTrailingSlashRedirect: true,
     assetPrefix: isDev ? undefined : `${assetHost}${assetPathPrefix}`,
     turbopack: { root: process.cwd() },
     async redirects() {
