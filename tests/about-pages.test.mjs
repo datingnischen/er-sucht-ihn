@@ -19,7 +19,8 @@ test("every moved about page exists in the imported catalog", () => {
 });
 
 test("legacy about URLs redirect permanently to the nested pages", () => {
-  assert.deepEqual(aboutRedirects.find((item) => item.source === "/bewertungen-und-erfahrungen"), { source: "/bewertungen-und-erfahrungen", destination: `${ABOUT_REVIEWS_PATH}/`, permanent: true });
+  // Alt-Pfade der Bewertungen werden nicht mehr bedient (404).
+  assert.equal(aboutRedirects.some((item) => item.source.includes("bewertungen-und-erfahrungen")), false);
   assert.deepEqual(aboutRedirects.find((item) => item.source === "/social-media"), { source: "/social-media", destination: `${ABOUT_SOCIAL_PATH}/`, permanent: true });
 });
 
