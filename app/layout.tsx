@@ -5,7 +5,9 @@ import "./theme.css";
 import { Footer, Header } from "@/components/site-shell";
 import { StickyCta } from "@/components/sticky-cta";
 import { SITE_URL } from "@/lib/site";
-import { staticAsset } from "@/lib/static-asset.mjs";
+import { staticAsset, assetHost } from "@/lib/static-asset.mjs";
+import { Analytics } from "@vercel/analytics/next";
+import { vercelAnalyticsProps } from "@/lib/vercel-analytics";
 
 // Überschriften in Fraunces (weich, mit Kursiv für Akzente), Fließtext bleibt Open Sans von ICONY.
 const display = Fraunces({ subsets: ["latin"], style: ["normal", "italic"], axes: ["SOFT", "opsz"], variable: "--font-display", display: "swap" });
@@ -20,5 +22,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="de" className={display.variable}><body><Header />{children}<Footer /><StickyCta /></body></html>;
+  return <html lang="de" className={display.variable}><body><Header />{children}<Footer /><StickyCta /><Analytics {...vercelAnalyticsProps(assetHost)} /></body></html>;
 }
