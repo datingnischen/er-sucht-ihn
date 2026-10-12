@@ -1210,3 +1210,9 @@
   .sc-cta-radar:hover,
   .sc-rich a.inline-content-cta:hover { transform: none; }
 }
+
+.sc-source-disclosure { padding: 12px 16px; border-top: 1px solid var(--line); font-size: .8125rem; }
+.sc-source-disclosure summary { cursor: pointer; font-size: .8125rem; font-weight: 600; }
+.sc-source-disclosure summary:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+.sc-source-disclosure .sc-rich { font-size: .8125rem; overflow-wrap: anywhere; }
+.sc-source-disclosure .sc-rich :is(p, li, a) { font-size: inherit; }

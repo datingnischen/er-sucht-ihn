@@ -46,7 +46,7 @@ export function LocationCityPage({ page, path, contentHtml, breadcrumbs }: Impor
   const nearby = nearestCities(path, 5).map((entry) => ({ ...entry, photo: pagePhoto(entry.path) }));
   const maxKm = Math.max(...nearby.map((entry) => entry.km), 1);
   const within100 = nearestCities(path, 40).filter((entry) => entry.km <= 100).length;
-  const chapters = guide.sections.filter((section) => !section.isPart);
+  const chapters = guide.sections.filter((section) => !section.isPart && section.topic !== "sources");
   const ideas = DATE_IDEAS.map((idea) => ({ ...idea, section: chapters.find((section) => idea.topics.includes(section.topic)) }))
     .filter((idea) => idea.section)
     .slice(0, 4);
@@ -157,6 +157,9 @@ export function LocationCityPage({ page, path, contentHtml, breadcrumbs }: Impor
         <div className="sc-chapters">
           {guide.introHtml ? <article className="sc-chapter sc-intro"><div className="sc-rich" dangerouslySetInnerHTML={{ __html: guide.introHtml }} /></article> : null}
           {guide.sections.map((section) => {
+            if (section.topic === "sources") {
+              return <details key={section.id} id={section.id} className="sc-source-disclosure sc-t-sources"><summary>{section.heading}</summary><div className="sc-rich" dangerouslySetInnerHTML={{ __html: section.html }} /></details>;
+            }
             const Heading = section.level === 3 ? "h3" : "h2";
             if (section.isPart) {
               return <div key={section.id} id={section.id} className="sc-part"><span aria-hidden="true"><HeartFilledIcon /></span><Heading>{section.heading}</Heading></div>;
