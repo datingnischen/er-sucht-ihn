@@ -15,6 +15,7 @@ import {
 } from "@/lib/magazine";
 import { registrationUrl, SITE_URL } from "@/lib/site";
 import { staticAsset } from "@/lib/static-asset.mjs";
+import { buildMagazineSchema, magazineReview } from "@/lib/magazine-review.mjs";
 
 export const dynamicParams = false;
 
@@ -63,19 +64,8 @@ export default async function MagazineDetailPage({ params }: Props) {
   }
   const related = relatedMagazineEntries(entry);
   const updated = entry.type === "post" ? articleUpdatedDate(entry) : "";
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": entry.type === "post" ? "Article" : "WebPage",
-    "@id": `${entry.canonical}#article`,
-    url: entry.canonical,
-    headline: entry.title,
-    description: entry.description,
-    datePublished: entry.date,
-    dateModified: entry.modified,
-    image: entry.featuredImage || undefined,
-    author: entry.author ? { "@type": "Person", name: entry.author.name } : undefined,
-    isPartOf: { "@id": `${SITE_URL}/#website` },
-  };
+  const review = magazineReview(entry);
+  const jsonLd = buildMagazineSchema(entry, SITE_URL);
   const category = entry.categories[0] ?? null;
   const isBio = entry.type === "page" && BIO_PAGE_SLUGS.has(entry.slug);
   const isGuide = entry.type === "page" && isSceneGuide(entry);
@@ -125,6 +115,15 @@ export default async function MagazineDetailPage({ params }: Props) {
                 {headings.map((heading) => <li key={heading.id}><a href={`#${heading.id}`}>{heading.text}</a></li>)}
               </ol>
             </nav>
+          )}
+          {review && (
+            <aside className="mz-review-summary" aria-label="Redaktionelle Anbieterbewertung">
+              <p><strong>{review.summary}</strong></p>
+              <p>Die Sterne geben den redaktionellen Gesamteindruck dieses Berichts wieder; sie sind keine durchschnittliche Nutzerbewertung.</p>
+              <p>{review.free}: 0 €. Der kostenlose Einstieg umfasst nicht automatisch alle Funktionen. Zusätzliche Leistungen können kostenpflichtig sein.
+                {review.source && <> <a href={review.source}>Preisangabe im App Store</a>.</>}
+              </p>
+            </aside>
           )}
           <div className="rich-content mz-prose" dangerouslySetInnerHTML={{ __html: html }} />
 

@@ -2468,3 +2468,12 @@
     transform: none;
   }
 }
+.mz-review-summary {
+  margin-bottom: 2rem;
+  padding: 1rem 1.25rem;
+  border-left: 3px solid currentColor;
+  font-size: .9rem;
+  line-height: 1.6;
+}
+.mz-review-summary p { margin: 0 0 .5rem; }
+.mz-review-summary p:last-child { margin-bottom: 0; }
