@@ -10,6 +10,9 @@ import { buildPageEntityGraph, serializePageEntityGraph } from "@/lib/page-entit
 import { LocationHubPage } from "@/components/location/location-hub-page";
 import { LocationCityPage } from "@/components/location/location-city-page";
 import { ContentPage } from "@/components/editorial/content-page";
+import { LocationStatePage, stateMetadata } from "@/components/location/location-state-page";
+import { statePages } from "@/lib/state-pages.mjs";
+import { publicUrl } from "@/lib/site-contract.mjs";
 
 type Props = { params: Promise<{ slug: string[] }> };
 
@@ -18,11 +21,25 @@ const dedicatedRoutes = new Set([ABOUT_SOCIAL_PATH]);
 const HUB_PATH = "/partnersuche";
 
 export function generateStaticParams() {
-  return publicPages.filter((page) => page.path !== "/" && !dedicatedRoutes.has(page.path)).map((page) => ({ slug: page.path.slice(1).split("/") }));
+  return [
+    ...publicPages.filter((page) => page.path !== "/" && !dedicatedRoutes.has(page.path)).map((page) => ({ slug: page.path.slice(1).split("/") })),
+    ...statePages().map((state) => ({ slug: state.path.slice(1).split("/") })),
+  ];
+}
+
+/** Bundesland-Seite (nur Länder mit Stadtseiten), sonst null. */
+function findState(path: string) {
+  return statePages().find((state) => state.path === path) ?? null;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  const state = findState(normalizePublicPath(slug));
+  if (state) {
+    const { title, description } = stateMetadata(state);
+    const canonical = publicUrl(state.path);
+    return { title, description, alternates: { canonical }, openGraph: { title, description, url: canonical } };
+  }
   const page = getImportedPage(normalizePublicPath(slug));
   if (!page) return {};
   const title = page.seoTitle ?? page.title;
@@ -37,6 +54,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ImportedPageView({ params }: Props) {
   const { slug } = await params;
   const path = normalizePublicPath(slug);
+  const state = findState(path);
+  if (state) {
+    const breadcrumbs = buildBreadcrumbs(path);
+    return <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(buildBreadcrumbSchema(path)).replace(/</g, "\\u003c") }} />
+      <LocationStatePage state={state} breadcrumbs={breadcrumbs} />
+    </>;
+  }
   const page = getImportedPage(path);
   if (!page || page.type === "platform" || page.type === "magazine") notFound();
   const isHub = path === HUB_PATH;

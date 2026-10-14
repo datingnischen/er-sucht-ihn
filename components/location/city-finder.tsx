@@ -5,7 +5,7 @@ import Link from "@/components/link";
 import { ArrowIcon, PinIcon, SearchIcon, MarsPairIcon } from "@/components/icons";
 
 export type FinderCity = { path: string; name: string; teaser: string; photo: { src: string; alt: string } | null };
-export type FinderRegion = { name: string; cities: FinderCity[] };
+export type FinderRegion = { name: string; path?: string; cities: FinderCity[] };
 
 type Props = { regions: FinderRegion[]; regionLabel: string; countryName: string };
 
@@ -42,7 +42,7 @@ export function CityFinder({ regions, regionLabel, countryName }: Props) {
           <li key={region.name} className="sh-region" style={{ ["--i" as string]: index }}>
             <div className="sh-region-head">
               <span className="sh-region-icon" aria-hidden="true"><PinIcon /></span>
-              <h3>{region.name}</h3>
+              <h3>{region.path ? <Link href={region.path}>{region.name}</Link> : region.name}</h3>
               <span className="sh-region-count">{region.cities.length} {region.cities.length === 1 ? "Stadt" : "Städte"}</span>
             </div>
             <ul className="sh-chips">

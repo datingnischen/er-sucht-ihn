@@ -36,9 +36,8 @@ export default function nextConfig(phase: string): NextConfig {
     async redirects() {
       return [
         ...aboutRedirects,
-        // Bundesländer haben keine eigene Seite; alte Links (u. a. aus Breadcrumbs) landen in der Städteübersicht.
-        ...["baden-wuerttemberg", "baden-w%C3%BCrttemberg", "bayern", "hessen", "niedersachsen", "nordrhein-westfalen", "sachsen", "sachsen-anhalt"]
-          .map((state) => ({ source: `/partnersuche/${state}`, destination: "/partnersuche/", permanent: true })),
+        // Bundesland-Seiten liegen unter /partnersuche/<land>/ (lib/state-pages.mjs); die Umlaut-Schreibweise aus ICONY-Pfaden zeigt auf den kanonischen Slug.
+        { source: "/partnersuche/baden-w%C3%BCrttemberg", destination: "/partnersuche/baden-wuerttemberg/", permanent: true },
         { source: "/partnersuche/bayern/m%C3%BCnchen", destination: "/partnersuche/bayern/muenchen/", permanent: true },
         { source: "/lexikon", destination: "/magazin/", permanent: true },
         { source: "/lexikon/:slug", destination: "/magazin/:slug/", permanent: true },

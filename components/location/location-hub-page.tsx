@@ -6,6 +6,7 @@ import { buildCityCards } from "@/lib/location-hub.mjs";
 import { buildCityGuide, selectCityPhoto } from "@/lib/city-guide.mjs";
 import { COUNTRY_BY_ROOT, citiesOfRoot } from "@/lib/city-geo.mjs";
 import { getCountryMap } from "@/lib/city-map.mjs";
+import { getStateByRegion, statePath } from "@/lib/state-pages.mjs";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { CitySearchFallback } from "@/components/city-search-fallback";
 import { ArrowIcon, HeartFilledIcon, MarsPairIcon } from "@/components/icons";
@@ -29,7 +30,10 @@ function regions(): FinderRegion[] {
     groups.set(city.region, list);
   }
   return [...groups]
-    .map(([name, cities]) => ({ name, cities }))
+    .map(([name, cities]) => {
+      const state = getStateByRegion(name);
+      return state ? { name, path: statePath(state.slug), cities } : { name, cities };
+    })
     .sort((a, b) => b.cities.length - a.cities.length || a.name.localeCompare(b.name, "de"));
 }
 

@@ -2,18 +2,30 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { buildBreadcrumbs, buildBreadcrumbSchema } from "../lib/breadcrumbs.mjs";
 
-test("nested German city pages show the state as unlinked text (no state page exists)", () => {
+test("city pages link their real state page, independent of the ICONY path", () => {
   assert.deepEqual(buildBreadcrumbs("/partnersuche/nordrhein-westfalen/köln"), [
     { name: "Start", path: "/" },
     { name: "Partnersuche", path: "/partnersuche" },
-    { name: "Nordrhein Westfalen", path: "/partnersuche/nordrhein-westfalen", linked: false },
+    { name: "Nordrhein-Westfalen", path: "/partnersuche/nordrhein-westfalen" },
     { name: "Köln", path: "/partnersuche/nordrhein-westfalen/köln" },
+  ]);
+  assert.equal(buildBreadcrumbs("/partnersuche/sachsen/halberstadt")[2].path, "/partnersuche/sachsen-anhalt");
+  assert.equal(buildBreadcrumbs("/partnersuche/baden-württemberg/freiburg")[2].path, "/partnersuche/baden-wuerttemberg");
+  assert.equal(buildBreadcrumbs("/partnersuche/augsburg")[2].name, "Bayern");
+  assert.deepEqual(buildBreadcrumbs("/partnersuche/berlin").map((item) => item.name), ["Start", "Partnersuche", "Berlin"]);
+});
+
+test("state pages sit between the hub and their cities", () => {
+  assert.deepEqual(buildBreadcrumbs("/partnersuche/bayern"), [
+    { name: "Start", path: "/" },
+    { name: "Partnersuche", path: "/partnersuche" },
+    { name: "Bayern", path: "/partnersuche/bayern" },
   ]);
 });
 
 test("regional breadcrumb names preserve German spelling", () => {
   assert.deepEqual(buildBreadcrumbs("/partnersuche/bayern/muenchen").map((item) => item.name), ["Start", "Partnersuche", "Bayern", "München"]);
-  assert.deepEqual(buildBreadcrumbs("/partnersuche/baden-wuerttemberg/stuttgart").map((item) => item.name), ["Start", "Partnersuche", "Baden Württemberg", "Stuttgart"]);
+  assert.deepEqual(buildBreadcrumbs("/partnersuche/baden-wuerttemberg/stuttgart").map((item) => item.name), ["Start", "Partnersuche", "Baden-Württemberg", "Stuttgart"]);
 });
 
 test("breadcrumb presentation is semantic, keyboard visible and mobile safe", async () => {
@@ -42,7 +54,8 @@ test("breadcrumb structured data uses canonical absolute item URLs", () => {
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Start", item: "https://er-sucht-ihn.de/" },
       { "@type": "ListItem", position: 2, name: "Partnersuche", item: "https://er-sucht-ihn.de/partnersuche/" },
-      { "@type": "ListItem", position: 3, name: "München", item: "https://er-sucht-ihn.de/partnersuche/bayern/muenchen/" },
+      { "@type": "ListItem", position: 3, name: "Bayern", item: "https://er-sucht-ihn.de/partnersuche/bayern/" },
+      { "@type": "ListItem", position: 4, name: "München", item: "https://er-sucht-ihn.de/partnersuche/bayern/muenchen/" },
     ],
   });
 });
