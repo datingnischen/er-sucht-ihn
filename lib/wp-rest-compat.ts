@@ -5,6 +5,7 @@ import type { MagazineCategory, MagazineEntry } from "./magazine.ts";
 import { SITE_URL } from "./site.ts";
 import { staticAsset } from "./static-asset.mjs";
 
+import { teaserImageUrl } from "./teaser-image.ts";
 /**
  * WordPress-kompatibler REST-Endpunkt für die Magazin-BEITRÄGE, erzeugt aus data/magazine.json.
  *
@@ -119,7 +120,7 @@ const mediaSlug = (asset: Asset) => (asset.localPath.split("/").pop() || "").rep
  * nginx muss den Pfad an Vercel durchreichen.
  */
 export function ownDomainMediaUrl(localPath: string) {
-  return `${PUBLIC_ORIGIN}${localPath.replace(/^\/magazine\/media\//, "/magazin/media/")}`;
+  return teaserImageUrl(`${PUBLIC_ORIGIN}/magazin/wp-json`, localPath);
 }
 
 function mediaObject(asset: Asset, fallbackAlt: string): Json {
@@ -132,7 +133,7 @@ function mediaObject(asset: Asset, fallbackAlt: string): Json {
     details.height = size.height;
     details.file = file;
     // medium/large sind Aliase derselben Datei, damit ICONY unabhängig von der gewählten Größe ein Bild bekommt
-    details.sizes = Object.fromEntries(["medium", "large", "full"].map((name) => [name, { file, width: size.width, height: size.height, mime_type: asset.mimeType, source_url: url }]));
+    details.sizes = Object.fromEntries(["thumbnail", "medium", "medium_large", "large", "full"].map((name) => [name, { file, width: size.width, height: size.height, mime_type: asset.mimeType, source_url: url }]));
   }
   const owner = postUsing(asset);
   return {
