@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/link";
 import { ArrowIcon, ClockIcon } from "@/components/icons";
 import { articleUpdatedDate, type MagazineEntry } from "@/lib/magazine";
 import { MagazineCategoryIcon } from "./category-icon";

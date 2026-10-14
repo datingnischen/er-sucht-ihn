@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/link";
 import { ABOUT_REVIEWS_PATH } from "@/lib/about-pages.mjs";
 import { platform } from "@/lib/site";
 import { Breadcrumbs } from "@/components/breadcrumbs";

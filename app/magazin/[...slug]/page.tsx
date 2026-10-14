@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "@/components/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { MagazineBreadcrumbs } from "@/components/magazine-breadcrumbs";
 import { ArrowIcon, BookIcon, CalendarIcon, ClockIcon, HeartFilledIcon, MarsPairIcon, PinIcon } from "@/components/icons";
@@ -33,14 +33,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const entry = getMagazineEntry(pathFrom(slug));
   if (!entry) return { robots: { index: false, follow: false } };
+  const title = entry.seoTitle ?? entry.title;
   return {
-    title: entry.title,
+    title,
     description: entry.description,
     alternates: { canonical: entry.canonical },
     openGraph: {
       type: "article",
       url: entry.canonical,
-      title: entry.title,
+      title,
       description: entry.description,
       publishedTime: entry.date,
       modifiedTime: entry.modified,

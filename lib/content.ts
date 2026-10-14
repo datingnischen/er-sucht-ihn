@@ -13,6 +13,9 @@ export type ImportedPage = {
   type: "location" | "editorial" | "magazine" | "platform";
   title: string;
   description: string;
+  /** Nur für <title>/Meta-Description, wenn sie vom sichtbaren Seitentext abweichen sollen. */
+  seoTitle?: string;
+  seoDescription?: string;
   h1: string;
   contentHtml: string;
   images: Array<{ src: string; alt: string }>;
@@ -35,7 +38,17 @@ function withPlatformType(page: ImportedPage): ImportedPage {
 }
 
 // Gezielte Korrekturen am ICONY-Import, die ein erneuter Import sonst wieder zurücksetzen würde.
-const metaOverrides: Record<string, Pick<ImportedPage, "title" | "description">> = {
+const metaOverrides: Record<string, Partial<Pick<ImportedPage, "title" | "description" | "seoTitle" | "seoDescription">>> = {
+  // ICONY bedient /bewertungen-und-erfahrungen/ und /social-media/ weiter mit denselben Texten: eigene Metadaten gegen Dubletten.
+  "/ueber-uns/bewertungen": {
+    seoTitle: "Bewertungen & Erfahrungen mit Er sucht Ihn",
+    seoDescription: "Was Mitglieder über Er sucht Ihn sagen: Erfahrungen, Trustpilot-Bewertungen und Vergleiche zur Partnersuche für schwule Männer.",
+  },
+  "/ueber-uns/social-media": {
+    seoTitle: "Er sucht Ihn auf Facebook & YouTube",
+    seoDescription: "Er sucht Ihn auf Facebook und YouTube: Dating-Tipps, Community-Themen und Neuigkeiten für schwule Männer. Folge unseren offiziellen Kanälen.",
+  },
+  "/partnersuche/essen": { title: "Er sucht Ihn in Essen (Ruhrgebiet)" },
   "/faq": {
     title: "FAQ er-sucht-ihn.de: Kosten, Sicherheit & Ablauf erklärt",
     description: "Antworten auf häufige Fragen zur Partnersuche bei er-sucht-ihn.de. Jetzt alles zu Kosten, Sicherheit & Ablauf erfahren.",

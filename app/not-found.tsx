@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/link";
 import { ArrowIcon, HeartFilledIcon, HeartIcon, PinIcon, QuestionIcon, SparkIcon } from "@/components/icons";
 import { SiteSearchForm } from "@/components/site-search-form";
 import "@/components/about/about.css";

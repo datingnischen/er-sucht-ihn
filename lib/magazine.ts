@@ -13,6 +13,8 @@ export type MagazineEntry = {
   canonical: string;
   sourceUrl: string;
   title: string;
+  /** Nur <title>; die Überschrift bleibt title. */
+  seoTitle?: string;
   description: string;
   date: string;
   modified: string;
@@ -39,8 +41,30 @@ type MagazineAsset = { localPath: string; legacyPaths: string[] };
 // The former /lexikon articles live on as magazine posts outside the WordPress snapshot.
 // Medien kommen vom Asset-Host, weil der nginx vor der Live-Domain nur Seitenrouten durchreicht.
 // Seiten-URLs (Canonical, interne Links) enden auf "/" wie die ICONY-Plattform; der Snapshot bleibt unverändert.
+// Seitentitel unter ca. 580 px (Google-Abschnitt), gemessen wie Seobility mit 20px Arial; Snapshot bleibt unverändert.
+const SEO_TITLES: Record<string, string> = {
+  "bin-ich-schwul": "Bin ich schwul? Gefühle verstehen und einordnen",
+  "drag-queen": "Drag Queen: Bedeutung, Geschichte und Szene",
+  "er-sucht-ihn": "Er sucht Ihn: Als schwuler Mann einen Mann finden",
+  "promi-outings": "Promi-Outings: Berühmte Schwule, die dazu stehen",
+  "kleine-pride-events-gay-dating": "Kleine Pride-Events: Echte Kontakte für Gay Singles",
+  "deepfake-nudes-dating-schutz": "Deepfake-Nudes: Privatsphäre beim Gay-Dating schützen",
+  "schwul-und-muslimisch-partnersuche": "Schwul und muslimisch: Chancen bei der Partnersuche",
+  "bisexuelle-maenner": "Bisexuelle Männer: Umgang und Gleichgesinnte finden",
+  "queere-events-dating-sicherheit": "Queere Events und Dating: Warum Vertrauen zählt",
+  gaychat: "Gaychat, Schwulenchat & Gay Cam: Der passende Chat",
+  "gay-escort": "Gay Escort: Dienstleistungen, Sicherheit & Tipps",
+  "ernie-und-bert-doch-nur-beste-freunde": "Ernie und Bert: doch nur beste Freunde?",
+};
+// Überschrift und Titel zugleich (ein Wort reicht weder als H1 noch als Titel), wie bei den anderen Gay-Locations.
+const TITLE_OVERRIDES: Record<string, string> = {
+  "gaylocations-dortmund": "Gay-Locations, Clubs und Bars in Dortmund",
+};
+
 export const magazineEntries = ([...catalog.entries, ...retiredLexicon.entries] as MagazineEntry[]).map((entry) => ({
   ...entry,
+  title: TITLE_OVERRIDES[entry.slug] ?? entry.title,
+  seoTitle: SEO_TITLES[entry.slug],
   canonical: withTrailingSlash(entry.canonical),
   featuredImage: entry.featuredImage ? staticAsset(entry.featuredImage) : entry.featuredImage,
   contentHtml: absolutizeAssetUrls(slashInternalLinks(entry.contentHtml)),

@@ -2,11 +2,11 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { buildBreadcrumbs, buildBreadcrumbSchema } from "../lib/breadcrumbs.mjs";
 
-test("nested German city pages expose state and city hierarchy", () => {
+test("nested German city pages show the state as unlinked text (no state page exists)", () => {
   assert.deepEqual(buildBreadcrumbs("/partnersuche/nordrhein-westfalen/köln"), [
     { name: "Start", path: "/" },
     { name: "Partnersuche", path: "/partnersuche" },
-    { name: "Nordrhein Westfalen", path: "/partnersuche/nordrhein-westfalen" },
+    { name: "Nordrhein Westfalen", path: "/partnersuche/nordrhein-westfalen", linked: false },
     { name: "Köln", path: "/partnersuche/nordrhein-westfalen/köln" },
   ]);
 });
@@ -42,8 +42,7 @@ test("breadcrumb structured data uses canonical absolute item URLs", () => {
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Start", item: "https://er-sucht-ihn.de/" },
       { "@type": "ListItem", position: 2, name: "Partnersuche", item: "https://er-sucht-ihn.de/partnersuche/" },
-      { "@type": "ListItem", position: 3, name: "Bayern", item: "https://er-sucht-ihn.de/partnersuche/bayern/" },
-      { "@type": "ListItem", position: 4, name: "München", item: "https://er-sucht-ihn.de/partnersuche/bayern/muenchen/" },
+      { "@type": "ListItem", position: 3, name: "München", item: "https://er-sucht-ihn.de/partnersuche/bayern/muenchen/" },
     ],
   });
 });

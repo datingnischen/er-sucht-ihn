@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/link";
 import type { ReactNode } from "react";
 import { MagazineBreadcrumbs } from "@/components/magazine-breadcrumbs";
 import { SparkIcon } from "@/components/icons";

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/link";
 import { ABOUT_ROOT_PATH, ABOUT_SOCIAL_PATH } from "@/lib/about-pages.mjs";
 import { registrationUrl } from "@/lib/site";
 import { socialChannels } from "@/lib/social-channels";

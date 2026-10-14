@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/link";
 import { ArrowIcon, PinIcon, SearchIcon, MarsPairIcon } from "@/components/icons";
 
 export type FinderCity = { path: string; name: string; teaser: string; photo: { src: string; alt: string } | null };

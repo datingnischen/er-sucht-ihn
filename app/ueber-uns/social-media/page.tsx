@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "@/components/link";
 import { notFound } from "next/navigation";
 import { AboutHero } from "@/components/about/about-hero";
 import { ArrowIcon, HeartFilledIcon, PeopleIcon } from "@/components/icons";
@@ -19,7 +19,9 @@ const community = socialChannels.find((channel) => !channel.profile);
 export function generateMetadata(): Metadata {
   const page = getImportedPage(ABOUT_SOCIAL_PATH);
   if (!page) return {};
-  return { title: page.title, description: page.description, alternates: { canonical: page.canonical }, openGraph: { title: page.title, description: page.description, url: page.canonical, images: [shareImage] } };
+  const title = page.seoTitle ?? page.title;
+  const description = page.seoDescription ?? page.description;
+  return { title, description, alternates: { canonical: page.canonical }, openGraph: { title, description, url: page.canonical, images: [shareImage] } };
 }
 
 export default function AboutSocialPage() {

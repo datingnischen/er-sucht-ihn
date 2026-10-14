@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import Link from "next/link";
+import Link from "@/components/link";
 import { MagazineBreadcrumbs } from "@/components/magazine-breadcrumbs";
 import { ArrowIcon, BookIcon, ClockIcon, GlassIcon, HeartFilledIcon, HeartIcon, MarsPairIcon, PhoneIcon, PinIcon, RainbowIcon, SparkIcon, TvIcon } from "@/components/icons";
 import { MagazineCategoryIcon } from "@/components/magazine/category-icon";

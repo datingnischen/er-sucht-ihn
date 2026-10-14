@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import Link from "next/link";
+import Link from "@/components/link";
 import { publicPages } from "@/lib/content";
 import { CENTRAL_POSTCODES, citySearchUrl, registrationUrl } from "@/lib/site";
 import { getMagazineEntry } from "@/lib/magazine";

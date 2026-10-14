@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/link";
 import { usePathname } from "next/navigation";
 import { platform, registrationUrl } from "@/lib/site";
 import { ABOUT_REVIEWS_PATH, ABOUT_ROOT_PATH, ABOUT_SEARCH_PATH, ABOUT_SOCIAL_PATH } from "@/lib/about-pages.mjs";

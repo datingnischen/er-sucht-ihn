@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "@/components/link";
 import type { ReactNode } from "react";
 import { ABOUT_SEARCH_PATH } from "@/lib/about-pages.mjs";
 import { buildBreadcrumbs } from "@/lib/breadcrumbs.mjs";

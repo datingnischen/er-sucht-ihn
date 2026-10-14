@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "@/components/link";
 import { publicPages } from "@/lib/content";
 import { buildCityCards } from "@/lib/location-hub.mjs";
 import { getMagazineEntry, magazinePosts } from "@/lib/magazine";

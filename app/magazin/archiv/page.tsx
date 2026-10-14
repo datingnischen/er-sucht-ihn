@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "@/components/link";
 import { BookIcon } from "@/components/icons";
 import { MagazineArchiveHero, MagazineFilterChips } from "@/components/magazine-archive";
 import { categoriesWithPosts } from "@/components/magazine/content";
