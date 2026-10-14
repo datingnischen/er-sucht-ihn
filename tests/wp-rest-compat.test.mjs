@@ -40,7 +40,9 @@ test("posts: Teaser-Abruf wie bei ICONY liefert drei Beiträge im WordPress-Form
     if (post.featured_media) {
       const media = post._embedded["wp:featuredmedia"][0];
       assert.equal(media.id, post.featured_media);
-      assert.match(media.source_url, /^https?:\/\/[^/]+\/.*magazine\/media\//, "absolute Bild-URL");
+      // Eigene Domain unter /magazin/media/ statt Asset-Host (CSP der ICONY-Startseite, Heiko 2026-10-14)
+      assert.match(media.source_url, /^https:\/\/er-sucht-ihn\.de\/magazin\/media\/[^/]+$/, "eigene Domain");
+      assert.equal(media.media_details.sizes.medium.source_url, media.source_url);
       assert.ok(media.media_details.width > 0 && media.media_details.height > 0);
       assert.ok(media.alt_text.trim(), "Alt-Text nie leer");
     }

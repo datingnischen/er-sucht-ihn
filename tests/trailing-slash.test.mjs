@@ -55,7 +55,7 @@ test("Next redirects page paths without slash itself and loaders normalise impor
   assert.match(await read("../proxy.ts"), /withTrailingSlash/);
   for (const match of config.matchAll(/destination: "([^"]+)"/g)) {
     const destination = match[1];
-    if (destination.startsWith("/:path")) continue;
+    if (destination.includes(":path")) continue; // Datei-Durchreichungen (/app-assets, /magazin/media) behalten den Dateipfad
     assert.ok(destination.endsWith("/") || /\.[a-z0-9]+$/i.test(destination), destination);
   }
   const content = await read("../lib/content.ts");

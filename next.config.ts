@@ -55,7 +55,11 @@ export default function nextConfig(phase: string): NextConfig {
       ];
     },
     async rewrites() {
-      return [{ source: `${assetPathPrefix}/:path*`, destination: "/:path*" }];
+      return [
+        { source: `${assetPathPrefix}/:path*`, destination: "/:path*" },
+        // Teaserbilder für ICONY (wp-json _embedded) auf der eigenen Domain: /magazin/media/<datei> = public/magazine/media/<datei>
+        { source: "/magazin/media/:path*", destination: "/magazine/media/:path*" },
+      ];
     },
     async headers() {
       return [{

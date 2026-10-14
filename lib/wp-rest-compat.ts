@@ -113,8 +113,17 @@ const mediaSlug = (asset: Asset) => (asset.localPath.split("/").pop() || "").rep
 
 // ---------------------------------------------------------------- Objekte im WordPress-Format
 
+/**
+ * Eigene Domain statt Asset-Host: Die CSP der ICONY-Startseiten lässt Teaserbilder nur von der eigenen Domain zu
+ * (Heiko, 2026-10-14). /magazin/media/<datei> zeigt per Rewrite (next.config.ts) auf public/magazine/media/<datei>;
+ * nginx muss den Pfad an Vercel durchreichen.
+ */
+export function ownDomainMediaUrl(localPath: string) {
+  return `${PUBLIC_ORIGIN}${localPath.replace(/^\/magazine\/media\//, "/magazin/media/")}`;
+}
+
 function mediaObject(asset: Asset, fallbackAlt: string): Json {
-  const url = absolute(staticAsset(asset.localPath));
+  const url = ownDomainMediaUrl(asset.localPath);
   const size = sizes[String(asset.id)];
   const file = asset.localPath.split("/").pop() || "";
   const details: Json = {};
@@ -122,7 +131,8 @@ function mediaObject(asset: Asset, fallbackAlt: string): Json {
     details.width = size.width;
     details.height = size.height;
     details.file = file;
-    details.sizes = { full: { file, width: size.width, height: size.height, mime_type: asset.mimeType, source_url: url } };
+    // medium/large sind Aliase derselben Datei, damit ICONY unabhängig von der gewählten Größe ein Bild bekommt
+    details.sizes = Object.fromEntries(["medium", "large", "full"].map((name) => [name, { file, width: size.width, height: size.height, mime_type: asset.mimeType, source_url: url }]));
   }
   const owner = postUsing(asset);
   return {
