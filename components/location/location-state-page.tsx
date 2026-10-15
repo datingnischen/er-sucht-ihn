@@ -67,11 +67,11 @@ export function LocationStatePage({ state, breadcrumbs }: Props) {
             <Breadcrumbs items={breadcrumbs} className="sc-crumbs" />
             <span className="sc-badge"><MarsPairIcon />Partnersuche für Männer · {country.regionLabel}</span>
             <h1>{emphasize(`Er sucht Ihn in ${state.name}`, state.name)}</h1>
-            <p className="sc-lead">Männer aus {state.name} kennenlernen: Hier findest Du alle Stadt-Guides von Er-sucht-Ihn.de für {names}.</p>
+            <p className="sc-lead">Gay-Dating nach Städten: Männer aus {state.name} kennenlernen. Hier findest Du alle Stadt-Guides von Er-sucht-Ihn.de für {names}.</p>
             <ul className="sh-stats">
-              <li><strong>{cities.length}</strong><span>{cities.length === 1 ? "Stadt" : "Städte"} mit Gay-Guide</span></li>
-              <li><strong><PinIcon /></strong><span>{state.name}</span></li>
-              <li><strong><HeartFilledIcon /></strong><span>kostenlos anmelden</span></li>
+              <li><span className="sx-strong">{cities.length}</span><span>{cities.length === 1 ? "Stadt" : "Städte"} mit Gay-Guide</span></li>
+              <li><span className="sx-strong"><PinIcon /></span><span>{state.name}</span></li>
+              <li><span className="sx-strong"><HeartFilledIcon /></span><span>kostenlos anmelden</span></li>
             </ul>
             <div className="sc-actions">
               <a className="button button-green" href={signupUrl}><HeartFilledIcon />Kostenlos anmelden</a>
@@ -128,7 +128,7 @@ export function LocationStatePage({ state, breadcrumbs }: Props) {
               <li key={city.path}>
                 <div className="sh-chip has-card-link" title={city.teaser}>
                   {city.photo ? <img src={city.photo.src} alt={`Stadtansicht von ${city.name}`} loading="lazy" decoding="async" /> : <span className="sh-chip-ph" aria-hidden="true"><MarsPairIcon /></span>}
-                  <span className="sh-chip-copy"><strong><Link className="card-link" href={city.path}>{city.name}</Link></strong><small>{city.teaser}</small></span>
+                  <span className="sh-chip-copy"><span className="sx-strong"><Link className="card-link" href={city.path}>{city.name}</Link></span><small>{city.teaser}</small></span>
                   <ArrowIcon className="sh-chip-go" />
                 </div>
               </li>

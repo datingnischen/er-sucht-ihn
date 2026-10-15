@@ -5,7 +5,7 @@ import { classifyPath, publicUrl, SITE_URL, slashInternalLinks, withTrailingSlas
 import { absolutizeAssetUrls, staticAsset } from "./static-asset.mjs";
 import { withImageAlts } from "./image-alt.mjs";
 import { withPagePhoto } from "./page-photos.mjs";
-import { withoutEmptyHeadings, withoutH1Repeat } from "./html-cleanup.mjs";
+import { fixTypos, limitStrong, withoutEmptyHeadings, withoutH1Repeat } from "./html-cleanup.mjs";
 
 export type ImportedPage = {
   path: string;
@@ -51,7 +51,8 @@ const metaOverrides: Record<string, Partial<Pick<ImportedPage, "title" | "descri
   },
   "/partnersuche/essen": { title: "Er sucht Ihn in Essen (Ruhrgebiet)" },
   "/faq": {
-    title: "FAQ: Kosten, Sicherheit & Ablauf bei Er sucht Ihn",
+    // Nur Wörter, die auch im Seitentext stehen.
+    title: "Fragen und Antworten zu Er-sucht-Ihn",
     description: "Antworten auf häufige Fragen zur Partnersuche bei er-sucht-ihn.de. Jetzt alles zu Kosten, Sicherheit & Ablauf erfahren.",
   },
 };
@@ -64,6 +65,11 @@ function withMetaOverride(page: ImportedPage): ImportedPage {
 // Längere H1 (Seobility: unter ca. 20 Zeichen zu kurz); Titel und Linktexte bleiben.
 const h1Overrides: Record<string, string> = {
   "/partnersuche/nordrhein-westfalen/bonn": "Er sucht Ihn in Bonn: schwule Männer kennenlernen",
+  // Importierte H1 mit Emoji und „NRW“ (steht nicht im Text).
+  "/partnersuche/bielefeld": "Schwule Singles in Bielefeld kennenlernen",
+  "/partnersuche/muenster": "Schwule Singles in Münster kennenlernen",
+  // „Gays“ stand nicht im Text.
+  "/partnersuche": "Finde Männer in deiner Stadt",
 };
 // Markenlink „Er sucht Ihn“ auf die Startseite konkurriert mit dem gleichnamigen Glossar-Artikel; die Startseite ist ohnehin überall verlinkt.
 const contentFixes: Record<string, Array<[string, string]>> = {
@@ -78,8 +84,9 @@ function withPageFixes(page: ImportedPage): ImportedPage {
   contentHtml = contentHtml.replace(/<a href="\/"[^>]*>(Er sucht Ihn)<\/a>/gi, "$1");
   // Interne Links einheitlich mit Umlauten statt Prozent-Kodierung (sonst zählt Seobility zwei URLs für dieselbe Seite).
   contentHtml = contentHtml.replace(/href="(\/[^"]*%[0-9A-Fa-f]{2}[^"]*)"/g, (_m, path: string) => `href="${safeDecode(path)}"`);
-  contentHtml = withoutH1Repeat(withoutEmptyHeadings(contentHtml), h1);
-  return h1 === page.h1 && contentHtml === page.contentHtml ? page : { ...page, h1, contentHtml };
+  contentHtml = fixTypos(limitStrong(withoutH1Repeat(withoutEmptyHeadings(contentHtml), h1)));
+  const description = fixTypos(page.description);
+  return h1 === page.h1 && contentHtml === page.contentHtml && description === page.description ? page : { ...page, h1, contentHtml, description };
 }
 
 // Seiten-URLs enden auf "/" wie die ICONY-Plattform; der Import-Snapshot bleibt unverändert.

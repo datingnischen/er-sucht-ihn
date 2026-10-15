@@ -71,9 +71,9 @@ export function LocationHubPage({ page, path, image, contentHtml, breadcrumbs }:
             <h1>{emphasize(page.h1, "deiner Stadt")}</h1>
             <p className="sc-lead">{page.description}</p>
             <ul className="sh-stats">
-              <li><strong>{cityCount}</strong><span>Städte mit Gay-Guide</span></li>
-              <li><strong>{regionList.length}</strong><span>{country.regionLabelPlural}</span></li>
-              <li><strong><HeartFilledIcon /></strong><span>kostenlos anmelden</span></li>
+              <li><span className="sx-strong">{cityCount}</span><span>Städte mit Gay-Guide</span></li>
+              <li><span className="sx-strong">{regionList.length}</span><span>{country.regionLabelPlural}</span></li>
+              <li><span className="sx-strong"><HeartFilledIcon /></span><span>kostenlos anmelden</span></li>
             </ul>
             <div className="sc-actions">
               <a className="button button-green" href={signupUrl}><HeartFilledIcon />Kostenlos anmelden</a>

@@ -50,7 +50,7 @@ export function CityFinder({ regions, regionLabel, countryName }: Props) {
                 <li key={city.path}>
                   <div className="sh-chip has-card-link" title={city.teaser}>
                     {city.photo ? <img src={city.photo.src} alt={`Stadtansicht von ${city.name}`} loading="lazy" decoding="async" /> : <span className="sh-chip-ph" aria-hidden="true"><MarsPairIcon /></span>}
-                    <span className="sh-chip-copy"><strong><Link className="card-link" href={city.path}>{city.name}</Link></strong><small>{city.teaser}</small></span>
+                    <span className="sh-chip-copy"><span className="sx-strong"><Link className="card-link" href={city.path}>{city.name}</Link></span><small>{city.teaser}</small></span>
                     <ArrowIcon className="sh-chip-go" />
                   </div>
                 </li>

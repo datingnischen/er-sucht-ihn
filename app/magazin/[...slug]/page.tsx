@@ -122,7 +122,7 @@ export default async function MagazineDetailPage({ params }: Props) {
           )}
           {review && (
             <aside className="mz-review-summary" aria-label="Redaktionelle Anbieterbewertung">
-              <p><strong>{review.summary}</strong></p>
+              <p><span className="em-strong">{review.summary}</span></p>
               <p>Die Sterne geben den redaktionellen Gesamteindruck dieses Berichts wieder; sie sind keine durchschnittliche Nutzerbewertung.</p>
               <p>{review.free}: 0 €. Der kostenlose Einstieg umfasst nicht automatisch alle Funktionen. Zusätzliche Leistungen können kostenpflichtig sein.
                 {review.source && <> <a href={review.source}>Preisangabe im App Store</a>.</>}

@@ -8,3 +8,10 @@
 .has-card-link .card-link::after { content: ""; position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
 .has-card-link .card-link:focus-visible { outline: none; }
 .has-card-link:focus-within { outline: 2px solid currentColor; outline-offset: 3px; }
+
+/* Hervorhebungen, die limitStrong (lib/html-cleanup.mjs) aus <strong> in <span> umwandelt: gleiche Optik wie strong. */
+.em-strong { font-weight: 700; }
+.sc-rich .em-strong { color: var(--ink); }
+.ab-prose-light .em-strong { color: #fff; }
+.lx-glossary-body .em-strong { font-family: var(--display); font-size: clamp(1.7rem, 3vw, 2.3rem); font-weight: 700; line-height: 1.08; }
+.lx-mag-body .em-strong { font-family: var(--display); font-size: 1.14rem; font-weight: 650; line-height: 1.22; }

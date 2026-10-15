@@ -3,7 +3,7 @@ import retiredLexicon from "../data/magazine-lexikon.json" with { type: "json" }
 import { absolutizeAssetUrls, staticAsset } from "./static-asset.mjs";
 import { slashInternalLinks, withTrailingSlash } from "./site-contract.mjs";
 import { withImageAlts } from "./image-alt.mjs";
-import { withoutEmptyHeadings } from "./html-cleanup.mjs";
+import { fixTypos, limitStrong, withoutEmptyHeadings } from "./html-cleanup.mjs";
 
 export type MagazineEntry = {
   id: number;
@@ -44,7 +44,7 @@ type MagazineAsset = { localPath: string; legacyPaths: string[] };
 // Seiten-URLs (Canonical, interne Links) enden auf "/" wie die ICONY-Plattform; der Snapshot bleibt unverändert.
 // Seitentitel unter ca. 580 px (Google-Abschnitt), gemessen wie Seobility mit 20px Arial; Snapshot bleibt unverändert.
 const SEO_TITLES: Record<string, string> = {
-  "bin-ich-schwul": "Bin ich schwul? Gefühle verstehen und einordnen",
+  "bin-ich-schwul": "Bin ich schwul? Anzeichen und Gefühle",
   "drag-queen": "Drag Queen: Bedeutung, Geschichte und Szene",
   // Ohne Wortwiederholung (Seobility) und ohne eigene Domain im Titel.
   "er-sucht-ihn": "Er sucht Ihn: Als schwuler Mann den Partner finden",
@@ -55,7 +55,7 @@ const SEO_TITLES: Record<string, string> = {
   "kleine-pride-events-gay-dating": "Kleine Pride-Events: Echte Kontakte für Gay Singles",
   "deepfake-nudes-dating-schutz": "Deepfake-Nudes: Privatsphäre beim Gay-Dating schützen",
   "schwul-und-muslimisch-partnersuche": "Schwul und muslimisch: Chancen bei der Partnersuche",
-  "bisexuelle-maenner": "Bisexuelle Männer: Umgang und Gleichgesinnte finden",
+  "bisexuelle-maenner": "Bisexuelle Männer: Gleichgesinnte finden",
   "queere-events-dating-sicherheit": "Queere Events und Dating: Warum Vertrauen zählt",
   gaychat: "Gaychat, Schwulenchat & Gay Cam: Der passende Chat",
   "gay-escort": "Gay Escort: Dienstleistungen, Sicherheit & Tipps",
@@ -68,7 +68,7 @@ const TITLE_OVERRIDES: Record<string, string> = {
 
 // Längere H1 (Seobility: unter ca. 20 Zeichen zu kurz); Titel, Karten und Linktexte behalten den Originaltitel.
 const H1_OVERRIDES: Record<string, string> = {
-  "bin-ich-schwul": "Bin ich schwul? Gefühle verstehen und einordnen",
+  "bin-ich-schwul": "Bin ich schwul? Anzeichen und Gefühle",
   "drag-queen": "Drag Queen: Bedeutung, Geschichte und Szene",
   "er-sucht-ihn": "Er sucht Ihn: Als schwuler Mann den Partner finden",
   "promi-outings": "Promi-Outings: Berühmte Schwule, die dazu stehen",
@@ -98,7 +98,8 @@ function withUniqueLinkTargets(slug: string, html: string) {
 export const magazineEntries = ([...catalog.entries, ...retiredLexicon.entries] as MagazineEntry[]).map((entry) => ({
   ...entry,
   // Importbereinigung vor dem Slash-/Asset-Schritt: leere Überschriften raus, eindeutige Linkziele.
-  contentHtml: withoutEmptyHeadings(withUniqueLinkTargets(entry.slug, entry.contentHtml)),
+  contentHtml: fixTypos(limitStrong(withoutEmptyHeadings(withUniqueLinkTargets(entry.slug, entry.contentHtml)))),
+  description: fixTypos(entry.description),
 })).map((entry) => ({
   ...entry,
   title: TITLE_OVERRIDES[entry.slug] ?? entry.title,

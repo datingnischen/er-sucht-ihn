@@ -78,7 +78,7 @@ export default function AboutPage() {
       badge="Hinter den Kulissen"
       badgeIcon={<MarsPairIcon />}
       title={<>Über Er-sucht-Ihn und die <em>Menschen</em> dahinter</>}
-      lead={<p>Seit über 20 Jahren bringen wir Männer zusammen, die Männer lieben. Hier erfährst Du, wer hinter der Plattform steht, wie andere uns bewerten und wo Du uns auf Social Media findest.</p>}
+      lead={<p>Seit über 20 Jahren bringen wir Männer zusammen, die Männer lieben. Hier erfährst Du, wer hinter der Plattform steht – die Menschen dahinter –, wie andere uns bewerten und wo Du uns auf Social Media findest.</p>}
       media={<figure className="ab-collage">
         <span className="ab-arch"><img src={staticAsset("/about/betrieb-support.webp")} alt="Mann schaut lächelnd von seinem Smartphone auf" width="720" height="900" fetchPriority="high" /></span>
         <span className="ab-float-heart" aria-hidden="true"><HeartFilledIcon /></span>

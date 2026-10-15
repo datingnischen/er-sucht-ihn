@@ -103,12 +103,12 @@ export default function MagazinePage() {
       <nav className="wrap mz-topics" aria-label="Magazin-Themen">
         <Link className="mz-topic mz-topic-index" href="/magazin/archiv">
           <span className="mz-topic-icon" aria-hidden="true"><BookIcon /></span>
-          <span><strong>Alles von A–Z</strong><small>{magazinePosts.length} Beiträge nach Jahren</small></span>
+          <span><span className="sx-strong">Alles von A–Z</span><small>{magazinePosts.length} Beiträge nach Jahren</small></span>
         </Link>
         {categories.map((category) => (
           <Link className="mz-topic" href={`/magazin/kategorie/${category.slug}`} key={category.id}>
             <span className="mz-topic-icon" aria-hidden="true"><MagazineCategoryIcon slug={category.slug} /></span>
-            <span><strong>{category.name}</strong><small>{category.total} {category.total === 1 ? "Beitrag" : "Beiträge"}</small></span>
+            <span><span className="sx-strong">{category.name}</span><small>{category.total} {category.total === 1 ? "Beitrag" : "Beiträge"}</small></span>
           </Link>
         ))}
       </nav>
@@ -167,7 +167,7 @@ export default function MagazinePage() {
                   <MagazineMedia entry={entry} className="mz-city-arch" />
                   <span className="mz-city-copy">
                     <Link className="card-link" href={entry.path}><small><PinIcon />Gay-Locations in</small>
-                    <strong>{guideCity(entry)}</strong></Link>
+                    <span className="sx-strong">{guideCity(entry)}</span></Link>
                     <span className="mz-city-go">Guide öffnen <ArrowIcon /></span>
                   </span>
                 </div>

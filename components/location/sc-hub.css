@@ -41,7 +41,7 @@
   backdrop-filter: blur(6px);
 }
 
-.sh-stats strong {
+.sh-stats strong, .sh-stats .sx-strong {
   display: flex;
   align-items: center;
   min-height: 2rem;
@@ -51,7 +51,7 @@
   line-height: 1;
 }
 
-.sh-stats strong svg { width: 28px; height: 28px; color: #8fc6ff; }
+.sh-stats strong svg, .sh-stats .sx-strong svg { width: 28px; height: 28px; color: #8fc6ff; }
 
 .sh-stats span {
   margin-top: 4px;
@@ -320,7 +320,7 @@
 
 .sh-chip-copy { display: grid; min-width: 0; }
 
-.sh-chip-copy strong {
+.sh-chip-copy strong, .sh-chip-copy .sx-strong {
   font-family: var(--display);
   font-size: 1.08rem;
   font-weight: 650;
@@ -621,7 +621,7 @@
 @media (max-width: 700px) {
   .sh-hero { padding-bottom: 140px; }
   .sh-stats li { flex: 1 1 90px; min-width: 0; padding: 10px 12px; }
-  .sh-stats strong { font-size: 1.7rem; }
+  .sh-stats strong, .sh-stats .sx-strong { font-size: 1.7rem; }
   .sh-map { padding: 14px 10px 12px; transform: none; }
   .sh-map-back { inset: 10px -8px -10px 8px; }
   .sh-cities { margin-top: -90px; }

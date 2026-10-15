@@ -14,9 +14,9 @@
 .mz-main h2,
 .mz-main h3,
 .mz-feature strong,
-.mz-topic strong,
+.mz-topic strong, .mz-topic .sx-strong,
 .mz-tile strong,
-.mz-city strong,
+.mz-city strong, .mz-city .sx-strong,
 .mz-scene-hub strong,
 .mz-knowledge-list strong,
 .mz-stats dd {
@@ -705,7 +705,7 @@
   height: 22px;
 }
 
-.mz-topic strong {
+.mz-topic strong, .mz-topic .sx-strong {
   display: block;
   font-size: 1rem;
   font-weight: 650;
@@ -734,7 +734,7 @@
   color: #fff !important;
 }
 
-.mz-topic-index strong {
+.mz-topic-index strong, .mz-topic-index .sx-strong {
   font-size: 1.2rem;
 }
 
@@ -995,7 +995,7 @@
   height: 14px;
 }
 
-.mz-city strong {
+.mz-city strong, .mz-city .sx-strong {
   font-size: 1.45rem;
   font-weight: 650;
   line-height: 1.1;
@@ -2307,7 +2307,7 @@
     border-radius: 12px;
   }
 
-  .mz-topic strong {
+  .mz-topic strong, .mz-topic .sx-strong {
     font-size: .92rem;
   }
 
@@ -2358,7 +2358,7 @@
     gap: 26px 16px;
   }
 
-  .mz-city strong {
+  .mz-city strong, .mz-city .sx-strong {
     font-size: 1.2rem;
   }
 
