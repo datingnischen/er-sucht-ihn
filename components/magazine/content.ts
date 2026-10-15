@@ -1,3 +1,4 @@
+import { collapseSourceSections } from "@/lib/collapse-sources";
 import { getMagazineEntry, magazineCategories, magazinePosts, postsForMagazineCategory, type MagazineEntry } from "@/lib/magazine";
 import { getLocationName } from "@/lib/site-contract.mjs";
 
@@ -58,9 +59,10 @@ export type ArticleHeading = { id: string; text: string };
 export function prepareArticleHtml(html: string) {
   const used = new Set<string>();
   const headings: ArticleHeading[] = [];
-  const cleaned = html
+  // Quellen klein und zugeklappt ans Ende; ihr Kapitel fällt so aus dem Inhaltsverzeichnis.
+  const cleaned = collapseSourceSections(html
     .replace(/<p>\s*(<table[\s\S]*?<\/table>)\s*<\/p>/g, "$1")
-    .replace(/<p>(?:\s|&nbsp;|<br\s*\/?>)*<\/p>/g, "");
+    .replace(/<p>(?:\s|&nbsp;|<br\s*\/?>)*<\/p>/g, ""));
   const withIds = cleaned.replace(/<h2(\s[^>]*)?>([\s\S]*?)<\/h2>/g, (match, attrs: string | undefined, inner: string) => {
     const text = stripHtml(inner);
     if (!text) return match;
