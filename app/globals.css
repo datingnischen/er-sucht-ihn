@@ -15,3 +15,6 @@
 .ab-prose-light .em-strong { color: #fff; }
 .lx-glossary-body .em-strong { font-family: var(--display); font-size: clamp(1.7rem, 3vw, 2.3rem); font-weight: 700; line-height: 1.08; }
 .lx-mag-body .em-strong { font-family: var(--display); font-size: 1.14rem; font-weight: 650; line-height: 1.22; }
+
+/* Ehemalige strong-Elemente (Seobility „viele Strong-Tags“): Fettschrift kam vom Browser-Standard für strong. */
+.sx-strong, .sc-fact-value { font-weight: 700; }
