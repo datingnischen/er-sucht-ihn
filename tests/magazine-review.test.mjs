@@ -46,3 +46,9 @@ test("unrated, comparison and non-provider articles retain article schema withou
   assert.equal(magazineReview({ ...entry("boytrap"), author: null }), null);
   assert.equal(magazineReview({ ...entry("boytrap"), contentHtml: '<table><tr><td>Gesamteindruck:</td><td>★★★★★★</td></tr></table>' }), null);
 });
+
+test("editorial attribution links the existing archive without becoming a person", () => {
+ const result = buildMagazineSchema({ ...entry("badoo-und-lovoo"), author: { name: "Redaktion", slug: "redaktion" } }, "https://er-sucht-ihn.de");
+ assert.equal(result.author["@type"], "Organization");
+ assert.equal(result.author.url, "https://er-sucht-ihn.de/magazin/author/redaktion/");
+});
