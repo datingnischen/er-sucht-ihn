@@ -2477,3 +2477,12 @@
 }
 .mz-review-summary p { margin: 0 0 .5rem; }
 .mz-review-summary p:last-child { margin-bottom: 0; }
+
+/* Themen-Kacheln mit Titel-Link: Klickfläche (.card-link::after) muss die ganze Kachel abdecken. Dafür ist der
+   Textblock statisch; Bild und Verlauf liegen mit negativem z-index darunter (die Kachel ist durch transform ein
+   eigener Stapelkontext, ihr Hintergrund bleibt dahinter). */
+.mz-tile.has-card-link img,
+.mz-tile.has-card-link::after { z-index: -1; }
+.mz-tile.has-card-link .mz-tile-copy { position: static; }
+.mz-tile.has-card-link .mz-tile-arrow { pointer-events: none; }
+.mz-tile.has-card-link:focus-within { transform: rotate(0deg) translateY(-4px); box-shadow: 0 26px 48px rgba(20, 40, 75, .26); }

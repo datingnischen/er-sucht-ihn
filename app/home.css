@@ -298,3 +298,10 @@
   .home-float { animation: none; }
   .home-belong-card img, .home-city img { transition: none; }
 }
+
+/* Karten mit Titel-Link: Der Textblock darf nicht positioniert sein, sonst deckt .card-link::after nur ihn ab.
+   Statt absolut unten liegt er per Flex unten in der Karte (gleiche Abstände). */
+.home-belong-card.has-card-link,
+.home-city.has-card-link { display: flex; align-items: flex-end; }
+.home-belong-card.has-card-link .home-belong-copy { position: static; flex: 1; margin: 0 24px 22px; }
+.home-city.has-card-link .home-city-copy { position: static; flex: 1; margin: 0 20px 18px; }
