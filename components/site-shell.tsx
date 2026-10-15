@@ -62,7 +62,8 @@ export function Footer() {
       <section className="footer-cta">
         <span className="footer-cta-mark" aria-hidden="true"><MarsPairIcon /></span>
         <p className="kicker">Partnersuche für Männer</p>
-        <h2>Triff Männer aus Deiner Region – <em>sicher, persönlich und kostenlos.</em></h2>
+        {/* Absatz mit Überschriften-Optik (.display): Footer-Texte gliedern den Seiteninhalt nicht. */}
+        <p className="display footer-cta-title">Triff Männer aus Deiner Region – <em>sicher, persönlich und kostenlos.</em></p>
         <div className="footer-cta-actions">
           <a className="button button-green" href={register}>Jetzt kostenlos registrieren</a>
           <Link className="button button-ghost-light" href="/partnersuche">Städte entdecken</Link>
@@ -81,7 +82,7 @@ export function Footer() {
         <FooterColumn title="Entdecken" links={[["Partnersuche", "/partnersuche"], ["Dating-Tipps", platform.datingTips], ["Magazin", "/magazin"]]} />
         <FooterColumn title="Über uns" links={[["Über Er-sucht-Ihn", ABOUT_ROOT_PATH], ["Bewertungen & Erfahrungen", ABOUT_REVIEWS_PATH], ["Social Media", ABOUT_SOCIAL_PATH], ["Suche", withTrailingSlash(ABOUT_SEARCH_PATH)]]} />
         <FooterColumn title="Vertrauen" links={[["Sicherheit & Datenschutz", platform.safety], ["Redaktionelle Kontrolle", platform.editorialControl], ["Basis-Mitgliedschaft", platform.basicMembership], ["Erfolgsgeschichten", platform.successStories], ["FAQ", "/faq"]]} />
-        <div className="footer-column"><h2>Service</h2><ul>
+        <div className="footer-column"><p className="display footer-title">Service</p><ul>
           <li><a href={platform.help}>Hilfe & Support</a></li><li><a href={platform.login}>Login</a></li><li><a href={register}>Registrieren</a></li>
           <li><a href={platform.privacy}>Datenschutz</a></li><li><a href={platform.legal}>Impressum</a></li><li><a href={platform.terms}>AGB</a></li>
         </ul></div>
@@ -92,5 +93,5 @@ export function Footer() {
 }
 
 function FooterColumn({ title, links }: { title: string; links: readonly (readonly [string, string])[] }) {
-  return <div className="footer-column"><h2>{title}</h2><ul>{links.map(([label, href]) => <li key={href}>{href.startsWith("http") ? <a href={href}>{label}</a> : <Link href={href}>{label}</Link>}</li>)}</ul></div>;
+  return <div className="footer-column"><p className="display footer-title">{title}</p><ul>{links.map(([label, href]) => <li key={href}>{href.startsWith("http") ? <a href={href}>{label}</a> : <Link href={href}>{label}</Link>}</li>)}</ul></div>;
 }

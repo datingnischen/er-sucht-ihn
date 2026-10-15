@@ -49,6 +49,8 @@ const metaOverrides: Record<string, Partial<Pick<ImportedPage, "title" | "descri
     seoTitle: "Er sucht Ihn auf Facebook & YouTube",
     seoDescription: "Er sucht Ihn auf Facebook und YouTube: Dating-Tipps, Community-Themen und Neuigkeiten für schwule Männer. Folge unseren offiziellen Kanälen.",
   },
+  // Titelwort „Gays“ auch im Seitentext (Lead = Description), Seobility „Keywords aus dem Titel nicht im Text“.
+  "/partnersuche": { description: "Partnersuche für Gays und homosexuelle Männer aus ganz Deutschland. Finde deinen Traumpartner: Stadt wählen, Mann aussuchen und loschatten." },
   "/partnersuche/essen": { title: "Er sucht Ihn in Essen (Ruhrgebiet)" },
   "/faq": {
     // Nur Wörter, die auch im Seitentext stehen.
@@ -84,6 +86,14 @@ function withPageFixes(page: ImportedPage): ImportedPage {
   contentHtml = contentHtml.replace(/<a href="\/"[^>]*>(Er sucht Ihn)<\/a>/gi, "$1");
   // Interne Links einheitlich mit Umlauten statt Prozent-Kodierung (sonst zählt Seobility zwei URLs für dieselbe Seite).
   contentHtml = contentHtml.replace(/href="(\/[^"]*%[0-9A-Fa-f]{2}[^"]*)"/g, (_m, path: string) => `href="${safeDecode(path)}"`);
+  // Die Flirt-Faktor-Erklärung steht wortgleich in 33 Stadttexten (Seobility „Textblöcke mehrfach“): Stadtname einsetzen.
+  const flirtCity = contentHtml.match(/🔥\s*([^<]+?)\s+Flirt-Faktor/)?.[1]?.trim();
+  if (flirtCity) {
+    contentHtml = contentHtml
+      .replace("Was bedeutet der Flirt-Faktor?", `Was bedeutet der Flirt-Faktor für ${flirtCity}?`)
+      .replace("Der Flirt-Faktor ist ein Index, der folgende Faktoren kombiniert:", `Der Flirt-Faktor für ${flirtCity} ist ein Index, der folgende Faktoren kombiniert:`)
+      .replace("<strong>• Community-Größe</strong>", `<strong>• Community-Größe in ${flirtCity}</strong>`);
+  }
   contentHtml = fixTypos(limitStrong(withoutH1Repeat(withoutEmptyHeadings(contentHtml), h1)));
   const description = fixTypos(page.description);
   return h1 === page.h1 && contentHtml === page.contentHtml && description === page.description ? page : { ...page, h1, contentHtml, description };

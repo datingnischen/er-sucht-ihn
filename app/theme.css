@@ -260,14 +260,16 @@ h1 em, h2 em, h3 em, .display em {
   line-height: 1;
 }
 .footer-cta .kicker { color: #a7d8ff; margin: 0 0 12px; }
-.footer-cta h2 {
+.footer-cta h2,
+.footer-cta .footer-cta-title {
   max-width: 880px;
   margin: 0 auto 30px;
   color: #fff;
   font-size: clamp(2rem, 4.6vw, 3.4rem);
   line-height: 1.06;
 }
-.footer-cta h2 em {
+.footer-cta h2 em,
+.footer-cta .footer-cta-title em {
   background: linear-gradient(100deg, #7fe7dc, #8fc6ff 55%, #c9b8ff);
   -webkit-background-clip: text;
   background-clip: text;
@@ -292,7 +294,8 @@ h1 em, h2 em, h3 em, .display em {
 .trust-list li { display: flex; align-items: center; gap: 10px; color: #e6edf7; font-weight: 650; font-size: .92rem; }
 .trust-list li::before { content: none; }
 .trust-list svg { flex: none; width: 20px; height: 20px; padding: 3px; border-radius: 50%; background: rgba(143, 198, 255, .18); color: #8fc6ff; }
-.footer-column h2 {
+.footer-column h2,
+.footer-column .footer-title {
   margin: 0 0 14px;
   color: #fff;
   font-size: 1.12rem;

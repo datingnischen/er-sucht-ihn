@@ -44,7 +44,7 @@ export function MagazineCard({ entry, variant = "default", heading = "h3", showE
           </span>
         </span>
         <div className="mz-card-body">
-          <Heading className="mz-card-title"><Link className="card-link" href={entry.path}>{entry.title}</Link></Heading>
+          <Heading className={heading === "p" ? "mz-card-title display" : "mz-card-title"}><Link className="card-link" href={entry.path}>{entry.title}</Link></Heading>
           {showExcerpt && <span className="mz-card-excerpt">{entry.description}</span>}
           <span className="mz-card-meta">
             {entry.type === "post" && <time dateTime={articleUpdatedDate(entry)}>Aktualisiert {dateLabel(articleUpdatedDate(entry))}</time>}

@@ -3,7 +3,7 @@ import retiredLexicon from "../data/magazine-lexikon.json" with { type: "json" }
 import { absolutizeAssetUrls, staticAsset } from "./static-asset.mjs";
 import { slashInternalLinks, withTrailingSlash } from "./site-contract.mjs";
 import { withImageAlts } from "./image-alt.mjs";
-import { fixTypos, limitStrong, withoutEmptyHeadings } from "./html-cleanup.mjs";
+import { fixTypos, limitStrong, withoutEmptyHeadings, withoutHeadingSkips } from "./html-cleanup.mjs";
 
 export type MagazineEntry = {
   id: number;
@@ -98,7 +98,7 @@ function withUniqueLinkTargets(slug: string, html: string) {
 export const magazineEntries = ([...catalog.entries, ...retiredLexicon.entries] as MagazineEntry[]).map((entry) => ({
   ...entry,
   // Importbereinigung vor dem Slash-/Asset-Schritt: leere Überschriften raus, eindeutige Linkziele.
-  contentHtml: fixTypos(limitStrong(withoutEmptyHeadings(withUniqueLinkTargets(entry.slug, entry.contentHtml)))),
+  contentHtml: fixTypos(limitStrong(withoutHeadingSkips(withoutEmptyHeadings(withUniqueLinkTargets(entry.slug, entry.contentHtml))))),
   description: fixTypos(entry.description),
 })).map((entry) => ({
   ...entry,

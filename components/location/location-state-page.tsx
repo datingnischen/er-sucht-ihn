@@ -121,7 +121,7 @@ export function LocationStatePage({ state, breadcrumbs }: Props) {
           <div className="sc-head">
             <p className="kicker">{countLabel} in {state.name}</p>
             <h2 id="sh-cities-title">Wähle Deine Stadt in {state.name}</h2>
-            <p>Jede Stadtseite verbindet Profilvorschauen von Männern aus der Region mit Bars, Events, Community-Treffs und Date-Ideen vor Ort.</p>
+            <p>Jede Stadtseite in {state.name} verbindet Profilvorschauen von Männern aus der Region mit Bars, Events, Community-Treffs und Date-Ideen vor Ort.</p>
           </div>
           <ul className="sh-chips sh-state-cities">
             {cards.map((city) => (
@@ -134,7 +134,7 @@ export function LocationStatePage({ state, breadcrumbs }: Props) {
               </li>
             ))}
           </ul>
-          <CitySearchFallback headingId={`${state.slug}-city-search-fallback-title`} />
+          <CitySearchFallback headingId={`${state.slug}-city-search-fallback-title`} region={state.name} />
         </div>
       </section>
 

@@ -123,8 +123,8 @@ export default async function MagazineDetailPage({ params }: Props) {
           {review && (
             <aside className="mz-review-summary" aria-label="Redaktionelle Anbieterbewertung">
               <p><span className="em-strong">{review.summary}</span></p>
-              <p>Die Sterne geben den redaktionellen Gesamteindruck dieses Berichts wieder; sie sind keine durchschnittliche Nutzerbewertung.</p>
-              <p>{review.free}: 0 €. Der kostenlose Einstieg umfasst nicht automatisch alle Funktionen. Zusätzliche Leistungen können kostenpflichtig sein.
+              <p>Die Sterne geben unseren redaktionellen Gesamteindruck von {review.name} wieder; sie sind keine durchschnittliche Nutzerbewertung.</p>
+              <p>{review.free}: 0 €. Der kostenlose Einstieg bei {review.name} umfasst nicht automatisch alle Funktionen. Zusätzliche Leistungen können kostenpflichtig sein.
                 {review.source && <> <a href={review.source}>Preisangabe im App Store</a>.</>}
               </p>
             </aside>
@@ -174,7 +174,7 @@ export default async function MagazineDetailPage({ params }: Props) {
               <Link className="button button-outline" href="/magazin/archiv">Alle Artikel</Link>
             </div>
             <div className="mz-grid">
-              {related.map((item) => <MagazineCard entry={item} key={item.id} />)}
+              {related.map((item) => <MagazineCard entry={item} heading="p" key={item.id} />)}
             </div>
           </div>
         </section>

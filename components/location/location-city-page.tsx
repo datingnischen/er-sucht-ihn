@@ -126,7 +126,7 @@ export function LocationCityPage({ page, path, contentHtml, breadcrumbs }: Impor
           <div className="sc-head">
             <p className="kicker">Aus dem Stadt-Guide</p>
             <h2 id="sc-ideas-title">Date-Ideen in <em>{cityName}</em></h2>
-            <p>Abgeleitet aus unseren Kapiteln: Orte, an denen Männer, die Männer lieben, ganz natürlich ins Gespräch kommen.</p>
+            <p>Abgeleitet aus unseren Kapiteln zu {cityName}: Orte, an denen Männer, die Männer lieben, ganz natürlich ins Gespräch kommen.</p>
           </div>
           <div className="sc-ideas-grid">
             {ideas.map((idea, index) => (

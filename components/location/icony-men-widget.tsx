@@ -17,7 +17,7 @@ export function IconyMenWidget({ city, widgetUrl, searchUrl }: Props) {
         <div>
           <p className="kicker">Gerade aktiv · nur Männer</p>
           <h2 id={headingId}>Single-Männer aus {city} <em>und Umgebung</em></h2>
-          <p>Sieh, welche Männer zuletzt bei Er-sucht-Ihn aktiv waren, und öffne ein Profil, das Dich neugierig macht.</p>
+          <p>Sieh, welche Männer aus {city} zuletzt bei Er-sucht-Ihn aktiv waren, und öffne ein Profil, das Dich neugierig macht.</p>
         </div>
       </div>
       <iframe className="sc-widget-frame" src={widgetUrl} title={`Single-Männer aus ${city} und Umgebung`} loading="lazy" referrerPolicy="no-referrer" />
