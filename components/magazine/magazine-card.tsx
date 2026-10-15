@@ -24,7 +24,8 @@ export function MagazineMedia({ entry, className = "", eager = false }: { entry:
 type CardProps = {
   entry: MagazineEntry;
   variant?: "default" | "lead" | "compact";
-  heading?: "h2" | "h3";
+  /** "p" für lange Listen (Archiv), die sonst zu viele Überschriften hätten. */
+  heading?: "h2" | "h3" | "p";
   showExcerpt?: boolean;
 };
 
@@ -34,7 +35,7 @@ export function MagazineCard({ entry, variant = "default", heading = "h3", showE
   const category = primaryCategory(entry);
   return (
     <article className={`mz-card mz-card-${variant}`}>
-      <Link href={entry.path} className="mz-card-link">
+      <div className="mz-card-link has-card-link">
         <span className="mz-card-visual">
           <MagazineMedia entry={entry} />
           <span className="mz-card-chip">
@@ -43,7 +44,7 @@ export function MagazineCard({ entry, variant = "default", heading = "h3", showE
           </span>
         </span>
         <div className="mz-card-body">
-          <Heading className="mz-card-title">{entry.title}</Heading>
+          <Heading className="mz-card-title"><Link className="card-link" href={entry.path}>{entry.title}</Link></Heading>
           {showExcerpt && <span className="mz-card-excerpt">{entry.description}</span>}
           <span className="mz-card-meta">
             {entry.type === "post" && <time dateTime={articleUpdatedDate(entry)}>Aktualisiert {dateLabel(articleUpdatedDate(entry))}</time>}
@@ -51,7 +52,7 @@ export function MagazineCard({ entry, variant = "default", heading = "h3", showE
           </span>
           <span className="mz-card-go">Lesen <ArrowIcon /></span>
         </div>
-      </Link>
+      </div>
     </article>
   );
 }

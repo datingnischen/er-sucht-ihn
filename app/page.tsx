@@ -94,11 +94,11 @@ export default function HomePage() {
         <p>Keine Schublade, kein Druck: Hier treffen sich Männer, die Männer lieben, in jeder Lebensphase. Unser Magazin begleitet Dich dabei.</p>
       </div>
       <div className="home-belonging">
-        {stories.map((story, index) => <Link className={`home-belong-card home-belong-${index}`} href={story.path} key={story.path}>
+        {stories.map((story, index) => <div className={`home-belong-card home-belong-${index} has-card-link`} key={story.path}>
           {story.entry?.featuredImage ? <img src={story.entry.featuredImage} alt={`Magazinartikel: ${story.entry.title}`} loading="lazy" /> : null}
           <span className="home-belong-shade" aria-hidden="true" />
-          <span className="home-belong-copy"><strong>{story.title}</strong><span>{story.text}</span><em>Weiterlesen <ArrowIcon /></em></span>
-        </Link>)}
+          <span className="home-belong-copy"><strong><Link className="card-link" href={story.path}>{story.title}</Link></strong><span>{story.text}</span><em>Weiterlesen <ArrowIcon /></em></span>
+        </div>)}
       </div>
     </section> : null}
 
@@ -119,11 +119,11 @@ export default function HomePage() {
         <Link className="button button-outline" href="/partnersuche">Alle Städte ansehen</Link>
       </div>
       <div className="home-cities">
-        {cities.map((city, index) => <Link className={`home-city${index === 0 ? " home-city-lead" : ""}`} href={city.path} key={city.path}>
+        {cities.map((city, index) => <div className={`home-city has-card-link${index === 0 ? " home-city-lead" : ""}`} key={city.path}>
           {city.image ? <img src={city.image.src} alt={`Stadtansicht von ${city.name}`} loading="lazy" /> : null}
           <span className="home-city-shade" aria-hidden="true" />
-          <span className="home-city-copy"><small><PinIcon /> Er sucht Ihn in</small><strong>{city.name}</strong><span>{city.teaser}</span></span>
-        </Link>)}
+          <span className="home-city-copy"><small><PinIcon /> Er sucht Ihn in</small><strong><Link className="card-link" href={city.path}>{city.name}</Link></strong><span>{city.teaser}</span></span>
+        </div>)}
         <a className="home-country" href={INDIVIDUAL_SEARCH_URL}>
           <small>Deine Stadt fehlt?</small><strong>Individuelle Suche</strong><span>Ort, Umkreis und Alter selbst festlegen</span><em><SearchIcon /></em>
         </a>
@@ -137,10 +137,10 @@ export default function HomePage() {
         <Link className="button button-outline" href="/magazin">Zum Magazin</Link>
       </div>
       <div className="home-posts">
-        {latest.map((post) => <Link className="home-post" href={post.path} key={post.id}>
+        {latest.map((post) => <div className="home-post has-card-link" key={post.id}>
           <span className="home-post-media">{post.featuredImage ? <img src={post.featuredImage} alt={`Titelbild: ${post.title}`} loading="lazy" /> : <BookIcon />}</span>
-          <span className="home-post-copy"><small>{post.categories[0]?.name || "Magazin"}</small><strong>{post.title}</strong><time dateTime={post.modified || post.date}>Aktualisiert am {dateLabel(post.modified || post.date)}</time></span>
-        </Link>)}
+          <span className="home-post-copy"><small>{post.categories[0]?.name || "Magazin"}</small><strong><Link className="card-link" href={post.path}>{post.title}</Link></strong><time dateTime={post.modified || post.date}>Aktualisiert am {dateLabel(post.modified || post.date)}</time></span>
+        </div>)}
       </div>
     </section>
 

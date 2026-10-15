@@ -126,11 +126,11 @@ export function LocationStatePage({ state, breadcrumbs }: Props) {
           <ul className="sh-chips sh-state-cities">
             {cards.map((city) => (
               <li key={city.path}>
-                <Link className="sh-chip" href={city.path} title={city.teaser}>
+                <div className="sh-chip has-card-link" title={city.teaser}>
                   {city.photo ? <img src={city.photo.src} alt={`Stadtansicht von ${city.name}`} loading="lazy" decoding="async" /> : <span className="sh-chip-ph" aria-hidden="true"><MarsPairIcon /></span>}
-                  <span className="sh-chip-copy"><strong>{city.name}</strong><small>{city.teaser}</small></span>
+                  <span className="sh-chip-copy"><strong><Link className="card-link" href={city.path}>{city.name}</Link></strong><small>{city.teaser}</small></span>
                   <ArrowIcon className="sh-chip-go" />
-                </Link>
+                </div>
               </li>
             ))}
           </ul>

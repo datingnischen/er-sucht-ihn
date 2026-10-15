@@ -83,19 +83,19 @@ export default function MagazinePage() {
           </div>
 
           {newest && (
-            <Link className="mz-feature" href={newest.path}>
+            <div className="mz-feature has-card-link">
               <span className="mz-feature-pin" aria-hidden="true"><HeartFilledIcon /></span>
               <MagazineMedia entry={newest} className="mz-feature-media" eager />
               <span className="mz-feature-body">
                 <span className="mz-feature-kicker"><SparkIcon />Neu im Magazin</span>
-                <strong>{newest.title}</strong>
+                <strong><Link className="card-link" href={newest.path}>{newest.title}</Link></strong>
                 <span className="mz-feature-excerpt">{newest.description}</span>
                 <span className="mz-feature-meta">
                   <span><ClockIcon />{readingMinutes(newest.contentHtml)} Min. Lesezeit</span>
                   <span className="mz-go">Jetzt lesen <ArrowIcon /></span>
                 </span>
               </span>
-            </Link>
+            </div>
           )}
         </div>
       </section>
@@ -121,20 +121,19 @@ export default function MagazinePage() {
         </div>
         <div className="mz-bento">
           {entryPoints.map((entry, index) => (
-            <Link
+            <div
               key={entry.path}
-              href={entry.path}
-              className={["mz-tile", entry.size ? `mz-tile-${entry.size}` : "", entry.image ? "" : "mz-tile-plain"].filter(Boolean).join(" ")}
+              className={["mz-tile has-card-link", entry.size ? `mz-tile-${entry.size}` : "", entry.image ? "" : "mz-tile-plain"].filter(Boolean).join(" ")}
               style={{ ["--tilt" as string]: `${index % 2 ? 0.8 : -0.8}deg` }}
             >
               {entry.image ? <img src={entry.image} alt={`Magazin-Thema ${entry.label}`} loading="lazy" decoding="async" /> : null}
               <span className="mz-tile-icon" aria-hidden="true">{entry.icon}</span>
               <span className="mz-tile-copy">
-                <strong>{entry.label}</strong>
+                <strong><Link className="card-link" href={entry.path}>{entry.label}</Link></strong>
                 <small>{entry.teaser}</small>
               </span>
               <span className="mz-tile-arrow" aria-hidden="true"><ArrowIcon /></span>
-            </Link>
+            </div>
           ))}
         </div>
       </section>
@@ -164,24 +163,24 @@ export default function MagazinePage() {
             </div>
             <div className="mz-city-grid">
               {cityGuides.map((entry, index) => (
-                <Link className="mz-city" href={entry.path} key={entry.id} style={{ ["--tilt" as string]: `${index % 2 ? 1.2 : -1.2}deg` }}>
+                <div className="mz-city has-card-link" key={entry.id} style={{ ["--tilt" as string]: `${index % 2 ? 1.2 : -1.2}deg` }}>
                   <MagazineMedia entry={entry} className="mz-city-arch" />
                   <span className="mz-city-copy">
-                    <small><PinIcon />Gay-Locations in</small>
-                    <strong>{guideCity(entry)}</strong>
+                    <Link className="card-link" href={entry.path}><small><PinIcon />Gay-Locations in</small>
+                    <strong>{guideCity(entry)}</strong></Link>
                     <span className="mz-city-go">Guide öffnen <ArrowIcon /></span>
                   </span>
-                </Link>
+                </div>
               ))}
             </div>
             {sceneHubs.length > 0 && (
               <div className="mz-scene-hubs">
                 {sceneHubs.map((entry) => (
-                  <Link className="mz-scene-hub" href={entry.path} key={entry.id}>
+                  <div className="mz-scene-hub has-card-link" key={entry.id}>
                     <span className="mz-scene-hub-icon" aria-hidden="true"><GlassIcon /></span>
-                    <span><strong>{entry.title}</strong><small>Deutschlands bekannteste Gay-Locations · {readingMinutes(entry.contentHtml)} Min. Lesezeit</small></span>
+                    <span><strong><Link className="card-link" href={entry.path}>{entry.title}</Link></strong><small>Deutschlands bekannteste Gay-Locations · {readingMinutes(entry.contentHtml)} Min. Lesezeit</small></span>
                     <ArrowIcon className="mz-scene-hub-arrow" />
-                  </Link>
+                  </div>
                 ))}
               </div>
             )}
@@ -226,11 +225,11 @@ export default function MagazinePage() {
             <ul className="mz-knowledge-list">
               {knowledgeGuides.map((entry) => (
                 <li key={entry.id}>
-                  <Link href={entry.path}>
+                  <div className="mz-knowledge-row has-card-link">
                     <MagazineMedia entry={entry} className="mz-knowledge-thumb" />
-                    <span><strong>{entry.title}</strong><small>{entry.slug === "glossar" ? "Begriffe von A bis Z" : `${readingMinutes(entry.contentHtml)} Min. Lesezeit`}</small></span>
+                    <span><strong><Link className="card-link" href={entry.path}>{entry.title}</Link></strong><small>{entry.slug === "glossar" ? "Begriffe von A bis Z" : `${readingMinutes(entry.contentHtml)} Min. Lesezeit`}</small></span>
                     <ArrowIcon />
-                  </Link>
+                  </div>
                 </li>
               ))}
             </ul>

@@ -3,6 +3,7 @@ import retiredLexicon from "../data/magazine-lexikon.json" with { type: "json" }
 import { absolutizeAssetUrls, staticAsset } from "./static-asset.mjs";
 import { slashInternalLinks, withTrailingSlash } from "./site-contract.mjs";
 import { withImageAlts } from "./image-alt.mjs";
+import { withoutEmptyHeadings } from "./html-cleanup.mjs";
 
 export type MagazineEntry = {
   id: number;
@@ -45,7 +46,11 @@ type MagazineAsset = { localPath: string; legacyPaths: string[] };
 const SEO_TITLES: Record<string, string> = {
   "bin-ich-schwul": "Bin ich schwul? Gefühle verstehen und einordnen",
   "drag-queen": "Drag Queen: Bedeutung, Geschichte und Szene",
-  "er-sucht-ihn": "Er sucht Ihn: Als schwuler Mann einen Mann finden",
+  // Ohne Wortwiederholung (Seobility) und ohne eigene Domain im Titel.
+  "er-sucht-ihn": "Er sucht Ihn: Als schwuler Mann den Partner finden",
+  "seitensprung-affaere": "Seitensprung und Affäre: Mann sucht Abenteuer",
+  "my-homo": "My-homo.net im Vergleich: Ist My-Homo eine Alternative?",
+  "poppen-de": "Poppen.de: große Dating-Community mit Gaychat",
   "promi-outings": "Promi-Outings: Berühmte Schwule, die dazu stehen",
   "kleine-pride-events-gay-dating": "Kleine Pride-Events: Echte Kontakte für Gay Singles",
   "deepfake-nudes-dating-schutz": "Deepfake-Nudes: Privatsphäre beim Gay-Dating schützen",
@@ -61,7 +66,40 @@ const TITLE_OVERRIDES: Record<string, string> = {
   "gaylocations-dortmund": "Gay-Locations, Clubs und Bars in Dortmund",
 };
 
+// Längere H1 (Seobility: unter ca. 20 Zeichen zu kurz); Titel, Karten und Linktexte behalten den Originaltitel.
+const H1_OVERRIDES: Record<string, string> = {
+  "bin-ich-schwul": "Bin ich schwul? Gefühle verstehen und einordnen",
+  "drag-queen": "Drag Queen: Bedeutung, Geschichte und Szene",
+  "er-sucht-ihn": "Er sucht Ihn: Als schwuler Mann den Partner finden",
+  "promi-outings": "Promi-Outings: Berühmte Schwule, die dazu stehen",
+};
+export function magazineHeading(entry: Pick<MagazineEntry, "slug" | "title">) {
+  return H1_OVERRIDES[entry.slug] ?? entry.title;
+}
+
+// Gleicher Linktext soll immer auf dasselbe Ziel zeigen (Seobility „identische Linktexte“). Sichtbarer Text bleibt,
+// nur das Ziel wird vereinheitlicht; im Gay-Locations-Überblick bekommen die Stadt-Zwischentitel den Themenzusatz,
+// weil die bloßen Stadtnamen sonst mit den Städteseiten unter /partnersuche/ konkurrieren.
+const LINK_TARGET_FIXES: Array<[RegExp, string]> = [
+  [/href="\/magazin\/gay-de\/?">schwule Männer finden</g, 'href="/magazin/schwule-maenner-suchen">schwule Männer finden<'],
+  [/href="\/gay\.html\/?">Schwule</g, 'href="/magazin/ist-er-schwul-merkmale">Schwule<'],
+  [/href="\/magazin\/schwule-maenner-suchen\/?">Schwule</g, 'href="/magazin/ist-er-schwul-merkmale">Schwule<'],
+  [/href="\/magazin\/tv-show-prince-charming\/?">Prince Charming</g, 'href="/magazin/prince-charming">Prince Charming<'],
+];
+function withUniqueLinkTargets(slug: string, html: string) {
+  let out = html;
+  for (const [pattern, replacement] of LINK_TARGET_FIXES) out = out.replace(pattern, replacement);
+  // Bildlinks auf die Städte-Guides: ein bloßer Stadtname als Alt-Text wäre derselbe Linktext wie zur Städteseite.
+  out = out.replace(/(<a href="\/magazin\/gaylocations-[a-z-]+\/?"[^>]*>\s*<img\b[^>]*\balt=")([A-ZÄÖÜ][a-zäöüß]+)(")/g, "$1Gay-Locations in $2$3");
+  if (slug === "gay-locations") out = out.replace(/<h4><a href="(\/magazin\/gaylocations-[a-z-]+\/?)">([^<]+)<\/a><\/h4>/g, '<h4><a href="$1">Gay-Locations in $2</a></h4>');
+  return out;
+}
+
 export const magazineEntries = ([...catalog.entries, ...retiredLexicon.entries] as MagazineEntry[]).map((entry) => ({
+  ...entry,
+  // Importbereinigung vor dem Slash-/Asset-Schritt: leere Überschriften raus, eindeutige Linkziele.
+  contentHtml: withoutEmptyHeadings(withUniqueLinkTargets(entry.slug, entry.contentHtml)),
+})).map((entry) => ({
   ...entry,
   title: TITLE_OVERRIDES[entry.slug] ?? entry.title,
   seoTitle: SEO_TITLES[entry.slug],

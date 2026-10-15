@@ -52,7 +52,7 @@ export default function MagazineArchivePage() {
               <p>{posts.length} Artikel</p>
             </header>
             <div className="mz-grid mz-grid-compact">
-              {posts.map((entry) => <MagazineCard entry={entry} variant="compact" showExcerpt={false} key={entry.id} />)}
+              {posts.map((entry) => <MagazineCard entry={entry} variant="compact" heading="p" showExcerpt={false} key={entry.id} />)}
             </div>
           </section>
         ))}

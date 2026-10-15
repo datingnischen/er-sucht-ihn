@@ -54,10 +54,11 @@ export function FaqPage({ page, image, faq, breadcrumbs }: ImportedView) {
       </div>
       <div className="lx-faq-service-grid">
         {services.map((service) => {
-          const body = <><span className="lx-faq-service-icon" aria-hidden="true">{service.icon}</span><strong>{service.title}</strong><span>{service.text}</span><em>{service.cta} <ArrowIcon /></em></>;
-          return service.internal
-            ? <Link className="lx-faq-service-card" href={service.href} key={service.title}>{body}</Link>
-            : <a className="lx-faq-service-card" href={service.href} key={service.title}>{body}</a>;
+          // Nur der Titel ist verlinkt (kurzer Linktext); die ganze Karte bleibt über .card-link::after klickbar.
+          const link = service.internal
+            ? <Link className="card-link" href={service.href}>{service.title}</Link>
+            : <a className="card-link" href={service.href}>{service.title}</a>;
+          return <div className="lx-faq-service-card has-card-link" key={service.title}><span className="lx-faq-service-icon" aria-hidden="true">{service.icon}</span><strong>{link}</strong><span>{service.text}</span><em aria-hidden="true">{service.cta} <ArrowIcon /></em></div>;
         })}
       </div>
     </section>

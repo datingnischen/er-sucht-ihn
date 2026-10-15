@@ -161,15 +161,15 @@ export function LocationHubPage({ page, path, image, contentHtml, breadcrumbs }:
 
       {locations ? (
         <section className="sc-wrap sc-section" aria-labelledby="sh-mag-title">
-          <Link className="sh-topten" href={locations.path}>
+          <div className="sh-topten has-card-link">
             <span className="sh-topten-media">{locations.featuredImage ? <img src={locations.featuredImage} alt={`Titelbild: ${locations.title}`} loading="lazy" decoding="async" /> : <MarsPairIcon />}</span>
             <span className="sh-topten-copy">
               <small className="kicker">Aus dem Magazin</small>
-              <strong id="sh-mag-title">{locations.title}</strong>
+              <strong id="sh-mag-title"><Link className="card-link" href={locations.path}>{locations.title}</Link></strong>
               <span>{locations.description.length > 180 ? `${locations.description.slice(0, 177).replace(/\s+\S*$/, "")} …` : locations.description}</span>
               <em>Szene-Guide lesen <ArrowIcon /></em>
             </span>
-          </Link>
+          </div>
         </section>
       ) : null}
     </main>

@@ -209,15 +209,15 @@ export function LocationCityPage({ page, path, contentHtml, breadcrumbs }: Impor
           </div>
           <div className={`sc-mag-grid${magazine.length === 1 ? " sc-mag-grid-single" : ""}`}>
             {magazine.map((entry, index) => (
-              <Link key={entry.path} className="sc-mag-card" href={entry.path} style={{ "--tilt": `${index % 2 ? 1 : -1}deg` } as CSSProperties}>
+              <div key={entry.path} className="sc-mag-card has-card-link" style={{ "--tilt": `${index % 2 ? 1 : -1}deg` } as CSSProperties}>
                 <span className="sc-mag-media">{entry.featuredImage ? <img src={entry.featuredImage} alt={`Titelbild: ${entry.title}`} loading="lazy" decoding="async" /> : <MarsPairIcon />}</span>
                 <span className="sc-mag-body">
                   <small>Magazin</small>
-                  <strong>{entry.title}</strong>
+                  <strong><Link className="card-link" href={entry.path}>{entry.title}</Link></strong>
                   <span>{teaser(entry.description)}</span>
                   <em>Artikel lesen <ArrowIcon /></em>
                 </span>
-              </Link>
+              </div>
             ))}
           </div>
         </section>

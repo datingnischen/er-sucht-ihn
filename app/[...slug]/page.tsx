@@ -13,6 +13,7 @@ import { ContentPage } from "@/components/editorial/content-page";
 import { LocationStatePage, stateMetadata } from "@/components/location/location-state-page";
 import { statePages } from "@/lib/state-pages.mjs";
 import { publicUrl } from "@/lib/site-contract.mjs";
+import { clampMetaDescription } from "@/lib/meta-description";
 
 type Props = { params: Promise<{ slug: string[] }> };
 
@@ -43,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const page = getImportedPage(normalizePublicPath(slug));
   if (!page) return {};
   const title = page.seoTitle ?? page.title;
-  const description = page.seoDescription ?? page.description;
+  const description = clampMetaDescription(page.seoDescription ?? page.description);
   return { title, description, alternates: { canonical: page.canonical }, openGraph: { title, description, url: page.canonical, images: selectHeroImage(page.images)?.src ? [selectHeroImage(page.images).src] : undefined } };
 }
 

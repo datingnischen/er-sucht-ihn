@@ -16,7 +16,8 @@ import { SiteSearchForm } from "@/components/site-search-form";
 import { SocialIcon } from "@/components/social-icon";
 
 const canonical = publicUrl(ABOUT_ROOT_PATH);
-const title = "Über uns: Wer hinter Er-sucht-Ihn.de steht";
+// Ohne eigene Domain im Titel (Seobility „Domain im Titel“).
+const title = "Über uns: Wer hinter Er sucht Ihn steht";
 const description = "Lerne die Plattform hinter Er-sucht-Ihn.de kennen: Betrieb, Redaktion, Bewertungen, Erfahrungen und unsere Social-Media-Kanäle.";
 
 // Scores and wording come from the imported ICONY page /bewertungen-und-erfahrungen and the footer seal.
@@ -146,10 +147,10 @@ export default function AboutPage() {
             <li><strong>{magazinePosts.length}</strong> Artikel</li>
             <li><strong>{categoriesWithPosts().length}</strong> Rubriken</li>
           </ul>
-          {author ? <Link className="ab-author" href={`/magazin/author/${author.slug}`}>
+          {author ? <div className="ab-author has-card-link">
             <span className="ab-author-icon" aria-hidden="true"><BookIcon /></span>
-            <span><small>Aus der Redaktion</small><strong>{author.name}</strong><span>{authorText || "Alle Beiträge unserer Redaktion über Gay-Dating, Beziehungen und Coming-out."}</span></span>
-          </Link> : null}
+            <span><small>Aus der Redaktion</small><strong><Link className="card-link" href={`/magazin/author/${author.slug}`}>{author.name}</Link></strong><span>{authorText || "Alle Beiträge unserer Redaktion über Gay-Dating, Beziehungen und Coming-out."}</span></span>
+          </div> : null}
           <Link className="ab-link" href="/magazin">Zum Magazin <ArrowIcon /></Link>
         </div>
       </div>

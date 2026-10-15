@@ -6,6 +6,7 @@ import { ArrowIcon, BookIcon, CalendarIcon, ClockIcon, HeartFilledIcon, MarsPair
 import { MagazineCategoryIcon } from "@/components/magazine/category-icon";
 import { authorProfile, BIO_PAGE_SLUGS, initials, isSceneGuide, prepareArticleHtml, readingMinutes } from "@/components/magazine/content";
 import { MagazineCard, MagazineMedia } from "@/components/magazine/magazine-card";
+import { magazineHeading } from "@/lib/magazine";
 import {
   articleUpdatedDate,
   getMagazineAttachment,
@@ -15,6 +16,7 @@ import {
 } from "@/lib/magazine";
 import { registrationUrl, SITE_URL } from "@/lib/site";
 import { staticAsset } from "@/lib/static-asset.mjs";
+import { clampMetaDescription } from "@/lib/meta-description";
 import { buildMagazineSchema, magazineReview } from "@/lib/magazine-review.mjs";
 
 export const dynamicParams = false;
@@ -34,15 +36,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const entry = getMagazineEntry(pathFrom(slug));
   if (!entry) return { robots: { index: false, follow: false } };
   const title = entry.seoTitle ?? entry.title;
+  const description = clampMetaDescription(entry.description);
   return {
     title,
-    description: entry.description,
+    description,
     alternates: { canonical: entry.canonical },
     openGraph: {
       type: "article",
       url: entry.canonical,
       title,
-      description: entry.description,
+      description,
       publishedTime: entry.date,
       modifiedTime: entry.modified,
       images: entry.featuredImage ? [{ url: entry.featuredImage }] : undefined,
@@ -85,7 +88,7 @@ export default async function MagazineDetailPage({ params }: Props) {
             {category
               ? <Link className="mz-badge mz-badge-link" href={`/magazin/kategorie/${category.slug}`}><span className="mz-badge-icon" aria-hidden="true">{badgeIcon}</span>{badge}</Link>
               : <span className="mz-badge"><span className="mz-badge-icon" aria-hidden="true">{badgeIcon}</span>{badge}</span>}
-            <h1>{entry.title}</h1>
+            <h1>{magazineHeading(entry)}</h1>
             <p className="mz-hero-lead mz-article-deck">{entry.description}</p>
             <div className="mz-byline">
               {author && (
@@ -139,7 +142,7 @@ export default async function MagazineDetailPage({ params }: Props) {
                 {author.role && <p className="mz-author-box-role">{author.role}</p>}
                 {author.bioLead && <p>{author.bioLead}</p>}
                 <div className="mz-author-box-links">
-                  <Link className="text-link" href={`/magazin/author/${author.slug}`}>Alle Beiträge <ArrowIcon /></Link>
+                  <Link className="text-link" href={`/magazin/author/${author.slug}`}>Alle Beiträge von {author.name} <ArrowIcon /></Link>
                   {author.bioEntry && <Link className="text-link" href={author.bioEntry.path}>Mehr über {author.slug === "redaktion" ? "unsere Redaktion" : author.name.split(" ")[0]} <ArrowIcon /></Link>}
                 </div>
               </div>

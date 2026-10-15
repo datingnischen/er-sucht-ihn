@@ -1212,7 +1212,7 @@
   list-style: none;
 }
 
-.mz-knowledge-list a {
+.mz-knowledge-list .mz-knowledge-row {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -1223,8 +1223,8 @@
   transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
 
-.mz-knowledge-list a:hover,
-.mz-knowledge-list a:focus-visible {
+.mz-knowledge-list .mz-knowledge-row:hover,
+.mz-knowledge-list .mz-knowledge-row:focus-visible {
   transform: translateX(4px);
   border-color: #b9d4ec;
   box-shadow: 0 12px 26px rgba(20, 40, 75, .08);
@@ -1241,7 +1241,7 @@
   width: 44%;
 }
 
-.mz-knowledge-list a > span:nth-child(2) {
+.mz-knowledge-list .mz-knowledge-row > span:nth-child(2) {
   display: grid;
   flex: 1;
   gap: 2px;
@@ -1259,7 +1259,7 @@
   font-size: .82rem;
 }
 
-.mz-knowledge-list a > svg {
+.mz-knowledge-list .mz-knowledge-row > svg {
   flex: none;
   width: 20px;
   height: 20px;
@@ -2447,7 +2447,7 @@
   .mz-media img,
   .mz-city-arch,
   .mz-scene-hub,
-  .mz-knowledge-list a,
+  .mz-knowledge-list .mz-knowledge-row,
   .mz-radar-card,
   .mz-card-go svg,
   .mz-tile-arrow {
@@ -2458,7 +2458,7 @@
   .mz-tile:hover,
   .mz-card-link:hover,
   .mz-city:hover .mz-city-arch,
-  .mz-knowledge-list a:hover {
+  .mz-knowledge-list .mz-knowledge-row:hover {
     transform: none;
   }
 

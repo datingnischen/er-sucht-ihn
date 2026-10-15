@@ -5,6 +5,7 @@ import { classifyPath, publicUrl, SITE_URL, slashInternalLinks, withTrailingSlas
 import { absolutizeAssetUrls, staticAsset } from "./static-asset.mjs";
 import { withImageAlts } from "./image-alt.mjs";
 import { withPagePhoto } from "./page-photos.mjs";
+import { withoutEmptyHeadings, withoutH1Repeat } from "./html-cleanup.mjs";
 
 export type ImportedPage = {
   path: string;
@@ -50,7 +51,7 @@ const metaOverrides: Record<string, Partial<Pick<ImportedPage, "title" | "descri
   },
   "/partnersuche/essen": { title: "Er sucht Ihn in Essen (Ruhrgebiet)" },
   "/faq": {
-    title: "FAQ er-sucht-ihn.de: Kosten, Sicherheit & Ablauf erklärt",
+    title: "FAQ: Kosten, Sicherheit & Ablauf bei Er sucht Ihn",
     description: "Antworten auf häufige Fragen zur Partnersuche bei er-sucht-ihn.de. Jetzt alles zu Kosten, Sicherheit & Ablauf erfahren.",
   },
 };
@@ -58,6 +59,27 @@ const metaOverrides: Record<string, Partial<Pick<ImportedPage, "title" | "descri
 function withMetaOverride(page: ImportedPage): ImportedPage {
   const override = metaOverrides[page.path];
   return override ? { ...page, ...override } : page;
+}
+
+// Längere H1 (Seobility: unter ca. 20 Zeichen zu kurz); Titel und Linktexte bleiben.
+const h1Overrides: Record<string, string> = {
+  "/partnersuche/nordrhein-westfalen/bonn": "Er sucht Ihn in Bonn: schwule Männer kennenlernen",
+};
+// Markenlink „Er sucht Ihn“ auf die Startseite konkurriert mit dem gleichnamigen Glossar-Artikel; die Startseite ist ohnehin überall verlinkt.
+const contentFixes: Record<string, Array<[string, string]>> = {
+  "/partnersuche/nordrhein-westfalen/duesseldorf": [['<a href="/">Er sucht Ihn</a>', "Er sucht Ihn"]],
+};
+function safeDecode(value: string) { try { return decodeURI(value); } catch { return value; } }
+function withPageFixes(page: ImportedPage): ImportedPage {
+  const h1 = h1Overrides[page.path] ?? page.h1;
+  let contentHtml = page.contentHtml;
+  for (const [from, to] of contentFixes[page.path] ?? []) contentHtml = contentHtml.split(from).join(to);
+  // Markenlink „Er sucht Ihn“ auf die Startseite (in vielen Stadttexten) konkurriert mit dem gleichnamigen Glossar-Artikel.
+  contentHtml = contentHtml.replace(/<a href="\/"[^>]*>(Er sucht Ihn)<\/a>/gi, "$1");
+  // Interne Links einheitlich mit Umlauten statt Prozent-Kodierung (sonst zählt Seobility zwei URLs für dieselbe Seite).
+  contentHtml = contentHtml.replace(/href="(\/[^"]*%[0-9A-Fa-f]{2}[^"]*)"/g, (_m, path: string) => `href="${safeDecode(path)}"`);
+  contentHtml = withoutH1Repeat(withoutEmptyHeadings(contentHtml), h1);
+  return h1 === page.h1 && contentHtml === page.contentHtml ? page : { ...page, h1, contentHtml };
 }
 
 // Seiten-URLs enden auf "/" wie die ICONY-Plattform; der Import-Snapshot bleibt unverändert.
@@ -74,7 +96,7 @@ function withAbsoluteAssets(page: ImportedPage): ImportedPage {
   };
 }
 
-const pages = (catalog.pages as ImportedPage[]).map(withAboutPath).map(withPlatformType).map(withMetaOverride).map(withTrailingSlashUrls).map(withAbsoluteAssets).map((page) => withPagePhoto(page, staticAsset) as ImportedPage).map((page) => withImageAlts(page, page.h1 || page.title) as ImportedPage);
+const pages = (catalog.pages as ImportedPage[]).map(withAboutPath).map(withPlatformType).map(withMetaOverride).map(withPageFixes).map(withTrailingSlashUrls).map(withAbsoluteAssets).map((page) => withPagePhoto(page, staticAsset) as ImportedPage).map((page) => withImageAlts(page, page.h1 || page.title) as ImportedPage);
 const pageMap = new Map(pages.map((page) => [page.path, page]));
 
 export const publicPages = pages.filter((page) => page.type !== "platform" && page.type !== "magazine");
