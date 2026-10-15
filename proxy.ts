@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from "next/server.js";
 import type { NextRequest } from "next/server";
 import { withTrailingSlash } from "./lib/site-contract.mjs";
 
@@ -26,7 +26,19 @@ function trailingSlashRedirect(request: NextRequest) {
   return NextResponse.redirect(destination, 308);
 }
 
+// Bewusst gelöschte Alt-Adressen (Entscheidung Christian, 2026-10-15): kein Lexikon mehr, Bewertungen & Erfahrungen
+// stehen unter /ueber-uns/bewertungen/. „410 Gone“ statt Weiterleitung, damit Suchmaschinen die URLs entfernen.
+const GONE = /^\/(?:lexikon|bewertungen-und-erfahrungen)(?:\/|$)/;
+
+function gone() {
+  return new NextResponse(
+    '<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>Seite entfernt | Er sucht Ihn</title></head><body><h1>Diese Seite gibt es nicht mehr</h1><p><a href="/magazin/">Zum Magazin</a> · <a href="/ueber-uns/bewertungen/">Bewertungen &amp; Erfahrungen</a></p></body></html>',
+    { status: 410, headers: { "Content-Type": "text/html; charset=utf-8", "X-Robots-Tag": "noindex" } },
+  );
+}
+
 export function proxy(request: NextRequest) {
+  if (GONE.test(request.nextUrl.pathname)) return gone();
   const slashRedirect = trailingSlashRedirect(request);
   if (slashRedirect) return slashRedirect;
 

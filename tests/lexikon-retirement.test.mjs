@@ -30,10 +30,19 @@ test("no public page or magazine entry links to the retired lexicon", () => {
   for (const item of [...pages, ...magazine.entries, ...retired]) assert.doesNotMatch(item.contentHtml, /href="\/lexikon/, item.path);
 });
 
-test("lexicon URLs redirect permanently into the magazine and leave the navigation", async () => {
+test("lexicon and old review URLs are gone (410) and leave the navigation", async () => {
+  // Entscheidung 2026-10-15: kein Lexikon, Bewertungen nur unter /ueber-uns/bewertungen/; alte URLs werden gelöscht.
   const config = await read("../next.config.ts");
-  assert.match(config, /\{ source: "\/lexikon", destination: "\/magazin\/", permanent: true \}/);
-  assert.match(config, /\{ source: "\/lexikon\/:slug", destination: "\/magazin\/:slug\/", permanent: true \}/);
+  assert.doesNotMatch(config, /source: "\/lexikon/);
+  const { NextRequest } = await import("next/server.js");
+  const { proxy } = await import("../proxy.ts");
+  for (const path of ["/lexikon", "/lexikon/", "/lexikon/gaychat/", "/bewertungen-und-erfahrungen/", "/bewertungen-und-erfahrungen"]) {
+    const response = proxy(new NextRequest(`https://er-sucht-ihn-two.vercel.app${path}`));
+    assert.equal(response.status, 410, path);
+    assert.equal(response.headers.get("location"), null, path);
+  }
+  assert.notEqual(proxy(new NextRequest("https://er-sucht-ihn-two.vercel.app/ueber-uns/bewertungen/")).status, 410);
+  assert.notEqual(proxy(new NextRequest("https://er-sucht-ihn-two.vercel.app/magazin/gaychat/")).status, 410);
   const shell = await read("../components/site-shell.tsx");
   const llms = await read("../app/llms.txt/route.ts");
   assert.doesNotMatch(shell + llms, /Lexikon|\/lexikon/);

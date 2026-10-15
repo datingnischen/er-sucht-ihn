@@ -39,8 +39,6 @@ export default function nextConfig(phase: string): NextConfig {
         // Bundesland-Seiten liegen unter /partnersuche/<land>/ (lib/state-pages.mjs); die Umlaut-Schreibweise aus ICONY-Pfaden zeigt auf den kanonischen Slug.
         { source: "/partnersuche/baden-w%C3%BCrttemberg", destination: "/partnersuche/baden-wuerttemberg/", permanent: true },
         { source: "/partnersuche/bayern/m%C3%BCnchen", destination: "/partnersuche/bayern/muenchen/", permanent: true },
-        { source: "/lexikon", destination: "/magazin/", permanent: true },
-        { source: "/lexikon/:slug", destination: "/magazin/:slug/", permanent: true },
         { source: "/magazin/wp-sitemap.xml", destination: "/magazin/sitemap.xml", permanent: true },
         { source: "/magazin/sitemap_index.xml", destination: "/magazin/sitemap.xml", permanent: true },
         { source: "/magazin/post-sitemap.xml", destination: "/magazin/sitemap.xml", permanent: true },
