@@ -13,3 +13,7 @@ test("heading levels never skip and siblings stay siblings", () => {
 test("an empty strong between two words keeps the space", () => {
   assert.equal(limitStrong("Nachhaltige<strong> </strong>französische"), "Nachhaltige französische");
 });
+
+test("doppelt verschachtelte Hervorhebungen ergeben gültiges HTML", () => {
+  assert.equal(limitStrong("<strong>a</strong><strong>a</strong><strong><strong>T</strong></strong>"), "<strong>a</strong><span class=\"em-strong\">a</span><strong>T</strong>");
+});
