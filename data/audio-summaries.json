@@ -1,0 +1,26 @@
+{
+  "/magazin/coming-out": {
+    "src": "/magazine/media/coming-out-audio-zusammenfassung.mp3",
+    "seconds": 54
+  },
+  "/magazin/gaychat": {
+    "src": "/magazine/media/gaychat-audio-zusammenfassung.mp3",
+    "seconds": 57
+  },
+  "/magazin/homophobie": {
+    "src": "/magazine/media/homophobie-audio-zusammenfassung.mp3",
+    "seconds": 60
+  },
+  "/magazin/pride-flag": {
+    "src": "/magazine/media/pride-flag-audio-zusammenfassung.mp3",
+    "seconds": 57
+  },
+  "/magazin/seitensprung-affaere": {
+    "src": "/magazine/media/seitensprung-affaere-audio-zusammenfassung.mp3",
+    "seconds": 50
+  },
+  "/magazin/singleboerse-seitensprung": {
+    "src": "/magazine/media/singleboerse-seitensprung-audio-zusammenfassung.mp3",
+    "seconds": 53
+  }
+}
