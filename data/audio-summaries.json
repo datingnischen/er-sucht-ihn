@@ -77,7 +77,7 @@
   },
   "/magazin/geschlechtsumwandlung": {
     "src": "/magazine/media/geschlechtsumwandlung-audio-zusammenfassung.mp3",
-    "seconds": 65
+    "seconds": 63
   },
   "/magazin/gilbert-baker": {
     "src": "/magazine/media/gilbert-baker-audio-zusammenfassung.mp3",
@@ -121,7 +121,7 @@
   },
   "/magazin/mr-gay-germany": {
     "src": "/magazine/media/mr-gay-germany-audio-zusammenfassung.mp3",
-    "seconds": 67
+    "seconds": 58
   },
   "/magazin/my-homo": {
     "src": "/magazine/media/my-homo-audio-zusammenfassung.mp3",
@@ -193,7 +193,7 @@
   },
   "/magazin/transgender-singleboerse": {
     "src": "/magazine/media/transgender-singleboerse-audio-zusammenfassung.mp3",
-    "seconds": 63
+    "seconds": 56
   },
   "/magazin/travesta": {
     "src": "/magazine/media/travesta-audio-zusammenfassung.mp3",
