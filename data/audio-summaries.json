@@ -1,26 +1,210 @@
 {
+  "/magazin/als-homosexuelles-paar-ein-kind-adoptieren": {
+    "src": "/magazine/media/als-homosexuelles-paar-ein-kind-adoptieren-audio-zusammenfassung.mp3",
+    "seconds": 65
+  },
+  "/magazin/badoo-und-lovoo": {
+    "src": "/magazine/media/badoo-und-lovoo-audio-zusammenfassung.mp3",
+    "seconds": 52
+  },
+  "/magazin/bin-ich-schwul": {
+    "src": "/magazine/media/bin-ich-schwul-audio-zusammenfassung.mp3",
+    "seconds": 48
+  },
+  "/magazin/bisexuelle-maenner": {
+    "src": "/magazine/media/bisexuelle-maenner-audio-zusammenfassung.mp3",
+    "seconds": 53
+  },
+  "/magazin/boytrap": {
+    "src": "/magazine/media/boytrap-audio-zusammenfassung.mp3",
+    "seconds": 53
+  },
+  "/magazin/charming-boys": {
+    "src": "/magazine/media/charming-boys-audio-zusammenfassung.mp3",
+    "seconds": 58
+  },
   "/magazin/coming-out": {
     "src": "/magazine/media/coming-out-audio-zusammenfassung.mp3",
     "seconds": 54
+  },
+  "/magazin/drag-queen": {
+    "src": "/magazine/media/drag-queen-audio-zusammenfassung.mp3",
+    "seconds": 64
+  },
+  "/magazin/er-sucht-ihn": {
+    "src": "/magazine/media/er-sucht-ihn-audio-zusammenfassung.mp3",
+    "seconds": 54
+  },
+  "/magazin/ernie-und-bert-doch-nur-beste-freunde": {
+    "src": "/magazine/media/ernie-und-bert-doch-nur-beste-freunde-audio-zusammenfassung.mp3",
+    "seconds": 57
+  },
+  "/magazin/ernie-und-bert-schwul": {
+    "src": "/magazine/media/ernie-und-bert-schwul-audio-zusammenfassung.mp3",
+    "seconds": 60
+  },
+  "/magazin/gay-cruising": {
+    "src": "/magazine/media/gay-cruising-audio-zusammenfassung.mp3",
+    "seconds": 52
+  },
+  "/magazin/gay-de": {
+    "src": "/magazine/media/gay-de-audio-zusammenfassung.mp3",
+    "seconds": 60
+  },
+  "/magazin/gay-escort": {
+    "src": "/magazine/media/gay-escort-audio-zusammenfassung.mp3",
+    "seconds": 63
+  },
+  "/magazin/gay-kino": {
+    "src": "/magazine/media/gay-kino-audio-zusammenfassung.mp3",
+    "seconds": 51
   },
   "/magazin/gaychat": {
     "src": "/magazine/media/gaychat-audio-zusammenfassung.mp3",
     "seconds": 57
   },
+  "/magazin/gayparship": {
+    "src": "/magazine/media/gayparship-audio-zusammenfassung.mp3",
+    "seconds": 62
+  },
+  "/magazin/gayroyal": {
+    "src": "/magazine/media/gayroyal-audio-zusammenfassung.mp3",
+    "seconds": 62
+  },
+  "/magazin/gaysauna": {
+    "src": "/magazine/media/gaysauna-audio-zusammenfassung.mp3",
+    "seconds": 51
+  },
+  "/magazin/geschlechtsumwandlung": {
+    "src": "/magazine/media/geschlechtsumwandlung-audio-zusammenfassung.mp3",
+    "seconds": 65
+  },
+  "/magazin/gilbert-baker": {
+    "src": "/magazine/media/gilbert-baker-audio-zusammenfassung.mp3",
+    "seconds": 65
+  },
+  "/magazin/grindr": {
+    "src": "/magazine/media/grindr-audio-zusammenfassung.mp3",
+    "seconds": 54
+  },
+  "/magazin/growlr": {
+    "src": "/magazine/media/growlr-audio-zusammenfassung.mp3",
+    "seconds": 57
+  },
+  "/magazin/homo-ehe": {
+    "src": "/magazine/media/homo-ehe-audio-zusammenfassung.mp3",
+    "seconds": 63
+  },
   "/magazin/homophobie": {
     "src": "/magazine/media/homophobie-audio-zusammenfassung.mp3",
     "seconds": 60
+  },
+  "/magazin/homosexualitaet-weissen-maennern": {
+    "src": "/magazine/media/homosexualitaet-weissen-maennern-audio-zusammenfassung.mp3",
+    "seconds": 56
+  },
+  "/magazin/ist-er-schwul-merkmale": {
+    "src": "/magazine/media/ist-er-schwul-merkmale-audio-zusammenfassung.mp3",
+    "seconds": 55
+  },
+  "/magazin/lgbt-bewegung": {
+    "src": "/magazine/media/lgbt-bewegung-audio-zusammenfassung.mp3",
+    "seconds": 67
+  },
+  "/magazin/mennation": {
+    "src": "/magazine/media/mennation-audio-zusammenfassung.mp3",
+    "seconds": 54
+  },
+  "/magazin/modetrends-unter-die-schwulen": {
+    "src": "/magazine/media/modetrends-unter-die-schwulen-audio-zusammenfassung.mp3",
+    "seconds": 61
+  },
+  "/magazin/mr-gay-germany": {
+    "src": "/magazine/media/mr-gay-germany-audio-zusammenfassung.mp3",
+    "seconds": 67
+  },
+  "/magazin/my-homo": {
+    "src": "/magazine/media/my-homo-audio-zusammenfassung.mp3",
+    "seconds": 55
+  },
+  "/magazin/poppen-de": {
+    "src": "/magazine/media/poppen-de-audio-zusammenfassung.mp3",
+    "seconds": 62
   },
   "/magazin/pride-flag": {
     "src": "/magazine/media/pride-flag-audio-zusammenfassung.mp3",
     "seconds": 57
   },
+  "/magazin/pride-month": {
+    "src": "/magazine/media/pride-month-audio-zusammenfassung.mp3",
+    "seconds": 60
+  },
+  "/magazin/prince-charming": {
+    "src": "/magazine/media/prince-charming-audio-zusammenfassung.mp3",
+    "seconds": 49
+  },
+  "/magazin/prince-charming-2019-staffel-1": {
+    "src": "/magazine/media/prince-charming-2019-staffel-1-audio-zusammenfassung.mp3",
+    "seconds": 61
+  },
+  "/magazin/prince-charming-2020-staffel-2": {
+    "src": "/magazine/media/prince-charming-2020-staffel-2-audio-zusammenfassung.mp3",
+    "seconds": 57
+  },
+  "/magazin/prince-charming-2021-staffel-3": {
+    "src": "/magazine/media/prince-charming-2021-staffel-3-audio-zusammenfassung.mp3",
+    "seconds": 52
+  },
+  "/magazin/promi-outings": {
+    "src": "/magazine/media/promi-outings-audio-zusammenfassung.mp3",
+    "seconds": 63
+  },
+  "/magazin/queere-events-dating-sicherheit": {
+    "src": "/magazine/media/queere-events-dating-sicherheit-audio-zusammenfassung.mp3",
+    "seconds": 62
+  },
+  "/magazin/romeo-com": {
+    "src": "/magazine/media/romeo-com-audio-zusammenfassung.mp3",
+    "seconds": 54
+  },
+  "/magazin/schwule-maenner-suchen": {
+    "src": "/magazine/media/schwule-maenner-suchen-audio-zusammenfassung.mp3",
+    "seconds": 56
+  },
+  "/magazin/scruff": {
+    "src": "/magazine/media/scruff-audio-zusammenfassung.mp3",
+    "seconds": 59
+  },
   "/magazin/seitensprung-affaere": {
     "src": "/magazine/media/seitensprung-affaere-audio-zusammenfassung.mp3",
     "seconds": 50
   },
+  "/magazin/shemale": {
+    "src": "/magazine/media/shemale-audio-zusammenfassung.mp3",
+    "seconds": 53
+  },
   "/magazin/singleboerse-seitensprung": {
     "src": "/magazine/media/singleboerse-seitensprung-audio-zusammenfassung.mp3",
     "seconds": 53
+  },
+  "/magazin/take-me-out-fuer-schwule": {
+    "src": "/magazine/media/take-me-out-fuer-schwule-audio-zusammenfassung.mp3",
+    "seconds": 59
+  },
+  "/magazin/transgender-singleboerse": {
+    "src": "/magazine/media/transgender-singleboerse-audio-zusammenfassung.mp3",
+    "seconds": 63
+  },
+  "/magazin/travesta": {
+    "src": "/magazine/media/travesta-audio-zusammenfassung.mp3",
+    "seconds": 58
+  },
+  "/magazin/tv-show-prince-charming": {
+    "src": "/magazine/media/tv-show-prince-charming-audio-zusammenfassung.mp3",
+    "seconds": 59
+  },
+  "/magazin/ueber-messengerdienste-flirten-wie-geht-das": {
+    "src": "/magazine/media/ueber-messengerdienste-flirten-wie-geht-das-audio-zusammenfassung.mp3",
+    "seconds": 60
   }
 }
