@@ -8,6 +8,7 @@ import { SITE_URL } from "@/lib/site";
 import { staticAsset, assetHost } from "@/lib/static-asset.mjs";
 import { Analytics } from "@vercel/analytics/next";
 import { vercelAnalyticsProps } from "@/lib/vercel-analytics";
+import { IconyGa4 } from "@/components/icony-ga4";
 
 // Überschriften in Fraunces (weich, mit Kursiv für Akzente), Fließtext bleibt Open Sans von ICONY.
 const display = Fraunces({ subsets: ["latin"], style: ["normal", "italic"], axes: ["SOFT", "opsz"], variable: "--font-display", display: "swap" });
@@ -22,5 +23,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="de" className={display.variable}><body><Header />{children}<Footer /><StickyCta /><Analytics {...vercelAnalyticsProps(assetHost)} /></body></html>;
+  return <html lang="de" className={display.variable}><body><Header />{children}<Footer /><StickyCta /><Analytics {...vercelAnalyticsProps(assetHost)} /><IconyGa4 /></body></html>;
 }
