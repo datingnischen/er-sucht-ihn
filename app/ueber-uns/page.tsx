@@ -87,6 +87,7 @@ export default function AboutPage() {
     >
       <ul className="ab-hero-chips" aria-label="Themen auf dieser Seite">
         <li><a href="#wer-wir-sind">Wer wir sind</a></li>
+        <li><a href="#geschichte">Geschichte</a></li>
         <li><a href="#community">Community</a></li>
         <li><a href="#magazin">Magazin</a></li>
         <li><a href="#bewertungen">Bewertungen &amp; Erfahrungen</a></li>
@@ -119,6 +120,30 @@ export default function AboutPage() {
           <p>Die ICONY GmbH betreibt Er-sucht-Ihn.de und kümmert sich um Support, Technik und Weiterentwicklung – mit Servern in Deutschland.</p>
         </div>
         <a className="ab-link" href={platform.legal}>Zum Impressum <ArrowIcon /></a>
+      </div>
+    </section>
+
+    <section className="wrap ab-section" id="geschichte" aria-labelledby="geschichte-title">
+      <div className="ab-feature">
+        <figure className="ab-history-shot">
+          <span className="ab-history-bar" aria-hidden="true"><i /><i /><i /><span>www.er-sucht-ihn.de · 2014</span></span>
+          <a className="ab-history-frame" href={staticAsset("/about/er-sucht-ihn-2014.webp")} target="_blank" rel="noopener">
+            <img src={staticAsset("/about/er-sucht-ihn-2014.webp")} alt="Alte Startseite von Er-sucht-Ihn.de mit Engel und Teufel, rotem Kopfbereich, Männerpaar und dem Hinweis „Ein Service von elFlirt“, Stand März 2014" width="930" height="1820" loading="lazy" />
+          </a>
+          <figcaption>So sah die Startseite im März 2014 aus. Screenshot: <a href="https://web.archive.org/web/20140331043056/http://www.er-sucht-ihn.de/" rel="nofollow noopener noreferrer" target="_blank">Internet Archive</a></figcaption>
+        </figure>
+        <div>
+          <p className="kicker">Unsere Geschichte</p>
+          <h2 id="geschichte-title">Von elFlirt zur <em>eigenen Plattform</em></h2>
+          <p>Er-sucht-Ihn.de startete 2009 als Service von elFlirt, der Dating-Plattform, die 2008 aus einer Idee unter Arbeitskollegen entstand. 2018 bekam Er-sucht-Ihn.de ein eigenes Design und läuft seitdem auf der Technik von ICONY.</p>
+          <p>Damals noch mit rotem Kopfbereich, Engel und Teufel und der Frage „Was bist Du?“. Das Design hat sich seitdem stark verändert, die Idee ist geblieben: ein eigener Ort für Männer, die Männer lieben.</p>
+          <ul className="ab-stats" aria-label="Er-sucht-Ihn.de damals">
+            <li><strong>2009</strong> Start als Service von elFlirt</li>
+            <li><strong>2018</strong> eigenes Design</li>
+            <li><strong>20.159</strong> Kontaktanzeigen (März 2014)</li>
+          </ul>
+          <a className="ab-link" href="https://www.elflirt.de/ueber-uns/geschichte/">Die Geschichte von elFlirt <ArrowIcon /></a>
+        </div>
       </div>
     </section>
 
