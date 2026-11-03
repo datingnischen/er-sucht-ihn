@@ -135,11 +135,11 @@ export default function AboutPage() {
         <div>
           <p className="kicker">Unsere Geschichte</p>
           <h2 id="geschichte-title">Von elFlirt zur <em>eigenen Plattform</em></h2>
-          <p>Er-sucht-Ihn.de startete 2009 als Service von elFlirt, der Dating-Plattform, die 2008 aus einer Idee unter Arbeitskollegen entstand. 2018 bekam Er-sucht-Ihn.de ein eigenes Design und läuft seitdem auf der Technik von ICONY.</p>
+          <p>Er-sucht-Ihn.de startete 2009 als Service von elFlirt, der Dating-Plattform, die 2008 aus einer Idee unter Arbeitskollegen entstand. 2017 wurde Er-sucht-Ihn.de gemeinsam mit Sie-sucht-Sie.de eine eigene Plattform im ICONY-Netzwerk. Mit diesen beiden Seiten hat ICONY zusammen mit Christian M. Haas erstmals seine Logik für queere Nischen entwickelt.</p>
           <p>Damals noch mit rotem Kopfbereich, Engel und Teufel und der Frage „Was bist Du?“. Das Design hat sich seitdem stark verändert, die Idee ist geblieben: ein eigener Ort für Männer, die Männer lieben.</p>
           <ul className="ab-stats" aria-label="Er-sucht-Ihn.de damals">
             <li><strong>2009</strong> Start als Service von elFlirt</li>
-            <li><strong>2018</strong> eigenes Design</li>
+            <li><strong>2017</strong> eigene Plattform bei ICONY</li>
             <li><strong>20.159</strong> Kontaktanzeigen (März 2014)</li>
           </ul>
           <a className="ab-link" href="https://www.elflirt.de/ueber-uns/geschichte/">Die Geschichte von elFlirt <ArrowIcon /></a>
