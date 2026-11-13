@@ -42,3 +42,7 @@ python scripts/import_public_pages.py
 ## Pflicht vor dem Domain-Cutover
 
 Vor einem DNS-Cutover auf Vercel muss ein separater, von Vercel erreichbarer Legacy-Origin für Registrierung, Login, Suche, Hilfe, Kontakt, Legal sowie benötigte WordPress-Admin-/API-Pfade per Proxy/Rewrites verifiziert sein. Ohne diesen Origin darf die Hauptdomain nicht umgestellt werden, da diese Pfade sonst 404 liefern oder in eine Schleife geraten könnten.
+
+## Zeitstempel im Magazin
+
+`date`/`modified` erscheinen in JSON-LD, Sitemap und `/magazin/wp-json`. Nie runde Uhrzeiten, nie dieselbe Sekunde oder denselben Aktualisierungstag für viele Beiträge, höchstens zwei Beiträge je Erscheinungstag (Ausnahmen begründet im Test). `tests/magazine-timestamps.test.mjs` sperrt Verstöße.
