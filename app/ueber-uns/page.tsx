@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "@/components/link";
+import { CHRISTIAN_PERSON_ID, CHRISTIAN_VITA_URL, christianPerson } from "@/lib/christian-person";
 import { ABOUT_REVIEWS_PATH, ABOUT_ROOT_PATH, ABOUT_SOCIAL_PATH } from "@/lib/about-pages.mjs";
 import { buildBreadcrumbs, buildBreadcrumbSchema } from "@/lib/breadcrumbs.mjs";
 import { getFamilyPages } from "@/lib/content";
@@ -50,9 +51,10 @@ function aboutEntityGraph() {
   return {
     "@context": "https://schema.org",
     "@graph": [
+      christianPerson(),
       { "@type": "WebSite", "@id": `${SITE_URL}/#website`, url: `${SITE_URL}/`, name: "Er-sucht-Ihn.de", inLanguage: "de-DE" },
       { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: "Er-sucht-Ihn.de", url: `${SITE_URL}/`, logo: staticAsset("/brand/logo.svg"), parentOrganization: { "@type": "Organization", name: "ICONY GmbH" }, sameAs: socialProfileUrls },
-      { "@type": "AboutPage", "@id": `${canonical}#webpage`, url: canonical, name: "Über uns", description, inLanguage: "de-DE", isPartOf: { "@id": `${SITE_URL}/#website` }, about: { "@id": `${SITE_URL}/#organization` } },
+      { "@type": "AboutPage", "@id": `${canonical}#webpage`, url: canonical, name: "Über uns", description, inLanguage: "de-DE", isPartOf: { "@id": `${SITE_URL}/#website` }, about: { "@id": `${SITE_URL}/#organization` }, mentions: { "@id": CHRISTIAN_PERSON_ID } },
     ],
   };
 }
@@ -135,7 +137,7 @@ export default function AboutPage() {
         <div>
           <p className="kicker">Unsere Geschichte</p>
           <h2 id="geschichte-title">Von elFlirt zur <em>eigenen Plattform</em></h2>
-          <p>Er-sucht-Ihn.de startete 2009 als Service von elFlirt, der Dating-Plattform, die 2008 aus einer Idee unter Arbeitskollegen entstand. 2017 wurde Er-sucht-Ihn.de gemeinsam mit Sie-sucht-Sie.de eine eigene Plattform im ICONY-Netzwerk. Mit diesen beiden Seiten hat ICONY zusammen mit Christian M. Haas erstmals seine Logik für queere Nischen entwickelt.</p>
+          <p>Er-sucht-Ihn.de startete 2009 als Service von elFlirt, der Dating-Plattform, die 2008 aus einer Idee unter Arbeitskollegen entstand. 2017 wurde Er-sucht-Ihn.de gemeinsam mit Sie-sucht-Sie.de eine eigene Plattform im ICONY-Netzwerk. Mit diesen beiden Seiten hat ICONY zusammen mit <a href={CHRISTIAN_VITA_URL}>Christian M. Haas</a> erstmals seine Logik für queere Nischen entwickelt.</p>
           <p>Damals noch mit rotem Kopfbereich, Engel und Teufel und der Frage „Was bist Du?“. Das Design hat sich seitdem stark verändert, die Idee ist geblieben: ein eigener Ort für Männer, die Männer lieben.</p>
           <ul className="ab-stats" aria-label="Er-sucht-Ihn.de damals">
             <li><strong>2009</strong> Start als Service von elFlirt</li>
